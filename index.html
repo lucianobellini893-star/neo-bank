@@ -159,6 +159,7 @@ button.card.gpc:hover{background:radial-gradient(260px 210px at calc(100% + 30px
 .hd-t{display:flex;flex-direction:column;gap:4px;min-width:0}.hd-r,.hd-x,.hd-i{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .w-sm{display:none}
 .hd-me{display:none}
+.hb-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.hb-d{display:none;font-size:15px;font-weight:700;white-space:nowrap}
 .hrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 
 /* nav */
@@ -687,6 +688,9 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .head .topbtn,.head .searchbtn{width:42px;height:42px}
   .head .dtabs{flex:1 1 100%}
   .head.is-home .hd-t{display:none}
+  .hb-d{display:inline}.hb-pills,.hb-cl,.hb-res{display:none!important}
+  .sub3.hb-sub{grid-template-columns:1fr 1fr!important}.sub3.hb-sub>div:first-child{grid-column:auto!important}.hb-sub>div{padding:12px 14px!important}.hb-sub span{font-size:12px!important}.hb-sub b{font-size:16px!important}
+  .hb-ch{min-height:76px!important}.hb-ch .chart{min-height:70px!important}
   .hd-t>span{display:none}
   .big{font-size:clamp(36px,11.5vw,48px)!important}
   .iban-big{font-size:clamp(14px,4.4vw,19px)!important;white-space:nowrap;letter-spacing:-.01em}
@@ -1727,11 +1731,11 @@ VIEWS.home = {
         <div class="hrow"><span style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#C4C6CE"><span style="width:24px;height:24px;border-radius:12px;background:#fff;color:#0E0F12;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">€</span>Баланс · EUR</span>
           <span style="display:flex;gap:8px"><button class="iconbtn" style="background:var(--hero2);color:#fff;width:36px;height:36px" data-act="topup" aria-label="Пополнить счёт" title="Пополнить счёт">${ic('plus', 17, 2.2)}</button><button class="iconbtn" style="background:var(--hero2);color:#fff;width:36px;height:36px" data-act="hide" aria-label="${DB.hidden ? 'Показать баланс' : 'Скрыть баланс'}">${ic(DB.hidden ? 'eyeoff' : 'eye', 17)}</button></span></div>
         <div style="display:flex;flex-direction:column;gap:12px">
-          <span class="big">${DB.hidden ? '€ ••••' : '€' + esc(s.slice(0, ci)) + '<span class="c">' + esc(s.slice(ci)) + '</span>'}</span>
-          <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="pill" style="background:var(--lime);color:#0E0F12">Расходы в этом месяце ${eur(monthOut)}</span><span class="pill" style="background:#1E1F25;color:#C4C6CE">IBAN ${esc(DB.iban.slice(0, 4))} •• ${esc(DB.iban.slice(-4))}</span></div>
+          <div class="hb-row"><span class="big">${DB.hidden ? '€ ••••' : '€' + esc(s.slice(0, ci)) + '<span class="c">' + esc(s.slice(ci)) + '</span>'}</span><span class="hb-d" id="hBigDelta"></span></div>
+          <div class="hb-pills" style="display:flex;gap:8px;flex-wrap:wrap"><span class="pill" style="background:var(--lime);color:#0E0F12">Расходы в этом месяце ${eur(monthOut)}</span><span class="pill" style="background:#1E1F25;color:#C4C6CE">IBAN ${esc(DB.iban.slice(0, 4))} •• ${esc(DB.iban.slice(-4))}</span></div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:4px;flex:1 1 auto;min-height:110px"><span style="font-size:12px;color:#9EA2AD;display:flex;justify-content:space-between"><span>Доступный остаток · 30 дней</span><span id="hChartDelta"></span></span><div class="chart" id="hChart" style="flex:1 1 auto;height:auto;min-height:96px"></div></div>
-        <div class="sub3"><div><span>Доступно</span><b>${money(DB.eur)}</b></div><div><span><span class="w-lg">Зарезервировано</span><span class="w-sm">Резерв</span></span><b>${money(DB.reserved)}</b></div><div><span>Крипто</span><b id="hSubCrypto">—</b></div></div>
+        <div class="hb-ch" style="display:flex;flex-direction:column;gap:4px;flex:1 1 auto;min-height:110px"><span class="hb-cl" style="font-size:12px;color:#9EA2AD;display:flex;justify-content:space-between"><span>Доступный остаток · 30 дней</span><span id="hChartDelta"></span></span><div class="chart" id="hChart" style="flex:1 1 auto;height:auto;min-height:96px"></div></div>
+        <div class="sub3 hb-sub"><div><span>Доступно</span><b>${money(DB.eur)}</b></div><div class="hb-res"><span><span class="w-lg">Зарезервировано</span><span class="w-sm">Резерв</span></span><b>${money(DB.reserved)}</b></div><div><span>Крипто</span><b id="hSubCrypto">—</b></div></div>
       </div>
       <div class="c2 col">
         <div class="card grow">
@@ -1799,6 +1803,7 @@ VIEWS.home = {
     };
     const pts = series(), drawH = () => { if (!$('hChart')) return; if (DB.hidden) { $('hChart').innerHTML = ''; return; } drawChart($('hChart'), pts, { dark: true, minimal: true, fmt: v => eur(v), label: 'Остаток за 30 дней' }); };
     const dlt = pts[pts.length - 1].v - pts[0].v; $('hChartDelta').innerHTML = DB.hidden ? '' : `<b style="color:${dlt >= 0 ? '#9DD43A' : '#FF8A80'}">${dlt >= 0 ? '+' : '−'}${eur(Math.abs(dlt))}</b>`;
+    if ($('hBigDelta')) { $('hBigDelta').textContent = DB.hidden ? '' : (dlt >= 0 ? '+' : '−') + eur(Math.abs(dlt), 0); $('hBigDelta').style.color = dlt >= 0 ? '#C8F560' : '#FF8A80'; $('hBigDelta').title = 'За 30 дней'; }
     drawH(); let lw = 0; let lh = 0; const ro = new ResizeObserver(() => { const el = $('hChart'), w = el ? el.clientWidth : 0, h = el ? el.clientHeight : 0; if (Math.abs(w - lw) > 2 || Math.abs(h - lh) > 2) { lw = w; lh = h; drawH(); } }); ro.observe($('hChart'));
     const off = Mkt.on(() => { const n = Date.now(); if (n - last > 1000) { last = n; upd(); } });
     unsubView = () => { off(); ro.disconnect(); };
