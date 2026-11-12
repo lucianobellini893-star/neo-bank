@@ -158,6 +158,7 @@ button.card.gpc:hover{background:radial-gradient(260px 210px at calc(100% + 30px
 .head{display:flex;flex-wrap:wrap;align-items:center;gap:16px;justify-content:space-between}
 .hd-t{display:flex;flex-direction:column;gap:4px;min-width:0}.hd-r,.hd-x,.hd-i{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .w-sm{display:none}
+.hd-me{display:none}
 .hrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 
 /* nav */
@@ -230,7 +231,7 @@ select.dd-open,.sel:hover{background-color:var(--soft2)}
 .kv b{text-align:right}
 .pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:6px 10px;border-radius:8px}
 .warn{border-radius:16px;background:var(--warn-bg);padding:12px 14px;font-size:12px;line-height:1.5;color:var(--warn)}
-.tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px}
+.tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;white-space:nowrap;flex:none}
 .tag.pend{background:var(--warn-bg);color:var(--warn-ink)}
 .tag.demo{background:var(--soft2);color:var(--ink2)}
 .toggle{position:relative;width:46px;height:28px;flex:none;border-radius:14px;background:var(--border)}
@@ -241,7 +242,7 @@ select.dd-open,.sel:hover{background-color:var(--soft2)}
 .li{display:flex;align-items:center;gap:14px;padding:10px 0;width:100%;text-align:left}
 .lic{width:44px;height:44px;flex:none;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
 .lim{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-.lim b{font-size:15px;font-weight:600;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3;overflow-wrap:anywhere}
+.lim b{font-size:15px;font-weight:600;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3;overflow-wrap:break-word}
 .lim span{font-size:13px;color:var(--muted)}
 .lir{display:flex;flex-direction:column;align-items:flex-end;gap:4px;white-space:nowrap}
 .lir b{font-size:15px}
@@ -601,7 +602,7 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
 .mklist.top{justify-content:flex-start}
 .fbox{display:flex;align-items:center;gap:8px;height:46px;padding:0 14px;border-radius:14px;border:1.5px solid transparent;background:var(--soft);transition:background .15s}
 .fbox:focus-within{background:var(--soft2)}
-.fbox input{flex:1;min-width:0;height:100%;border:0;background:transparent;font-size:14px;font-weight:500;color:var(--ink)}
+.fbox{min-width:0}.fbox input{flex:1;min-width:0;width:0;height:100%;border:0;background:transparent;font-size:14px;font-weight:500;color:var(--ink)}
 .tbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .tbar>.sel,.tbar>.fbox,.tbar>.btn,.tbar>.seg{height:46px;flex-shrink:0}
 .tbar>.btn{padding:0 18px}
@@ -685,6 +686,16 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .head .topbtn[data-act="theme"]{display:none}
   .head .topbtn,.head .searchbtn{width:42px;height:42px}
   .head .dtabs{flex:1 1 100%}
+  .head.is-home .hd-t{display:none}
+  .hd-t>span{display:none}
+  .big{font-size:clamp(36px,11.5vw,48px)!important}
+  .iban-big{font-size:clamp(14px,4.4vw,19px)!important;white-space:nowrap;letter-spacing:-.01em}
+  .chart text{font-size:10.5px}
+  .hd-me{display:flex;grid-column:1;grid-row:1;align-items:center;gap:10px;min-width:0;justify-self:start;max-width:100%;padding:2px 6px 2px 2px;border-radius:999px;text-align:left;color:var(--ink)}
+  .hd-me .av{width:42px;height:42px;border-radius:21px;font-size:14px}
+  .hd-me b{font-size:clamp(17px,4.8vw,20px);font-weight:700;letter-spacing:-.01em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .hd-me .vf{color:var(--green);display:flex;flex:none}
+  .hd-me:active{background:var(--soft)}
   .card{padding:20px;border-radius:24px}
   .row{gap:14px}
   .w-lg{display:none}.w-sm{display:inline}
@@ -700,6 +711,22 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .login .promo{padding:22px 22px 24px!important;gap:18px!important;min-height:0!important}
   .login .promo h1{font-size:28px!important}.login .promo p,.login .promo .stat3{display:none}
   .login .formwrap{padding:16px 10px 24px;align-items:flex-start}
+}
+@media (max-width:380px){
+  .main{padding-left:12px;padding-right:12px}
+  .card{padding:18px}
+  .sub3{grid-template-columns:1fr 1fr!important}.sub3>div:first-child{grid-column:1/-1}
+  .sub3 b{font-size:15px!important}
+  .head{gap:10px 8px}.hd-i{gap:6px}.head .topbtn,.head .searchbtn{width:40px;height:40px}
+  .bnav{left:10px;right:10px;padding:5px}.bnav button{height:44px}.bnav .bn-ind{top:5px;height:44px}.bnav button{font-size:13px}
+  .trchips{gap:4px}.trchips .chip{font-size:12.5px}
+  .pnlc-ch{margin-bottom:12px}.pnlc-ch em{top:auto;bottom:-15px}
+  .btn{white-space:nowrap}.btn svg{flex:none}
+  .li{gap:10px}
+  .li .lim>b{display:block;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+  .an3{gap:6px!important}.an3 .box{padding:12px 10px!important;min-width:0}.an3 span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px!important}.an3 b{font-size:15px!important;white-space:nowrap}
+  .dr b.mono{font-size:11.5px}
+  .li .lim>b>.muted{display:none}
 }
 @media print{.side,.noprint{display:none!important}.main{padding:0}.card{box-shadow:none}}
 </style>
@@ -1276,7 +1303,8 @@ function drawChart(el, pts, o = {}) {
   let g = '';
   if (!o.minimal) for (let k = 0; k <= 3; k++) { const v = lo + (hi - lo) * (k + 0.5) / 4, yy = y(v); g += `<line x1="0" x2="${W - padR}" y1="${yy}" y2="${yy}" stroke="${grid}" stroke-dasharray="3 5"/><text x="${W - padR + 8}" y="${yy + 4}" fill="${txt}" font-size="11" font-family="Onest,system-ui">${esc(o.fmt ? o.fmt(v) : nf(v))}</text>`; }
   const span_s = pts[pts.length - 1].t - pts[0].t, labFmt = span_s <= 2 * 86400 ? { hour: '2-digit', minute: '2-digit' } : span_s <= 120 * 86400 ? { day: 'numeric', month: 'short' } : { month: 'short', year: '2-digit' };
-  if (!o.minimal) for (let k = 0; k < 5; k++) { const i = Math.round(k / 4 * (pts.length - 1)); const xx = Math.min(W - padR - 24, Math.max(18, x(i))); g += `<text x="${xx}" y="${H - 6}" fill="${txt}" font-size="11" text-anchor="middle" font-family="Onest,system-ui">${esc(new Date(pts[i].t * 1000).toLocaleString('ru-RU', labFmt))}</text>`; }
+  const nX = (W - padR) < 300 ? 3 : (W - padR) < 420 ? 4 : 5;
+  if (!o.minimal) for (let k = 0; k < nX; k++) { const i = Math.round(k / (nX - 1) * (pts.length - 1)); const xx = Math.min(W - padR - 24, Math.max(18, x(i))); g += `<text x="${xx}" y="${H - 6}" fill="${txt}" font-size="11" text-anchor="middle" font-family="Onest,system-ui">${esc(new Date(pts[i].t * 1000).toLocaleString('ru-RU', labFmt))}</text>`; }
   const lastY = y(pts[pts.length - 1].v);
   el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(o.label || 'График')}">
     ${g}
@@ -1476,7 +1504,9 @@ function bindVerify(mode) {
   f.onchange = () => { V.vdocs = (V.vdocs || []).concat([...f.files].filter(x => x.size <= 10 * 1024 * 1024).map(x => ({ name: x.name, size: x.size > 1048576 ? nf(x.size / 1048576, 1) + ' МБ' : Math.max(1, Math.round(x.size / 1024)) + ' КБ' }))).slice(0, 6); setSheet(verifyHTML(mode)); bindVerify(mode); };
 }
 function header(title, sub, right = '') {
-  return `<header class="head"><div class="hd-t"><span class="muted" style="font-size:14px">${sub}</span><h1>${title}</h1></div><div class="hd-r">${right ? `<div class="hd-x">${right}</div>` : ''}<div class="hd-i">${topActions()}</div></div></header>` + pageBanners();
+  const home = route === 'home', fn = String(DB.user.name || DB.user.first || '').trim().split(/\s+/)[0] || DB.user.first;
+  const me = home ? `<button class="hd-me" data-go="settings" aria-label="Профиль: ${esc(DB.user.name)}"><span class="av">${esc(initials(DB.user.name))}</span><b>${esc(fn)}</b><span class="vf" title="Личность подтверждена">${ic('badge', 17, 2)}</span></button>` : '';
+  return `<header class="head${home ? ' is-home' : ''}">${me}<div class="hd-t"><span class="muted" style="font-size:14px">${sub}</span><h1>${title}</h1></div><div class="hd-r">${right ? `<div class="hd-x">${right}</div>` : ''}<div class="hd-i">${topActions()}</div></div></header>` + pageBanners();
 }
 /* animated bell (recreates the Iconly "Ringtone" Lottie: swing + clapper + squash) */
 /* animated Check Circle (recreates the Iconly "Check circle" Lottie: circle squashes, tick flies out and redraws) */
@@ -1706,7 +1736,7 @@ VIEWS.home = {
       <div class="c2 col">
         <div class="card grow">
           <div class="hrow"><h2>Реквизиты счёта</h2><span class="tag" style="background:var(--accent-soft);color:var(--accent-ink);font-size:12px;padding:5px 9px">SEPA · Instant</span></div>
-          <div class="box" style="gap:12px"><span class="muted" style="font-size:12px;font-weight:600">IBAN</span><span class="mono" style="font-size:19px;font-weight:600;word-break:break-word">${esc(DB.iban)}</span>
+          <div class="box" style="gap:12px"><span class="muted" style="font-size:12px;font-weight:600">IBAN</span><span class="mono iban-big" style="font-size:19px;font-weight:600;word-break:break-word">${esc(DB.iban)}</span>
             <button class="btn pri" data-act="copy" data-val="${esc(DB.iban)}" style="height:42px">${ic('copy', 16)}Скопировать IBAN</button></div>
           ${[['BIC', DB.bic], ['Владелец', DB.user.name]].map(([k, v]) => `<div class="kv" style="align-items:center"><span class="muted">${k}</span><span style="display:flex;align-items:center;gap:6px"><b>${esc(v)}</b><button class="iconbtn" style="width:32px;height:32px" data-act="copy" data-val="${esc(v)}" aria-label="Скопировать ${k}">${ic('copy', 15)}</button></span></div>`).join('')}
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto"><button class="btn" data-act="shareIban">${ic('share', 16)}Поделиться</button><button class="btn" data-act="request">${ic('qr', 16)}QR-код</button></div>
@@ -1733,7 +1763,7 @@ VIEWS.home = {
         <div class="card grow" style="gap:4px">
           <div class="hrow" style="margin-bottom:6px"><h2>Рынок</h2><button data-go="crypto" style="font-size:14px;font-weight:600;color:var(--link)">Крипто →</button></div>
           <div id="hMkt" class="mklist hmk"></div>
-          <div class="box" style="margin-top:auto;flex-direction:row;align-items:center;gap:10px;padding:12px 14px"><span style="color:var(--accent)">${ic('bell', 18)}</span><span style="flex:1;font-size:13px">Настройте уведомление о цене — сообщим, когда монета достигнет нужного уровня</span><button class="chip g" data-go="crypto">Настроить</button></div>
+          <div class="box unk" style="margin-top:auto;flex-direction:row;align-items:center;gap:10px;padding:12px 14px"><span style="color:var(--accent);flex:none">${ic('bell', 18)}</span><span style="flex:1;font-size:13px">Настройте уведомление о цене — сообщим, когда монета достигнет нужного уровня</span><button class="chip g" data-go="crypto">Настроить</button></div>
         </div>
       </div>
     </section>`;
@@ -2175,7 +2205,7 @@ VIEWS.analytics = {
           return `<button class="${i === A.sel ? 'on' : ''}" data-act="anSel" data-val="${i}" aria-label="${x.full}: доходы ${eur(x.inc, 0)}, расходы ${eur(x.sp, 0)}" style="flex-direction:row;align-items:flex-end;justify-content:center;gap:4px;opacity:${i === A.sel ? 1 : .55}">
             ${i === A.sel ? `<span class="bt" style="bottom:calc(${Math.max(hi, hs)}% + 8px)">${eur(x.inc - x.sp, 0).replace('€', (x.inc - x.sp >= 0 ? '+€' : '€'))}</span>` : ''}<i style="height:${hi}%;max-width:18px;background:var(--lime)"></i><i style="height:${hs}%;max-width:18px;background:var(--accent)"></i></button>`; }).join('')}</div>
         <div class="blabels" style="gap:12px">${months.map((x, i) => `<span style="${i === A.sel ? 'color:var(--ink);font-weight:700' : ''}">${x.label}</span>`).join('')}</div>
-        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+        <div class="an3" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
           <div class="box" style="gap:4px;padding:14px"><span class="muted" style="font-size:12px">Доходы</span><b style="font-size:18px" class="up">${eur(cur.inc, 0)}</b></div>
           <div class="box" style="gap:4px;padding:14px"><span class="muted" style="font-size:12px">Расходы</span><b style="font-size:18px">${eur(cur.sp, 0)}</b></div>
           <div class="box" style="gap:4px;padding:14px"><span class="muted" style="font-size:12px">${saved >= 0 ? 'Сэкономлено' : 'Перерасход'}</span><b style="font-size:18px" class="${saved >= 0 ? 'up' : 'down'}">${eur(Math.abs(saved), 0)}${cur.inc > 0 ? ` <span class="muted" style="font-size:12px;font-weight:600">${rate}%</span>` : ''}</b></div>
@@ -2322,7 +2352,7 @@ VIEWS.settings = {
         ${t('instant', 'SEPA Instant по умолчанию', 'Мгновенные переводы до €100 000')}
         <button class="li" data-act="pwChange" style="border-top:1px solid var(--line)"><span class="lim"><b>Сменить пароль</b><span>${DB.security.pwChanged ? 'Изменён ' + agoStr(DB.security.pwChanged) : 'Рекомендуем менять раз в год'}</span></span><span class="muted">${ic('arrow', 18)}</span></button>
         ${(() => { const checks = [['Вход по Passkey', !!DB.settings.passkey, 'data-act="set" data-val="passkey"'], ['Пароль менялся за последний год', !!DB.security.pwChanged && Date.now() - DB.security.pwChanged < 365 * DAY, 'data-act="pwChange"'], ['Дневной лимит не выше €5 000', DB.security.dayLimit <= 5000, 'data-act="setLimit" data-val="5000"'], ['Нет неудачных попыток входа за неделю', !DB.security.logins.some(l => !l.ok && Date.now() - l.ts < 7 * DAY), 'data-act="logins"']], sc = checks.filter(c => c[1]).length;
-          return `<div class="box" style="margin-top:auto;gap:8px"><div class="kv" style="align-items:center"><b>Проверка безопасности</b><span class="tag" style="font-size:12px;padding:4px 9px;background:${sc === 4 ? 'var(--lime-soft)' : sc >= 2 ? 'var(--warn-bg)' : 'var(--peach-soft)'};color:${sc === 4 ? 'var(--lime-ink)' : sc >= 2 ? 'var(--warn-ink)' : 'var(--peach-ink)'}">${sc} из 4</span></div>${checks.map(([l, okk, fix]) => okk ? `<span class="sck"><span style="color:var(--green);flex:none;display:flex">${ic('check', 15, 2.4)}</span>${l}</span>` : `<button class="sck bad" ${fix}><span style="color:var(--orange);flex:none;display:flex">${ic('warn', 15, 2.4)}</span><span style="flex:1">${l}</span><b>Исправить</b></button>`).join('')}</div>`; })()}
+          return `<div class="box" style="margin-top:auto;gap:8px"><div class="kv" style="align-items:center;gap:10px"><b style="text-align:left">Проверка безопасности</b><span class="tag" style="font-size:12px;padding:4px 9px;background:${sc === 4 ? 'var(--lime-soft)' : sc >= 2 ? 'var(--warn-bg)' : 'var(--peach-soft)'};color:${sc === 4 ? 'var(--lime-ink)' : sc >= 2 ? 'var(--warn-ink)' : 'var(--peach-ink)'}">${sc} из 4</span></div>${checks.map(([l, okk, fix]) => okk ? `<span class="sck"><span style="color:var(--green);flex:none;display:flex">${ic('check', 15, 2.4)}</span>${l}</span>` : `<button class="sck bad" ${fix}><span style="color:var(--orange);flex:none;display:flex">${ic('warn', 15, 2.4)}</span><span style="flex:1">${l}</span><b>Исправить</b></button>`).join('')}</div>`; })()}
       </div>
     </section>
     <section class="row"><div class="card" style="flex:1 1 100%;gap:14px"><div class="hrow"><h2>Сообщения банка</h2><span class="tag demo">Демо</span></div>
