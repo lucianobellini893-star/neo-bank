@@ -718,7 +718,7 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .head .topbtn,.head .searchbtn{width:42px;height:42px}
   .head .dtabs{flex:1 1 100%}
   .head.is-home .hd-t{display:none}
-  .qtr-home{display:none!important}
+  .qtr-home,.hmk-card{display:none!important}
   .htx>.hrow{flex-wrap:wrap;row-gap:12px}
   .htx-all{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:var(--link)}
   .htx .chips{flex:1 1 100%;order:3;display:flex!important;flex-wrap:nowrap;gap:2px;padding:3px;border-radius:12px;background:var(--soft)}
@@ -1841,7 +1841,7 @@ VIEWS.home = {
           <div class="hrow"><h2>Быстрый перевод</h2><button data-go="transfers" style="font-size:14px;font-weight:600;color:var(--link)">Все</button></div>
           ${quickList()}
         </div>
-        <div class="card grow" style="gap:4px">
+        <div class="card grow hmk-card" style="gap:4px">
           <div class="hrow" style="margin-bottom:6px"><h2>Рынок</h2><button data-go="crypto" style="font-size:14px;font-weight:600;color:var(--link)">Крипто →</button></div>
           <div id="hMkt" class="mklist hmk"></div>
           <div class="box unk" style="margin-top:auto;flex-direction:row;align-items:center;gap:10px;padding:12px 14px"><span style="color:var(--accent);flex:none">${ic('bell', 18)}</span><span style="flex:1;font-size:13px">Настройте уведомление о цене — сообщим, когда монета достигнет нужного уровня</span><button class="chip g" data-go="crypto">Настроить</button></div>
