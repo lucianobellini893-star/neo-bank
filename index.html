@@ -717,6 +717,11 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .head .dtabs{flex:1 1 100%}
   .head.is-home .hd-t{display:none}
   .qtr-home{display:none!important}
+  .row.hcar{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:0 -14px;padding:0 14px;scroll-padding:0 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .row.hcar::-webkit-scrollbar{display:none}
+  .row.hcar>.card{flex:0 0 calc(100% - 34px)!important;width:auto!important;max-width:none!important;height:158px;min-height:0!important;scroll-snap-align:start;box-sizing:border-box}
+  .row.hcar>.card.gpc{padding:18px 20px 16px;gap:10px}.row.hcar .gpc-stack{width:clamp(96px,30vw,124px)!important;right:-6px;bottom:-8px}.row.hcar .gpc-amt{flex-direction:column;align-items:flex-start;gap:6px}.row.hcar .gpc-coins{display:none}.row.hcar .gpc-amt b{font-size:24px}.row.hcar .gpc-t span{white-space:nowrap}
+  .hdots{display:flex;justify-content:center;gap:6px;margin-top:-4px}.hdots i{width:6px;height:6px;border-radius:3px;background:var(--border);transition:width .25s,background-color .25s}.hdots i.on{width:18px;background:var(--ink)}
   .card.rq{gap:0!important;padding:14px!important}
   .rq-desk{display:none!important}
   .rq-hd{display:flex;align-items:center;gap:12px;width:100%;text-align:left;color:var(--ink);padding:2px}
@@ -1473,6 +1478,7 @@ function bnavInd(instant) {
   if (instant) { ind.offsetWidth; ind.style.transition = ''; }
 }
 addEventListener('resize', () => bnavInd(true));
+if (window.matchMedia) matchMedia('(max-width:760px)').addEventListener('change', () => { if (typeof route !== 'undefined' && route === 'home' && document.getElementById('main')) rerenderMain(); });
 function bnavHTML() {
   const from = ROUTES.includes(bnavHTML.prev) ? bnavHTML.prev : route;
   const it = (r, icon, l) => `<button class="${from === r ? 'on' : ''}" data-go="${r}" ${route === r ? 'aria-current="page"' : ''}>${ic(icon, 22)}<span class="l">${l}</span></button>`;
@@ -1809,11 +1815,7 @@ VIEWS.home = {
           ${[['BIC', DB.bic], ['Владелец', DB.user.name]].map(([k, v]) => `<div class="kv" style="align-items:center"><span class="muted">${k}</span><span style="display:flex;align-items:center;gap:6px"><b>${esc(v)}</b><button class="iconbtn" style="width:32px;height:32px" data-act="copy" data-val="${esc(v)}" aria-label="Скопировать ${k}">${ic('copy', 15)}</button></span></div>`).join('')}
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto"><button class="btn" data-act="shareIban">${ic('share', 16)}Поделиться</button><button class="btn" data-act="request">${ic('qr', 16)}QR-код</button></div></div></div>
         </div>
-        <button class="card gpc" data-go="crypto" aria-label="Крипто-портфель">
-          <img class="gpc-stack" src="${GP_IMG.stack}" alt="" aria-hidden="true">
-          <span class="gpc-top"><img class="gpc-logo" src="${GP_IMG.coin}" alt="" aria-hidden="true"><span class="gpc-t"><b>Crypto Portfolio</b><span id="hCryptoSub"><i class="gpc-dot"></i>Загрузка цен…</span></span></span>
-          <span class="gpc-bot"><span class="gpc-amt"><b id="hCrypto">—</b><span id="hCryptoCh"></span></span><span class="gpc-coins" id="hCoins"></span></span>
-        </button>
+        ${isMob() ? '' : gpcHTML()}
       </div>
     </section>
     ${homeInsights()}
@@ -1876,6 +1878,7 @@ VIEWS.home = {
       $('hMini').innerHTML = DB.hidden ? '' : `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true"><polygon points="0,${H} ${line} ${W},${H}" fill="${col}" fill-opacity=".16"/><polyline points="${line}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
       const base = v[0] || 0, pc = base > 0 ? dlt / base * 100 : 0; $('hMiniPct').textContent = DB.hidden ? '' : base > 0 ? (up ? '+' : '−') + nf(Math.abs(pc), Math.abs(pc) < 10 ? 1 : 0) + '% · 30 дн' : ''; $('hMiniPct').style.color = col; }
     if ($('hBigDelta')) { $('hBigDelta').textContent = DB.hidden ? '' : (dlt >= 0 ? '+' : '−') + eur(Math.abs(dlt), 0); $('hBigDelta').style.color = dlt >= 0 ? '#C8F560' : '#FF8A80'; $('hBigDelta').title = 'За 30 дней'; }
+    if ($('hCar')) { const car = $('hCar'), dots = [...$('hDots').children]; car.addEventListener('scroll', () => { const cs = [...car.children], mid = car.scrollLeft + car.clientWidth / 2; let bi = 0, bd = 1e9; cs.forEach((c, i) => { const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd) { bd = d; bi = i; } }); dots.forEach((d, i) => d.classList.toggle('on', i === bi)); }, { passive: true }); }
     drawH(); let lw = 0; let lh = 0; const ro = new ResizeObserver(() => { const el = $('hChart'), w = el ? el.clientWidth : 0, h = el ? el.clientHeight : 0; if (Math.abs(w - lw) > 2 || Math.abs(h - lh) > 2) { lw = w; lh = h; drawH(); } }); ro.observe($('hChart'));
     const off = Mkt.on(() => { const n = Date.now(); if (n - last > 1000) { last = n; upd(); } });
     unsubView = () => { off(); ro.disconnect(); };
@@ -1893,11 +1896,20 @@ function homeInsights() {
   const card = (go, icon, bg, fg, label, value, sub, subCls = '') => `<button class="card c1" data-go="${go}" style="flex-direction:row;align-items:center;gap:14px;text-align:left;padding:20px">
       <span class="lic" style="background:${bg};color:${fg}">${ic(icon, 20)}</span>
       <span class="lim"><span style="font-size:13px">${label}</span><b style="font-size:18px;font-weight:700">${value}</b><span class="${subCls}" style="font-size:12px;white-space:normal">${sub}</span></span></button>`;
-  return `<section class="row row3">
+  const mob = isMob();
+  return `<section class="row row3${mob ? ' hcar' : ''}" ${mob ? 'id="hCar"' : ''}>
+    ${mob ? gpcHTML() : ''}
     ${spendCard(mtd, diff, pEnd)}
     ${incomeCard(inc, prevInc)}
     <button class="card c1 pnlc" data-go="crypto" aria-label="Доходность крипто"><img class="pnlc-art" src="${GP_IMG.safe}" alt="" aria-hidden="true"><span class="pnlc-t"><span class="pnlc-h"><img src="${GP_IMG.coin}" alt="" aria-hidden="true">Crypto Returns</span><span class="pnlc-v"><b id="hPnl">—</b><span id="hPnlSub" class="pnlc-sub">Загрузка цен…</span></span><span class="pnlc-ch" id="hPnlCh"></span></span></button>
-  </section>`;
+  </section>${mob ? '<div class="hdots" id="hDots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>' : ''}`;
+}
+function gpcHTML() {
+  return `<button class="card gpc" data-go="crypto" aria-label="Крипто-портфель">
+          <img class="gpc-stack" src="${GP_IMG.stack}" alt="" aria-hidden="true">
+          <span class="gpc-top"><img class="gpc-logo" src="${GP_IMG.coin}" alt="" aria-hidden="true"><span class="gpc-t"><b>Crypto Portfolio</b><span id="hCryptoSub"><i class="gpc-dot"></i>Загрузка цен…</span></span></span>
+          <span class="gpc-bot"><span class="gpc-amt"><b id="hCrypto">—</b><span id="hCryptoCh"></span></span><span class="gpc-coins" id="hCoins"></span></span>
+        </button>`;
 }
 function spendCard(mtd, diff, pEnd) {
   const by = {}; DB.tx.filter(t => isSpend(t) && monthKey(new Date(t.ts)) === monthKey()).forEach(t => { by[t.cat] = (by[t.cat] || 0) - t.amount; });
