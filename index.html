@@ -159,7 +159,8 @@ button.card.gpc:hover{background:radial-gradient(260px 210px at calc(100% + 30px
 .hd-t{display:flex;flex-direction:column;gap:4px;min-width:0}.hd-r,.hd-x,.hd-i{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .w-sm{display:none}
 .hd-me{display:none}
-.hb-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}.hb-d{display:none;font-size:15px;font-weight:700;white-space:nowrap}
+.hb-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.hb-seg,.hb-mini,.hb-cap{display:none}.hb-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}.hb-main{display:flex;flex-direction:column;gap:8px;min-width:0}.hb-d{display:none;font-size:15px;font-weight:700;white-space:nowrap}
 .hrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 
 /* nav */
@@ -688,9 +689,17 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .head .topbtn,.head .searchbtn{width:42px;height:42px}
   .head .dtabs{flex:1 1 100%}
   .head.is-home .hd-t{display:none}
-  .hb-d{display:inline}.hb-pills,.hb-cl,.hb-res{display:none!important}
-  .sub3.hb-sub{grid-template-columns:1fr 1fr!important}.sub3.hb-sub>div:first-child{grid-column:auto!important}.hb-sub>div{padding:12px 14px!important}.hb-sub span{font-size:12px!important}.hb-sub b{font-size:16px!important}
-  .hb-ch{min-height:76px!important}.hb-ch .chart{min-height:70px!important}
+  .hb-pills,.hb-ch,.hb-sub,.hb-lbl,.hb-d{display:none!important}
+  .card.c3:has(.hb-top){gap:18px!important;justify-content:flex-start!important}
+  .hb-seg{display:flex;gap:2px;padding:3px;border-radius:12px;background:#1E1F25}
+  .hb-seg button{height:30px;padding:0 13px;border-radius:9px;font-size:13px;font-weight:700;color:#9EA2AD;transition:background-color .2s,color .2s}
+  .hb-seg button.on{background:#fff;color:#0E0F12}
+  .hb-cap{display:block;font-size:13px;color:#9EA2AD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hb-mini{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:none;padding-bottom:1px}
+  .hb-mini svg{display:block;width:clamp(56px,21vw,96px);max-width:100%;height:auto}
+  .hb-mini b{font-size:11.5px;font-weight:700;white-space:nowrap}
+  .hb-top .big{white-space:nowrap;font-size:clamp(28px,9.6vw,44px)!important}
+  .hb-top{gap:10px}.hb-mini{flex:0 1 auto;min-width:52px}
   .hd-t>span{display:none}
   .big{font-size:clamp(36px,11.5vw,48px)!important}
   .iban-big{font-size:clamp(14px,4.4vw,19px)!important;white-space:nowrap;letter-spacing:-.01em}
@@ -1070,6 +1079,9 @@ function processDue() {
   if (changed) { save(); refreshBadge(); if (['home', 'transfers', 'docs'].includes(route) && !document.activeElement.matches('input,select,textarea')) rerenderMain(); }
 }
 const totalBalance = () => DB.eur + DB.reserved;
+const isMob = () => matchMedia('(max-width:760px)').matches;
+const balAll = () => isMob() && (DB.settings || {}).balMode === 'all';
+const bigHTML = v => { const s = nf(v, 2), ci = s.lastIndexOf(','); return '€' + esc(s.slice(0, ci)) + '<span class="c">' + esc(s.slice(ci)) + '</span>'; };
 function buyCrypto(id, amt, label) {
   const c = COIN[id], p = Mkt.price(id), fee = amt * feePct(), q = (amt - fee) / p;
   if (!DB.crypto.cost) DB.crypto.cost = {};
@@ -1728,10 +1740,10 @@ VIEWS.home = {
       `<button class="btn pri" data-go="transfers" style="height:46px">${ic('plus', 17, 2.5)}Новый перевод</button>`) + frozenBanner() + `
     <section class="row">
       <div class="card dark c3" style="gap:20px;justify-content:space-between">
-        <div class="hrow"><span style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#C4C6CE"><span style="width:24px;height:24px;border-radius:12px;background:#fff;color:#0E0F12;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">€</span>Баланс · EUR</span>
+        <div class="hrow"><span class="hb-seg" role="group" aria-label="Что показать"><button data-act="balMode" data-val="acc" class="${balAll() ? '' : 'on'}" aria-pressed="${!balAll()}">Счёт</button><button data-act="balMode" data-val="all" class="${balAll() ? 'on' : ''}" aria-pressed="${balAll()}">Всего</button></span><span class="hb-lbl" style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#C4C6CE"><span style="width:24px;height:24px;border-radius:12px;background:#fff;color:#0E0F12;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">€</span>Баланс · EUR</span>
           <span style="display:flex;gap:8px"><button class="iconbtn" style="background:var(--hero2);color:#fff;width:36px;height:36px" data-act="topup" aria-label="Пополнить счёт" title="Пополнить счёт">${ic('plus', 17, 2.2)}</button><button class="iconbtn" style="background:var(--hero2);color:#fff;width:36px;height:36px" data-act="hide" aria-label="${DB.hidden ? 'Показать баланс' : 'Скрыть баланс'}">${ic(DB.hidden ? 'eyeoff' : 'eye', 17)}</button></span></div>
         <div style="display:flex;flex-direction:column;gap:12px">
-          <div class="hb-row"><span class="big">${DB.hidden ? '€ ••••' : '€' + esc(s.slice(0, ci)) + '<span class="c">' + esc(s.slice(ci)) + '</span>'}</span><span class="hb-d" id="hBigDelta"></span></div>
+          <div class="hb-top"><div class="hb-main"><div class="hb-row"><span class="big" id="hBig">${DB.hidden ? '€ ••••' : '€' + esc(s.slice(0, ci)) + '<span class="c">' + esc(s.slice(ci)) + '</span>'}</span><span class="hb-d" id="hBigDelta"></span></div><span class="hb-cap" id="hBigCap">${balAll() ? 'Счёт + крипто' : 'IBAN ' + esc(DB.iban.slice(0, 4)) + ' •• ' + esc(DB.iban.slice(-4))}</span></div><div class="hb-mini" aria-label="Остаток за 30 дней"><div id="hMini"></div><b id="hMiniPct"></b></div></div>
           <div class="hb-pills" style="display:flex;gap:8px;flex-wrap:wrap"><span class="pill" style="background:var(--lime);color:#0E0F12">Расходы в этом месяце ${eur(monthOut)}</span><span class="pill" style="background:#1E1F25;color:#C4C6CE">IBAN ${esc(DB.iban.slice(0, 4))} •• ${esc(DB.iban.slice(-4))}</span></div>
         </div>
         <div class="hb-ch" style="display:flex;flex-direction:column;gap:4px;flex:1 1 auto;min-height:110px"><span class="hb-cl" style="font-size:12px;color:#9EA2AD;display:flex;justify-content:space-between"><span>Доступный остаток · 30 дней</span><span id="hChartDelta"></span></span><div class="chart" id="hChart" style="flex:1 1 auto;height:auto;min-height:96px"></div></div>
@@ -1788,6 +1800,7 @@ VIEWS.home = {
           const sig = line.length + ':' + up; if ($('hPnlCh').dataset.sig !== sig) { $('hPnlCh').dataset.sig = sig; $('hPnlCh').innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="pnlG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".22"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs><polygon points="0,${H} ${line} ${W},${H}" fill="url(#pnlG)"/><polyline points="${line}" fill="none" stroke="${col}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg><em>7 дней</em>`; } } }
       if ($('hCoins')) { const ids = Object.keys(DB.crypto.hold).filter(k => DB.crypto.hold[k] > 0 && COIN[k]).sort((x, y) => DB.crypto.hold[y] * (Mkt.price(y) || 0) - DB.crypto.hold[x] * (Mkt.price(x) || 0)), sig = ids.join(); if ($('hCoins').dataset.sig !== sig) { $('hCoins').dataset.sig = sig; $('hCoins').innerHTML = ids.slice(0, 5).map(k => `<span title="${esc(COIN[k].name || COIN[k].sym)}">${coinIcon(k, 26)}</span>`).join('') + (ids.length > 5 ? `<em>+${ids.length - 5}</em>` : ''); } }
       if ($('hSubCrypto')) $('hSubCrypto').textContent = DB.hidden ? '••••' : eur(cd.now || 0);
+      window.hbCrypto = cd.now || 0; if (window.hbUpd) hbUpd();
       if ($('hMkt')) $('hMkt').innerHTML = COINS.slice(0, innerWidth <= 900 ? 5 : COINS.length).map(c => c.id).map(id => { const pr = Mkt.price(id), ch = Mkt.ch(id); return `<button class="li sel-row" data-act="txCoin" data-val="${id}" style="padding:8px">${coinIcon(id, 34)}<span class="lim"><b style="font-size:14px">${COIN[id].name}</b><span style="font-size:12px">${COIN[id].sym}</span></span>${sparkSVG(Mkt.spark[id], ch >= 0, 56, 24)}<span class="lir" style="width:92px"><b style="font-size:14px">${pr ? eur(pr) : '—'}</b><span style="font-size:12px;font-weight:700" class="${ch >= 0 ? 'up' : 'down'}">${pr ? pct(ch) : ''}</span></span></button>`; }).join('');
     };
     let last = 0; upd();
@@ -1803,6 +1816,13 @@ VIEWS.home = {
     };
     const pts = series(), drawH = () => { if (!$('hChart')) return; if (DB.hidden) { $('hChart').innerHTML = ''; return; } drawChart($('hChart'), pts, { dark: true, minimal: true, fmt: v => eur(v), label: 'Остаток за 30 дней' }); };
     const dlt = pts[pts.length - 1].v - pts[0].v; $('hChartDelta').innerHTML = DB.hidden ? '' : `<b style="color:${dlt >= 0 ? '#9DD43A' : '#FF8A80'}">${dlt >= 0 ? '+' : '−'}${eur(Math.abs(dlt))}</b>`;
+    window.hbUpd = () => { const b = $('hBig'), cap = $('hBigCap'); if (!b) return; const all = balAll();
+      b.innerHTML = DB.hidden ? '€ ••••' : bigHTML(totalBalance() + (all ? (window.hbCrypto || 0) : 0));
+      if (cap) cap.textContent = all ? 'Счёт + крипто' : 'IBAN ' + DB.iban.slice(0, 4) + ' •• ' + DB.iban.slice(-4); };
+    if ($('hMini')) { const v = pts.map(p => p.v), mn = Math.min(...v), mx = Math.max(...v), r = mx - mn || 1, W = 96, H = 40, n = v.length, up = dlt >= 0, col = up ? '#C8F560' : '#FF8A80';
+      const xy = v.map((y, i) => [(i / (n - 1) * W).toFixed(1), (H - 3 - (y - mn) / r * (H - 8)).toFixed(1)]), line = xy.map(p => p.join(',')).join(' ');
+      $('hMini').innerHTML = DB.hidden ? '' : `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true"><polygon points="0,${H} ${line} ${W},${H}" fill="${col}" fill-opacity=".16"/><polyline points="${line}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+      const base = v[0] || 0, pc = base > 0 ? dlt / base * 100 : 0; $('hMiniPct').textContent = DB.hidden ? '' : base > 0 ? (up ? '+' : '−') + nf(Math.abs(pc), Math.abs(pc) < 10 ? 1 : 0) + '% · 30 дн' : ''; $('hMiniPct').style.color = col; }
     if ($('hBigDelta')) { $('hBigDelta').textContent = DB.hidden ? '' : (dlt >= 0 ? '+' : '−') + eur(Math.abs(dlt), 0); $('hBigDelta').style.color = dlt >= 0 ? '#C8F560' : '#FF8A80'; $('hBigDelta').title = 'За 30 дней'; }
     drawH(); let lw = 0; let lh = 0; const ro = new ResizeObserver(() => { const el = $('hChart'), w = el ? el.clientWidth : 0, h = el ? el.clientHeight : 0; if (Math.abs(w - lw) > 2 || Math.abs(h - lh) > 2) { lw = w; lh = h; drawH(); } }); ro.observe($('hChart'));
     const off = Mkt.on(() => { const n = Date.now(); if (n - last > 1000) { last = n; upd(); } });
@@ -2989,6 +3009,7 @@ const ACT = {
     C.swapAmt = ''; save(); refreshBadge(); VIEWS.crypto.lists(); VIEWS.crypto.head(); VIEWS.crypto.panel(); toast('Обменено на ' + nf(out, b.dp) + ' ' + b.sym);
   },
   hide() { DB.hidden = !DB.hidden; save(); rerenderMain(); },
+  balMode(el) { DB.settings.balMode = el.dataset.val; save(); document.querySelectorAll('.hb-seg button').forEach(b => { const on = b.dataset.val === el.dataset.val; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); if (window.hbUpd) hbUpd(); },
   async copy(el) { const v = el.dataset.val; try { await navigator.clipboard.writeText(v); toast('Скопировано'); } catch (e) { prompt('Скопируйте:', v); } },
   txf(el) { V.txFilter = el.dataset.val; rerenderMain(); },
   async topup() {
