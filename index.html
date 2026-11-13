@@ -166,6 +166,12 @@ button.card.gpc:hover{background:radial-gradient(260px 210px at calc(100% + 30px
 .hd-t{display:flex;flex-direction:column;gap:4px;min-width:0}.hd-r,.hd-x,.hd-i{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .w-sm{display:none}
 .hd-me{display:none}
+.trd{display:flex;flex-direction:column;gap:14px;min-height:calc(100dvh - 200px - env(safe-area-inset-bottom));justify-content:center}
+.trd-top{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}.trd-top h2{font-size:20px}
+.trd-ok{width:58px;height:58px;border-radius:50%;background:var(--lime-soft);color:var(--green);display:flex;align-items:center;justify-content:center}
+.trd-amt{font-size:36px;letter-spacing:-.03em;line-height:1}.trd-top .tag{font-size:12px;padding:4px 10px;background:var(--lime-soft);color:var(--lime-ink)}
+.trd-card{gap:8px!important;padding:14px 16px!important}.trd-card .kv{font-size:13.5px}.trd-card .kv b{text-align:right}
+.trd-btns{display:flex;flex-direction:column;gap:8px}.trd-btns .btn{height:48px}.trd-btns>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}.trd .btn.trd-w{background:var(--card)}.trd-top .tag.tag{background:var(--lime-soft);color:var(--lime-ink)}.trd-top .tag.pend{background:var(--warn-bg);color:var(--warn-ink)}
 .trw-h,.trw-rec{display:none}.trs{display:contents}
 .atip{display:none}
 .htx-all{display:none}
@@ -1145,7 +1151,7 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (
   try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {}
 })();
 function addNotif(kind, title, body) { DB.notifs.unshift({ id: uid(), ts: Date.now(), kind, title, body, read: false }); DB.notifs = DB.notifs.slice(0, 40); const nn = DB.notifs[0], quiet = !DB.settings.notifPush || !ntfPrefs()[ntfTone(nn).g]; clearTimeout(addNotif.t); addNotif.t = setTimeout(() => { refreshBadge(); if (!quiet) ringBell(); }, 80); setTimeout(() => showPush(nn), 160); }
-function addTx(tx) { DB.tx.unshift({ id: uid(), ts: Date.now(), ...tx }); if (tx.amount < 0) checkBudget(); }
+function addTx(tx) { DB.tx.unshift({ id: tx.id || uid(), ts: Date.now(), ...tx }); if (tx.amount < 0) checkBudget(); }
 const monthKey = (d = new Date()) => d.getFullYear() + '-' + d.getMonth();
 const live = t => t.status !== 'cancelled';
 const LTX = () => DB.tx.filter(live);
@@ -1993,6 +1999,11 @@ VIEWS.transfers = {
   title: 'Переводы',
   html() {
     const T = V.tr = Object.assign({ name: '', iban: '', amount: '', ref: '', instant: DB.settings.instant, done: null, step: 1 }, V.tr || {});
+    if (T.done && isMob()) { const d = T.done, t = DB.tx.find(x => x.id === d.id) || {}, dt = new Date(t.ts || Date.now());
+      const row = (k, v, cls = '') => `<div class="kv"><span class="muted">${k}</span><b class="${cls}">${v}</b></div>`;
+      return header('Переводы', '') + `<div class="trd"><div class="trd-top"><span class="trd-ok">${ic('check', 30, 2.6)}</span><h2>${d.instant ? 'Деньги отправлены' : 'Перевод принят'}</h2><b class="trd-amt">${esc(eur(d.amount))}</b><span class="tag ${d.instant ? 'demo' : 'pend'}">${d.instant ? 'SEPA Instant · зачислено' : 'SEPA · 1 рабочий день'}</span></div>
+        <div class="card trd-card">${row('Получатель', esc(d.name))}${row('IBAN', `<span class="mono">${esc((g => g[0] + ' •• ' + g.slice(-2).join(' '))(d.iban.split(' ')))}</span>`)}${row('Назначение', esc(t.ref || '—'))}${row('Способ', d.instant ? 'SEPA Instant' : 'SEPA')}${row('Комиссия', '€0,00', 'up')}${row('Дата', dt.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).replace(' в ', ', '))}${row('Номер', 'NEO-' + esc(String(t.id || '').toUpperCase().slice(0, 8)))}</div>
+        <div class="trd-btns"><div><button class="btn trd-w" data-act="txReceipt" data-id="${t.id}">${ic('doc', 17)}PDF</button><button class="btn trd-w" data-act="txShare" data-id="${t.id}">${ic('share', 17)}Поделиться</button></div><button class="btn blk" data-act="trNew">Готово</button></div></div>`; }
     if (T.done) return header('Переводы', 'SEPA и SEPA Instant по всей Европе') + `<div class="card" style="max-width:560px;align-self:center;width:100%"><div class="done">
       <span class="ok">${ic('check', 34, 2.6)}</span><h2 style="font-size:24px">${T.done.instant ? 'Деньги отправлены' : 'Перевод принят'}</h2>
       <span class="muted">${esc(eur(T.done.amount))} → ${esc(T.done.name)}<br><span class="mono" style="font-size:13px">${esc(T.done.iban)}</span></span>
@@ -2091,11 +2102,11 @@ VIEWS.transfers = {
         `<span class="muted" style="font-size:12px;display:flex;gap:8px">${ic('shield', 15)}В реальном приложении — подтверждение по Passkey / Face ID</span>`);
       if (!ok) return;
       DB.eur -= amt;
-      addTx({ title: T.name.trim(), meta: T.instant ? 'SEPA Instant' : 'Исходящий SEPA', amount: -amt, cat: 'transfer', status: T.instant ? undefined : 'pending', iban: fmtIban(T.iban), ref: T.ref.trim() || undefined });
+      const txId = uid(); addTx({ id: txId, title: T.name.trim(), meta: T.instant ? 'SEPA Instant' : 'Исходящий SEPA', amount: -amt, cat: 'transfer', status: T.instant ? undefined : 'pending', iban: fmtIban(T.iban), ref: T.ref.trim() || undefined });
       if (!DB.recipients.some(r => r.iban.replace(/\s/g, '') === T.iban.replace(/\s/g, '').toUpperCase())) DB.recipients.unshift({ id: uid(), name: T.name.trim(), iban: fmtIban(T.iban) });
       save();
       addNotif('out', 'Перевод ' + eur(amt) + ' отправлен', T.name.trim() + ' · ' + (T.instant ? 'SEPA Instant' : 'SEPA'));
-      T.done = { name: T.name.trim(), iban: fmtIban(T.iban), amount: amt, instant: T.instant };
+      T.done = { id: txId, name: T.name.trim(), iban: fmtIban(T.iban), amount: amt, instant: T.instant };
       rerenderMain();
     };
   },
