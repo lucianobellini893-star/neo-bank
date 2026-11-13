@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F3F3F0">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Neo">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Neo — банк</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -159,6 +166,14 @@ button.card.gpc:hover{background:radial-gradient(260px 210px at calc(100% + 30px
 .hd-t{display:flex;flex-direction:column;gap:4px;min-width:0}.hd-r,.hd-x,.hd-i{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .w-sm{display:none}
 .hd-me{display:none}
+.appbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.appbtn{display:flex;align-items:center;gap:12px;height:60px;padding:0 16px;border-radius:16px;background:var(--inv);color:var(--on-inv);text-align:left;transition:transform .15s,filter .15s}
+.appbtn:hover{filter:brightness(1.12)}.appbtn:active{transform:scale(.98)}
+.appbtn svg{flex:none}.appbtn span{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.appbtn small{font-size:11px;font-weight:600;opacity:.7}.appbtn b{font-size:16px;font-weight:700}
+.isteps{display:flex;flex-direction:column;gap:12px}
+.istep{display:flex;gap:12px;align-items:flex-start}.istep>span{flex:none;width:28px;height:28px;border-radius:14px;background:var(--soft2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.istep p{margin:4px 0 0;font-size:14.5px;line-height:1.45}.iico{display:inline-flex;vertical-align:-3px;padding:2px 5px;border-radius:6px;background:var(--soft)}
 .hb-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .hb-seg,.hb-mini,.hb-cap{display:none}.hb-top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}.hb-main{display:flex;flex-direction:column;gap:8px;min-width:0}.hb-d{display:none;font-size:15px;font-weight:700;white-space:nowrap}
 .hrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
@@ -1365,6 +1380,19 @@ function ask(title, rows, okText = 'Подтвердить', extra = '') {
   });
 }
 
+/* ---------- install to home screen (PWA) ---------- */
+let INSTALL_EVT = null;
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const devOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ? 'ios' : /android/i.test(navigator.userAgent) ? 'android' : 'other';
+addEventListener('beforeinstallprompt', e => { e.preventDefault(); INSTALL_EVT = e; });
+addEventListener('appinstalled', () => { INSTALL_EVT = null; toast('Neo добавлен на главный экран', { type: 'ok' }); if (route === 'settings') rerenderMain(); });
+if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+function infoDlg(title, body) {
+  $('dlgBody').innerHTML = `<div style="display:flex;flex-direction:column;gap:16px"><h2 tabindex="-1">${esc(title)}</h2>${body}<button class="btn pri" id="dOk">Понятно</button></div>`;
+  const d = $('dlg'); d.showModal(); d.querySelector('#dlgBody h2').focus(); $('dOk').onclick = () => d.close();
+}
+const istep = (n, html) => `<div class="istep"><span>${n}</span><p>${html}</p></div>`;
+
 function askNum(title, sub, value, { min = 1, max = Infinity, okText = 'Сохранить', presets = [] } = {}) {
   return new Promise(res => {
     $('dlgBody').innerHTML = `<form id="dNum" style="display:flex;flex-direction:column;gap:14px" novalidate>
@@ -2352,6 +2380,9 @@ VIEWS.settings = {
         <button class="btn pri" data-act="saveProfile" style="align-self:flex-start;margin-top:8px">Сохранить</button>
       </div>
       <div class="c2 col">
+        <div class="card" style="gap:14px"><div class="hrow"><h2>Приложение на телефон</h2>${isStandalone() ? '<span class="tag" style="background:var(--lime-soft);color:var(--lime-ink)">Установлено</span>' : ''}</div>
+          <span class="muted" style="font-size:13.5px;line-height:1.45">Добавьте Neo на главный экран — открывается как обычное приложение, на весь экран, без адресной строки.</span>
+          <div class="appbtns"><button class="appbtn${devOS() === 'android' ? ' me' : ''}" data-act="installApp" data-val="android">${ic('device', 22)}<span><small>Установить на</small><b>Android</b></span></button><button class="appbtn${devOS() === 'ios' ? ' me' : ''}" data-act="installApp" data-val="ios">${ic('device', 22)}<span><small>Установить на</small><b>iPhone</b></span></button></div></div>
         <div class="card"><h2>Оформление</h2><div class="seg" style="border-radius:14px">${[['system', 'Системная'], ['light', 'Светлая'], ['dark', 'Тёмная']].map(([k, l]) => `<button style="flex:1;height:40px" class="${(DB.settings.theme || 'system') === k ? 'on' : ''}" data-act="setTheme" data-val="${k}">${l}</button>`).join('')}</div></div>
         <div class="card" style="gap:0"><h2 style="margin-bottom:10px">Уведомления</h2>${t('notifPush', 'Push-уведомления', 'Всплывающие окна и звонок колокольчика')}${t('notifEmail', 'Email-отчёты', 'Ежемесячная сводка')}
           <button class="li" data-act="ntfPrefs" style="border-top:1px solid var(--line)"><span class="lim"><b>Категории</b><span>${(() => { const P = ntfPrefs(), off = NTF_CATS.filter(([k]) => !P[k]).length; return off ? 'Выключено: ' + off + ' из ' + NTF_CATS.length : 'Все включены'; })()}</span></span><span class="muted">${ic('arrow', 18)}</span></button></div>
@@ -3009,6 +3040,13 @@ const ACT = {
     C.swapAmt = ''; save(); refreshBadge(); VIEWS.crypto.lists(); VIEWS.crypto.head(); VIEWS.crypto.panel(); toast('Обменено на ' + nf(out, b.dp) + ' ' + b.sym);
   },
   hide() { DB.hidden = !DB.hidden; save(); rerenderMain(); },
+  async installApp(el) {
+    const want = el.dataset.val;
+    if (isStandalone()) return toast('Neo уже установлен на этом устройстве');
+    if (want === 'android' && INSTALL_EVT) { INSTALL_EVT.prompt(); const r = await INSTALL_EVT.userChoice.catch(() => null); INSTALL_EVT = null; if (r && r.outcome === 'accepted') toast('Устанавливаем Neo…', { type: 'ok' }); return; }
+    if (want === 'ios') return infoDlg('Установить на iPhone', `<div class="isteps">${istep(1, 'Откройте этот сайт в <b>Safari</b>')}${istep(2, `Нажмите <b>Поделиться</b> <span class="iico">${ic('share', 16)}</span> внизу экрана`)}${istep(3, 'Выберите <b>На экран «Домой»</b>')}${istep(4, 'Нажмите <b>Добавить</b> — иконка Neo появится на главном экране')}</div>`);
+    infoDlg('Установить на Android', `<div class="isteps">${istep(1, 'Откройте этот сайт в <b>Chrome</b>')}${istep(2, `Нажмите меню <span class="iico" style="transform:rotate(90deg)">${ic('dots', 16)}</span> в правом верхнем углу`)}${istep(3, 'Выберите <b>Установить приложение</b> или <b>Добавить на главный экран</b>')}${istep(4, 'Подтвердите — иконка Neo появится на главном экране')}</div>`);
+  },
   balMode(el) { DB.settings.balMode = el.dataset.val; save(); document.querySelectorAll('.hb-seg button').forEach(b => { const on = b.dataset.val === el.dataset.val; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); if (window.hbUpd) hbUpd(); },
   async copy(el) { const v = el.dataset.val; try { await navigator.clipboard.writeText(v); toast('Скопировано'); } catch (e) { prompt('Скопируйте:', v); } },
   txf(el) { V.txFilter = el.dataset.val; rerenderMain(); },
