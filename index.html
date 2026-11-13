@@ -166,12 +166,17 @@ button.card.gpc:hover{background:radial-gradient(260px 210px at calc(100% + 30px
 .hd-t{display:flex;flex-direction:column;gap:4px;min-width:0}.hd-r,.hd-x,.hd-i{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .w-sm{display:none}
 .hd-me{display:none}
-.trd{display:flex;flex-direction:column;gap:14px;min-height:calc(100dvh - 200px - env(safe-area-inset-bottom));justify-content:center}
-.trd-top{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}.trd-top h2{font-size:20px}
+.trd{display:flex;flex-direction:column;gap:14px;min-height:calc(100dvh - 90px - env(safe-area-inset-bottom));justify-content:center}
+.trd-x{display:flex;justify-content:flex-end;margin-bottom:-58px;position:relative;z-index:2}
+.trd-close{width:42px;height:42px;border-radius:50%;background:var(--card);color:var(--ink);display:flex;align-items:center;justify-content:center;box-shadow:0 1px 2px rgba(14,15,18,.06)}
+body.no-bnav .bnav{display:none!important}
+body.no-bnav .main{padding-bottom:calc(16px + env(safe-area-inset-bottom))!important}
+.trd-btns{position:sticky;bottom:calc(12px + env(safe-area-inset-bottom));margin-top:auto;padding-top:8px}
+.trd-top{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}.trd-top h2{font-size:20px}
 .trd-ok{width:58px;height:58px;border-radius:50%;background:var(--lime-soft);color:var(--green);display:flex;align-items:center;justify-content:center}
 .trd-amt{font-size:36px;letter-spacing:-.03em;line-height:1}.trd-top .tag{font-size:12px;padding:4px 10px;background:var(--lime-soft);color:var(--lime-ink)}
-.trd-card{gap:8px!important;padding:14px 16px!important}.trd-card .kv{font-size:13.5px}.trd-card .kv b{text-align:right}
-.trd-btns{display:flex;flex-direction:column;gap:8px}.trd-btns .btn{height:48px}.trd-btns>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}.trd .btn.trd-w{background:var(--card)}.trd-top .tag.tag{background:var(--lime-soft);color:var(--lime-ink)}.trd-top .tag.pend{background:var(--warn-bg);color:var(--warn-ink)}
+.trd-card{margin-bottom:auto;gap:8px!important;padding:14px 16px!important}.trd-card .kv{font-size:13.5px}.trd-card .kv b{text-align:right}
+.trd-btns{display:flex;flex-direction:column;gap:8px;margin-top:auto}.trd-btns .btn{height:48px}.trd-btns>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}.trd .btn.trd-w{background:var(--card)}.trd-top .tag.tag{background:var(--lime-soft);color:var(--lime-ink)}.trd-top .tag.pend{background:var(--warn-bg);color:var(--warn-ink)}
 .trw-h,.trw-rec{display:none}.trs{display:contents}
 .atip{display:none}
 .htx-all{display:none}
@@ -738,10 +743,11 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .trf[data-step="1"] .trs[data-s="1"],.trf[data-step="2"] .trs[data-s="2"],.trf[data-step="3"] .trs[data-s="3"]{display:flex}
   .trw-rec{display:flex;flex-direction:column;gap:10px}.trw-rec:empty{display:none}
   .trw-l{font-size:12.5px;font-weight:700;color:var(--ink2)}
-  .trw-avs{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none}.trw-avs::-webkit-scrollbar{display:none}
+  .trw-avs{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;padding:5px;margin:-5px}.trw-avs::-webkit-scrollbar{display:none}
   .trw-p{display:flex;flex-direction:column;align-items:center;gap:6px;flex:none;color:var(--ink)}
   .trw-p .lic{width:48px!important;height:48px!important;border-radius:24px!important;font-size:15px;font-weight:800;box-shadow:0 0 0 0 var(--ink);transition:box-shadow .2s}
-  .trw-p.on .lic{box-shadow:0 0 0 2.5px var(--card),0 0 0 4.5px var(--ink)}
+  .trw-p.on .lic{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--accent)}.trw-p.on small{color:var(--accent);font-weight:700}
+  .trw-p small{max-width:60px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .trw-p small{font-size:12px;font-weight:600}
   .trw-new{width:48px;height:48px;border-radius:24px;border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted)}
   .trf #trBtn{position:sticky;bottom:calc(84px + env(safe-area-inset-bottom));z-index:3;box-shadow:0 8px 20px -10px rgba(31,77,255,.6)}
@@ -1656,12 +1662,12 @@ function render() {
   const view = VIEWS[route];
   root.innerHTML = `<div class="app">${sideHTML()}<main class="main" id="main">${view.html()}</main></div>${bnavHTML()}${takeoverHTML()}`;
   bnavInd(true); if (bnavHTML.prev !== route) { const r = route; requestAnimationFrame(() => requestAnimationFrame(() => { document.querySelectorAll('.bnav button').forEach(b => b.classList.toggle('on', b.dataset.go === r)); bnavInd(); })); } bnavHTML.prev = route;
-  view.mount && view.mount();
+  document.body.classList.remove('no-bnav'); view.mount && view.mount();
   const mn = $('main'); mn.classList.add('enter'); setTimeout(() => mn.classList.remove('enter'), 600);
   document.title = 'Neo — ' + view.title;
   window.scrollTo(0, 0);
 }
-function rerenderMain() { const v = VIEWS[route]; if (unsubView) { unsubView(); unsubView = null; } $('main').innerHTML = v.html(); v.mount && v.mount(); }
+function rerenderMain() { const v = VIEWS[route]; if (unsubView) { unsubView(); unsubView = null; } document.body.classList.remove('no-bnav'); $('main').innerHTML = v.html(); v.mount && v.mount(); }
 
 /* =====================================================================
    LOGIN
@@ -2001,9 +2007,9 @@ VIEWS.transfers = {
     const T = V.tr = Object.assign({ name: '', iban: '', amount: '', ref: '', instant: DB.settings.instant, done: null, step: 1 }, V.tr || {});
     if (T.done && isMob()) { const d = T.done, t = DB.tx.find(x => x.id === d.id) || {}, dt = new Date(t.ts || Date.now());
       const row = (k, v, cls = '') => `<div class="kv"><span class="muted">${k}</span><b class="${cls}">${v}</b></div>`;
-      return header('Переводы', '') + `<div class="trd"><div class="trd-top"><span class="trd-ok">${ic('check', 30, 2.6)}</span><h2>${d.instant ? 'Деньги отправлены' : 'Перевод принят'}</h2><b class="trd-amt">${esc(eur(d.amount))}</b><span class="tag ${d.instant ? 'demo' : 'pend'}">${d.instant ? 'SEPA Instant · зачислено' : 'SEPA · 1 рабочий день'}</span></div>
+      return `<div class="trd-x"><button class="trd-close" data-act="trDone" aria-label="Закрыть">${ic('x', 18, 2.2)}</button></div><div class="trd"><div class="trd-top"><span class="trd-ok">${ic('check', 30, 2.6)}</span><h2>${d.instant ? 'Деньги отправлены' : 'Перевод принят'}</h2><b class="trd-amt">${esc(eur(d.amount))}</b><span class="tag ${d.instant ? 'demo' : 'pend'}">${d.instant ? 'SEPA Instant · зачислено' : 'SEPA · 1 рабочий день'}</span></div>
         <div class="card trd-card">${row('Получатель', esc(d.name))}${row('IBAN', `<span class="mono">${esc((g => g[0] + ' •• ' + g.slice(-2).join(' '))(d.iban.split(' ')))}</span>`)}${row('Назначение', esc(t.ref || '—'))}${row('Способ', d.instant ? 'SEPA Instant' : 'SEPA')}${row('Комиссия', '€0,00', 'up')}${row('Дата', dt.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).replace(' в ', ', '))}${row('Номер', 'NEO-' + esc(String(t.id || '').toUpperCase().slice(0, 8)))}</div>
-        <div class="trd-btns"><div><button class="btn trd-w" data-act="txReceipt" data-id="${t.id}">${ic('doc', 17)}PDF</button><button class="btn trd-w" data-act="txShare" data-id="${t.id}">${ic('share', 17)}Поделиться</button></div><button class="btn blk" data-act="trNew">Готово</button></div></div>`; }
+        <div class="trd-btns"><div><button class="btn trd-w" data-act="txReceipt" data-id="${t.id}">${ic('doc', 17)}PDF</button><button class="btn trd-w" data-act="txShare" data-id="${t.id}">${ic('share', 17)}Поделиться</button></div><button class="btn blk" data-act="trDone">Готово</button></div></div>`; }
     if (T.done) return header('Переводы', 'SEPA и SEPA Instant по всей Европе') + `<div class="card" style="max-width:560px;align-self:center;width:100%"><div class="done">
       <span class="ok">${ic('check', 34, 2.6)}</span><h2 style="font-size:24px">${T.done.instant ? 'Деньги отправлены' : 'Перевод принят'}</h2>
       <span class="muted">${esc(eur(T.done.amount))} → ${esc(T.done.name)}<br><span class="mono" style="font-size:13px">${esc(T.done.iban)}</span></span>
@@ -2052,7 +2058,7 @@ VIEWS.transfers = {
     </section>`;
   },
   mount() {
-    const T = V.tr; if (T.done) return;
+    const T = V.tr; if (T.done) { if (isMob()) document.body.classList.add('no-bnav'); return; }
     const sumUpd = () => { const el = $('trSum'); if (!el) return; const amt = parseNum($('trAmt').value), nm = $('trName').value.trim(), ib = $('trIban').value.replace(/\s+/g, '').toUpperCase(), ok = ib.length >= 15 && ibanValid(ib) && SEPA.includes(ib.slice(0, 2)), inst = !!T.instant, left = Math.max(0, DB.eur - (amt || 0));
       const row = (k, v, cls = '') => `<div class="kv"><span class="muted">${k}</span><b class="${cls}">${v}</b></div>`;
       el.innerHTML = `<div class="trsum-h"><b>Сводка перевода</b><span class="tag" style="background:${inst ? 'var(--lime-soft)' : 'var(--soft2)'};color:${inst ? 'var(--lime-ink)' : 'var(--ink2)'}">${inst ? 'SEPA Instant' : 'SEPA'}</span></div>`
@@ -3218,6 +3224,7 @@ const ACT = {
   trInstant() { V.tr.instant = !V.tr.instant; document.querySelector('[data-act="trInstant"] .toggle').classList.toggle('on', V.tr.instant); },
   trPick(el) { const r = DB.recipients.find(x => x.id === el.dataset.id); Object.assign(V.tr, { name: r.name, iban: r.iban }); rerenderMain(); $('trAmt').focus(); },
   trNew() { V.tr = null; rerenderMain(); },
+  trDone() { V.tr = null; go('home'); },
   trBack() { if (V.tr && V.tr.step > 1 && window.trSetStep) trSetStep(V.tr.step - 1); },
   trPick(el) { const T = V.tr, r = DB.recipients.find(x => x.id === el.dataset.id); T.name = r ? r.name : ''; T.iban = r ? r.iban : ''; $('trName').value = T.name; $('trIban').value = T.iban; document.querySelectorAll('.trw-p').forEach(b => b.classList.toggle('on', !!r && b === el)); if (r) { window.trVal && trVal(); $('trRef').focus(); } else { $('trIban').classList.remove('ok', 'bad'); $('trName').focus(); } },
   // analytics
