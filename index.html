@@ -1388,8 +1388,8 @@ addEventListener('beforeinstallprompt', e => { e.preventDefault(); INSTALL_EVT =
 addEventListener('appinstalled', () => { INSTALL_EVT = null; toast('Neo добавлен на главный экран', { type: 'ok' }); if (route === 'settings') rerenderMain(); });
 if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
 function infoDlg(title, body) {
-  $('dlgBody').innerHTML = `<div style="display:flex;flex-direction:column;gap:16px"><h2 tabindex="-1">${esc(title)}</h2>${body}<button class="btn pri" id="dOk">Понятно</button></div>`;
-  const d = $('dlg'); d.showModal(); d.querySelector('#dlgBody h2').focus(); $('dOk').onclick = () => d.close();
+  $('dlgBody').innerHTML = `<div style="display:flex;flex-direction:column;gap:16px"><h2 tabindex="-1">${esc(title)}</h2>${body}<button class="btn pri" id="dNo">Понятно</button></div>`;
+  const d = $('dlg'); d.showModal(); d.querySelector('#dlgBody h2').focus(); $('dNo').onclick = () => d.close();
 }
 const istep = (n, html) => `<div class="istep"><span>${n}</span><p>${html}</p></div>`;
 
