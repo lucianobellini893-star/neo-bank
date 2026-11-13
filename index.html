@@ -734,12 +734,12 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .head.is-home .hd-t{display:none}
   .qtr-home,.hmk-card{display:none!important}
   .trf>h2{display:none}
-  .trw-h{display:flex;flex-direction:column;gap:14px}
-  .trw-bar{display:flex;gap:6px}.trw-bar i{flex:1;height:4px;border-radius:2px;background:var(--line);transition:background-color .3s}.trw-bar i.on{background:var(--ink)}
-  .trw-t{display:flex;align-items:center;gap:10px}.trw-t span{display:flex;flex-direction:column;gap:2px}
-  .trw-t small{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.trw-t b{font-size:22px;letter-spacing:-.02em}
-  .trw-back{width:38px;height:38px;border-radius:12px;background:var(--soft);display:flex;align-items:center;justify-content:center;flex:none}.trw-back svg{transform:rotate(180deg)}
-  .trf[data-step="1"] .trw-back{display:none}
+  .main:has(.trw-h) > .head{display:none}
+  .trw-h{display:flex;flex-direction:column;gap:12px;margin:2px 0 2px}
+  .trw-bar{display:flex;gap:6px}.trw-bar i{flex:1;height:3px;border-radius:2px;background:var(--line);transition:background-color .3s}.trw-bar i.on{background:var(--ink)}
+  .trw-t{display:flex;align-items:center;gap:10px}.trw-t span{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;text-align:center}
+  .trw-t small{font-size:12px;font-weight:500;color:var(--muted)}.trw-t b{font-size:16px;font-weight:800;letter-spacing:-.01em}
+  .trw-back,.trw-x{width:40px;height:40px;border-radius:50%;background:var(--card);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 1px 2px rgba(14,15,18,.06)}.trw-back svg{transform:rotate(180deg)}
   .trs{display:none;flex-direction:column;gap:16px}
   .trf[data-step="1"] .trs[data-s="1"],.trf[data-step="2"] .trs[data-s="2"],.trf[data-step="3"] .trs[data-s="3"]{display:flex}
   .trw-rec{display:flex;flex-direction:column;gap:10px}.trw-rec:empty{display:none}
@@ -2016,10 +2016,10 @@ VIEWS.transfers = {
       <span class="muted">${esc(eur(T.done.amount))} → ${esc(T.done.name)}<br><span class="mono" style="font-size:13px">${esc(T.done.iban)}</span></span>
       <span class="tag ${T.done.instant ? 'demo' : 'pend'}" style="font-size:12px;padding:4px 10px">${T.done.instant ? 'SEPA Instant · зачислено' : 'SEPA · 1 рабочий день · можно отменить, пока в обработке'}</span>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:8px"><button class="btn" data-go="home">На главную</button><button class="btn pri" data-act="trNew">Новый перевод</button></div></div></div>`;
-    return header('Переводы', 'SEPA и SEPA Instant по всей Европе') + frozenBanner() + `
+    return header('Переводы', 'SEPA и SEPA Instant по всей Европе') + frozenBanner() + `<div class="trw-h"><div class="trw-t"><button type="button" class="trw-back" data-act="trBack" aria-label="Назад">${ic('arrow', 18, 2.2)}</button><span><b>Новый перевод</b><small id="trwN">Шаг ${T.step} из 3 · ${['Кому', 'Сумма', 'Проверка'][T.step - 1]}</small></span><button type="button" class="trw-x" data-act="trDone" aria-label="Закрыть">${ic('x', 17, 2.4)}</button></div><div class="trw-bar">${[1, 2, 3].map(k => `<i class="${k <= T.step ? 'on' : ''}"></i>`).join('')}</div></div>
     <section class="row">
       <form class="card c3 trf" id="trForm" data-step="${T.step}" novalidate>
-        <div class="trw-h"><div class="trw-bar">${[1, 2, 3].map(k => `<i class="${k <= T.step ? 'on' : ''}"></i>`).join('')}</div><div class="trw-t"><button type="button" class="trw-back" data-act="trBack" aria-label="Назад">${ic('arrow', 18, 2.2)}</button><span><small id="trwN">Шаг ${T.step} из 3</small><b id="trwT">${['Кому отправить?', 'Сколько отправить?', 'Проверьте перевод'][T.step - 1]}</b></span></div></div>
+        
         <h2 style="order:0">Новый перевод по IBAN</h2>
         <div class="trs" data-s="1">
           <div class="trw-rec">${trRecents(T)}</div>
@@ -2085,7 +2085,7 @@ VIEWS.transfers = {
     $('trAmt').oninput = e => { e.target.value = T.amount = e.target.value.replace(/[^0-9,.]/g, ''); };
     $('trRef').oninput = e => T.ref = e.target.value;
     if (T.iban) val();
-    window.trSetStep = (n) => { T.step = n; const f = $('trForm'); if (!f) return; f.dataset.step = n; f.querySelectorAll('.trw-bar i').forEach((b, k) => b.classList.toggle('on', k < n)); $('trwN').textContent = 'Шаг ' + n + ' из 3'; $('trwT').textContent = ['Кому отправить?', 'Сколько отправить?', 'Проверьте перевод'][n - 1]; $('trBtn').textContent = isMob() ? (n < 3 ? 'Дальше' : 'Отправить ' + (parseNum(T.amount) > 0 ? eur(cents(parseNum(T.amount))) : '')) : 'Продолжить'; $('trErr').textContent = ''; sumUpd(); scrollTo({ top: 0, behavior: 'smooth' }); };
+    window.trSetStep = (n) => { T.step = n; const f = $('trForm'); if (!f) return; f.dataset.step = n; document.querySelectorAll('.trw-bar i').forEach((b, k) => b.classList.toggle('on', k < n)); $('trwN').textContent = 'Шаг ' + n + ' из 3 · ' + ['Кому', 'Сумма', 'Проверка'][n - 1]; $('trBtn').textContent = isMob() ? (n < 3 ? 'Дальше' : 'Отправить ' + (parseNum(T.amount) > 0 ? eur(cents(parseNum(T.amount))) : '')) : 'Продолжить'; $('trErr').textContent = ''; sumUpd(); scrollTo({ top: 0, behavior: 'smooth' }); };
     window.trVal = val; trSetStep(T.step || 1);
     $('trForm').onsubmit = async e => {
       e.preventDefault();
@@ -3226,7 +3226,7 @@ const ACT = {
   trPick(el) { const r = DB.recipients.find(x => x.id === el.dataset.id); Object.assign(V.tr, { name: r.name, iban: r.iban }); rerenderMain(); $('trAmt').focus(); },
   trNew() { V.tr = null; rerenderMain(); },
   trDone() { V.tr = null; go('home'); },
-  trBack() { if (V.tr && V.tr.step > 1 && window.trSetStep) trSetStep(V.tr.step - 1); },
+  trBack() { if (V.tr && V.tr.step > 1 && window.trSetStep) trSetStep(V.tr.step - 1); else { V.tr = null; go('home'); } },
   trPick(el) { const T = V.tr, r = DB.recipients.find(x => x.id === el.dataset.id); T.name = r ? r.name : ''; T.iban = r ? r.iban : ''; $('trName').value = T.name; $('trIban').value = T.iban; document.querySelectorAll('.trw-p').forEach(b => b.classList.toggle('on', !!r && b === el)); if (r) { window.trVal && trVal(); $('trRef').focus(); } else { $('trIban').classList.remove('ok', 'bad'); $('trName').focus(); } },
   // analytics
   anSel(el) { V.an.sel = +el.dataset.val; rerenderMain(); },
