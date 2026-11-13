@@ -166,6 +166,7 @@ button.card.gpc:hover{background:radial-gradient(260px 210px at calc(100% + 30px
 .hd-t{display:flex;flex-direction:column;gap:4px;min-width:0}.hd-r,.hd-x,.hd-i{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .w-sm{display:none}
 .hd-me{display:none}
+.rq-hd{display:none}.rq-body{display:flex;flex:1 1 auto}.rq-in{display:flex;flex-direction:column;gap:inherit;flex:1;min-height:0}.card.rq>.rq-body>.rq-in{gap:16px}
 .appbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .appbtn{display:flex;align-items:center;gap:12px;height:60px;padding:0 16px;border-radius:16px;background:var(--inv);color:var(--on-inv);text-align:left;transition:transform .15s,filter .15s}
 .appbtn:hover{filter:brightness(1.12)}.appbtn:active{transform:scale(.98)}
@@ -715,6 +716,16 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .head .topbtn,.head .searchbtn{width:42px;height:42px}
   .head .dtabs{flex:1 1 100%}
   .head.is-home .hd-t{display:none}
+  .card.rq{gap:0!important;padding:14px!important}
+  .rq-desk{display:none!important}
+  .rq-hd{display:flex;align-items:center;gap:12px;width:100%;text-align:left;color:var(--ink);padding:2px}
+  .rq-ic{width:42px;height:42px;border-radius:14px;background:var(--soft);display:flex;align-items:center;justify-content:center;flex:none}
+  .rq-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rq-t b{font-size:16px}.rq-t span{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rq-ch{color:var(--muted);display:flex;transition:transform .3s cubic-bezier(.3,.7,.2,1)}.rq.open .rq-ch{transform:rotate(180deg)}
+  .rq-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.3,.7,.2,1)}.rq.open .rq-body{grid-template-rows:1fr}
+  .rq-in{overflow:hidden;min-height:0;opacity:0;transition:opacity .2s}.rq.open .rq-in{opacity:1;transition:opacity .25s .1s}
+  .card.rq>.rq-body>.rq-in{gap:12px}.rq-in>.box:first-child{margin-top:14px}
+  .rq-in .kv{padding:0 4px}
   .hb-pills,.hb-ch,.hb-sub,.hb-lbl,.hb-d{display:none!important}
   .card.c3:has(.hb-top){gap:18px!important;justify-content:flex-start!important}
   .hb-seg{display:flex;gap:2px;padding:3px;border-radius:12px;background:#1E1F25}
@@ -1789,12 +1800,13 @@ VIEWS.home = {
         <div class="sub3 hb-sub"><div><span>Доступно</span><b>${money(DB.eur)}</b></div><div class="hb-res"><span><span class="w-lg">Зарезервировано</span><span class="w-sm">Резерв</span></span><b>${money(DB.reserved)}</b></div><div><span>Крипто</span><b id="hSubCrypto">—</b></div></div>
       </div>
       <div class="c2 col">
-        <div class="card grow">
-          <div class="hrow"><h2>Реквизиты счёта</h2><span class="tag" style="background:var(--accent-soft);color:var(--accent-ink);font-size:12px;padding:5px 9px">SEPA · Instant</span></div>
-          <div class="box" style="gap:12px"><span class="muted" style="font-size:12px;font-weight:600">IBAN</span><span class="mono iban-big" style="font-size:19px;font-weight:600;word-break:break-word">${esc(DB.iban)}</span>
+        <div class="card grow rq${(DB.settings || {}).rqOpen ? ' open' : ''}">
+          <button class="rq-hd" data-act="rqToggle" aria-expanded="${!!(DB.settings || {}).rqOpen}" aria-controls="rqBody"><span class="rq-ic">${ic('idcard', 19)}</span><span class="rq-t"><b>Реквизиты счёта</b><span>${esc(DB.iban.slice(0, 4))} •• ${esc(DB.iban.slice(-4))} · SEPA Instant</span></span><span class="rq-ch">${ic('chev', 20)}</span></button>
+          <div class="hrow rq-desk"><h2>Реквизиты счёта</h2><span class="tag" style="background:var(--accent-soft);color:var(--accent-ink);font-size:12px;padding:5px 9px">SEPA · Instant</span></div>
+          <div class="rq-body" id="rqBody"><div class="rq-in"><div class="box" style="gap:12px"><span class="muted" style="font-size:12px;font-weight:600">IBAN</span><span class="mono iban-big" style="font-size:19px;font-weight:600;word-break:break-word">${esc(DB.iban)}</span>
             <button class="btn pri" data-act="copy" data-val="${esc(DB.iban)}" style="height:42px">${ic('copy', 16)}Скопировать IBAN</button></div>
           ${[['BIC', DB.bic], ['Владелец', DB.user.name]].map(([k, v]) => `<div class="kv" style="align-items:center"><span class="muted">${k}</span><span style="display:flex;align-items:center;gap:6px"><b>${esc(v)}</b><button class="iconbtn" style="width:32px;height:32px" data-act="copy" data-val="${esc(v)}" aria-label="Скопировать ${k}">${ic('copy', 15)}</button></span></div>`).join('')}
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto"><button class="btn" data-act="shareIban">${ic('share', 16)}Поделиться</button><button class="btn" data-act="request">${ic('qr', 16)}QR-код</button></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto"><button class="btn" data-act="shareIban">${ic('share', 16)}Поделиться</button><button class="btn" data-act="request">${ic('qr', 16)}QR-код</button></div></div></div>
         </div>
         <button class="card gpc" data-go="crypto" aria-label="Крипто-портфель">
           <img class="gpc-stack" src="${GP_IMG.stack}" alt="" aria-hidden="true">
@@ -3051,6 +3063,7 @@ const ACT = {
     C.swapAmt = ''; save(); refreshBadge(); VIEWS.crypto.lists(); VIEWS.crypto.head(); VIEWS.crypto.panel(); toast('Обменено на ' + nf(out, b.dp) + ' ' + b.sym);
   },
   hide() { DB.hidden = !DB.hidden; save(); rerenderMain(); },
+  rqToggle(el) { const c = el.closest('.rq'), o = !c.classList.contains('open'); c.classList.toggle('open', o); el.setAttribute('aria-expanded', o); DB.settings.rqOpen = o; save(); },
   async installApp(el) {
     const want = el.dataset.val;
     if (isStandalone()) return toast('Neo уже установлен на этом устройстве');
