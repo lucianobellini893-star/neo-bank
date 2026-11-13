@@ -930,7 +930,7 @@ const P = {
   link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   user:'<path d="M5.541 20c0-2.109 1.664-4.734 6.459-4.734 4.794 0 6.458 2.606 6.458 4.716M16.125 8.126a4.125 4.125 0 1 1-8.25 0 4.125 4.125 0 0 1 8.25 0z"/>',
   camera:'<path d="M4 8h3l2-3h6l2 3h3v12H4z"/><circle cx="12" cy="13" r="4"/>',
-  idcard:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2.5"/><path d="M14 10h4M14 14h4"/>',
+  bankcard:'<path d="M17.036 4.539H6.965C4.53 4.539 3.002 6.264 3.002 8.705v6.587c0 2.442 1.52 4.166 3.963 4.166h10.07c2.444 0 3.965-1.724 3.965-4.166V8.705c0-2.441-1.52-4.166-3.964-4.166z"/><path d="M3 9.123h17.998M6.43 15.436h3.412M6.43 12.717h2.534"/><path d="M15.306 15.69h1.275a.988.988 0 0 0 .989-.988v-1.253a.988.988 0 0 0-.989-.988h-1.275a.988.988 0 0 0-.989.988v1.253c0 .546.443.988.989.988z"/>', idcard:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2.5"/><path d="M14 10h4M14 14h4"/>',
   star:'<g transform="translate(3 3.5)"><path d="M10.104.677l1.828 3.651c.179.358.524.607.925.664l4.088.589c1.01.146 1.412 1.37.681 2.071l-2.956 2.84c-.29.28-.423.681-.354 1.076l.697 4.01c.172.992-.884 1.749-1.786 1.28l-3.654-1.895a1.247 1.247 0 0 0-1.146 0l-3.654 1.895c-.903.469-1.959-.288-1.786-1.28l.697-4.01c.069-.395-.064-.796-.354-1.076L.374 7.652c-.731-.701-.33-1.925.681-2.071l4.088-.589c.4-.057.747-.306.927-.664L7.896.677c.452-.903 1.756-.903 2.208 0z"/></g>',
   lock:'<g transform="translate(3.5 2)"><path d="M12.923 7.448V5.301A4.551 4.551 0 0 0 8.372.75a4.55 4.55 0 0 0-4.57 4.531v2.167M12.183 19.25H4.542A3.792 3.792 0 0 1 .75 15.458v-4.289a3.792 3.792 0 0 1 3.792-3.792h7.641a3.792 3.792 0 0 1 3.792 3.792v4.289a3.792 3.792 0 0 1-3.792 3.792zM8.363 12.203v2.221"/></g>',
   device:'<rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/>',
@@ -1809,7 +1809,7 @@ VIEWS.home = {
       </div>
       <div class="c2 col">
         <div class="card grow rq${(DB.settings || {}).rqOpen ? ' open' : ''}">
-          <button class="rq-hd" data-act="rqToggle" aria-expanded="${!!(DB.settings || {}).rqOpen}" aria-controls="rqBody"><span class="rq-ic">${ic('idcard', 19)}</span><span class="rq-t"><b>Реквизиты счёта</b><span>${esc(DB.iban.slice(0, 4))} •• ${esc(DB.iban.slice(-4))} · SEPA Instant</span></span><span class="rq-ch">${ic('chev', 20)}</span></button>
+          <button class="rq-hd" data-act="rqToggle" aria-expanded="${!!(DB.settings || {}).rqOpen}" aria-controls="rqBody"><span class="rq-ic">${ic('bankcard', 22, 1.6)}</span><span class="rq-t"><b>Реквизиты счёта</b><span>${esc(DB.iban.slice(0, 4))} •• ${esc(DB.iban.slice(-4))} · SEPA Instant</span></span><span class="rq-ch">${ic('chev', 20)}</span></button>
           <div class="hrow rq-desk"><h2>Реквизиты счёта</h2><span class="tag" style="background:var(--accent-soft);color:var(--accent-ink);font-size:12px;padding:5px 9px">SEPA · Instant</span></div>
           <div class="rq-body" id="rqBody"><div class="rq-in"><div class="box" style="gap:12px"><span class="muted" style="font-size:12px;font-weight:600">IBAN</span><span class="mono iban-big" style="font-size:19px;font-weight:600;word-break:break-word">${esc(DB.iban)}</span>
             <button class="btn pri" data-act="copy" data-val="${esc(DB.iban)}" style="height:42px">${ic('copy', 16)}Скопировать IBAN</button></div>
