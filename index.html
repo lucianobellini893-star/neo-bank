@@ -716,6 +716,7 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .head .topbtn,.head .searchbtn{width:42px;height:42px}
   .head .dtabs{flex:1 1 100%}
   .head.is-home .hd-t{display:none}
+  .qtr-home{display:none!important}
   .card.rq{gap:0!important;padding:14px!important}
   .rq-desk{display:none!important}
   .rq-hd{display:flex;align-items:center;gap:12px;width:100%;text-align:left;color:var(--ink);padding:2px}
@@ -1823,7 +1824,7 @@ VIEWS.home = {
         ${txs.length > 8 ? '<button data-go="docs" style="align-self:center;font-size:14px;font-weight:600;color:var(--link);padding:8px 14px;margin-top:auto">Вся история →</button>' : ''}
       </div>
       <div class="c2 col">
-        <div class="card">
+        <div class="card qtr-home">
           <div class="hrow"><h2>Быстрый перевод</h2><button data-go="transfers" style="font-size:14px;font-weight:600;color:var(--link)">Все</button></div>
           ${quickList()}
         </div>
