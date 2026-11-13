@@ -166,6 +166,7 @@ button.card.gpc:hover{background:radial-gradient(260px 210px at calc(100% + 30px
 .hd-t{display:flex;flex-direction:column;gap:4px;min-width:0}.hd-r,.hd-x,.hd-i{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .w-sm{display:none}
 .hd-me{display:none}
+.htx-all{display:none}
 .gpc-sp{display:none}
 .rq-hd{display:none}.rq-body{display:flex;flex:1 1 auto}.rq-in{display:flex;flex-direction:column;gap:inherit;flex:1;min-height:0}.card.rq>.rq-body>.rq-in{gap:16px}
 .appbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -718,6 +719,12 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .head .dtabs{flex:1 1 100%}
   .head.is-home .hd-t{display:none}
   .qtr-home{display:none!important}
+  .htx>.hrow{flex-wrap:wrap;row-gap:12px}
+  .htx-all{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:700;color:var(--link)}
+  .htx .chips{flex:1 1 100%;order:3;display:flex!important;flex-wrap:nowrap;gap:2px;padding:3px;border-radius:12px;background:var(--soft)}
+  .htx .chips .chip{flex:1;height:34px;border-radius:9px;background:none;color:var(--muted);font-size:13px;padding:0}
+  .htx .chips .chip.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .htx .dayl{display:none}
   .row.hcar{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:0 -14px;padding:0 14px;scroll-padding:0 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .row.hcar::-webkit-scrollbar{display:none}
   .row.hcar>.card{flex:0 0 calc(100% - 34px)!important;width:auto!important;max-width:none!important;height:158px;min-height:0!important;scroll-snap-align:start;box-sizing:border-box}
@@ -1822,10 +1829,10 @@ VIEWS.home = {
     </section>
     ${homeInsights()}
     <section class="row">
-      <div class="card c3" style="gap:10px">
-        <div class="hrow"><h2>Операции</h2><div class="chips">${[['all', 'Все'], ['in', 'Входящие'], ['out', 'Исходящие']].map(([k, l]) => `<button class="chip g ${f === k ? 'on' : ''}" data-act="txf" data-val="${k}">${l}</button>`).join('')}</div></div>
-        <div>${txList(txs, 8)}</div>
-        ${txs.length > 8 ? '<button data-go="docs" style="align-self:center;font-size:14px;font-weight:600;color:var(--link);padding:8px 14px;margin-top:auto">Вся история →</button>' : ''}
+      <div class="card c3 htx" style="gap:10px">
+        <div class="hrow"><h2>Операции</h2><button class="htx-all" data-go="docs">Все ${ic('arrow', 15, 2.2)}</button><div class="chips">${[['all', 'Все'], ['in', 'Входящие'], ['out', 'Исходящие']].map(([k, l]) => `<button class="chip g ${f === k ? 'on' : ''}" data-act="txf" data-val="${k}">${l}</button>`).join('')}</div></div>
+        <div>${txList(txs, isMob() ? 4 : 8)}</div>
+        ${!isMob() && txs.length > 8 ? '<button data-go="docs" style="align-self:center;font-size:14px;font-weight:600;color:var(--link);padding:8px 14px;margin-top:auto">Вся история →</button>' : ''}
       </div>
       <div class="c2 col">
         <div class="card qtr-home">
