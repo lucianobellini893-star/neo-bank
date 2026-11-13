@@ -720,7 +720,13 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .head .dtabs{flex:1 1 100%}
   .head.is-home .hd-t{display:none}
   .qtr-home,.hmk-card{display:none!important}
-  .atip{display:flex;align-items:center;gap:10px;margin-bottom:-48px;padding:7px 6px 38px 14px;border-radius:20px 20px 0 0;gap:8px;background:#E6E6E0;color:var(--ink);cursor:pointer;position:relative;z-index:1;transition:opacity .25s,margin .25s}
+  .qs{display:flex;align-items:center;gap:10px;margin-bottom:-48px;padding:8px 8px 40px 12px;border-radius:22px 22px 0 0;background:var(--card);color:var(--ink);cursor:pointer;position:relative;z-index:1}
+  .qs-avs{display:flex}.qs-av{width:32px!important;height:32px!important;border-radius:16px!important;font-size:11.5px!important;font-weight:800;box-shadow:0 0 0 2.5px var(--card);flex:none}.qs-av+.qs-av{margin-left:-7px}
+  .qs-ic{width:32px;height:32px;border-radius:16px;background:var(--soft);display:flex;align-items:center;justify-content:center}
+  .qs-t{flex:1;font-size:13.5px;font-weight:700}
+  .qs-go{width:34px;height:34px;border-radius:12px;background:var(--soft);display:flex;align-items:center;justify-content:center}
+  .qs:active{filter:brightness(.98)}
+  .atip{display:flex;align-items:center;gap:10px;margin-bottom:-48px;padding:7px 6px 38px 14px;border-radius:20px 20px 0 0;gap:8px;background:#E6E6E0;color:var(--ink);cursor:pointer;position:relative;z-index:0;transition:opacity .25s,margin .25s}
   :root[data-theme="dark"] .atip{background:#14151A}
   .atip-i{display:flex;color:var(--muted)}.atip-t{flex:1;font-size:12.5px;font-weight:700}
   .atip-x{width:26px;height:26px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
@@ -1811,7 +1817,7 @@ VIEWS.home = {
     const monthOut = monthSpend();
     const hr = new Date().getHours();
     return header(`${hr < 5 ? 'Доброй ночи' : hr < 12 ? 'Доброе утро' : hr < 18 ? 'Добрый день' : 'Добрый вечер'}, ${esc(DB.user.first)}`, (s => s[0].toUpperCase() + s.slice(1))(new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })),
-      `<button class="btn pri" data-go="transfers" style="height:46px">${ic('plus', 17, 2.5)}Новый перевод</button>`) + frozenBanner() + (isMob() && !(DB.settings || {}).tipAlertOff ? `<div class="atip" role="button" tabindex="0" data-act="alertTip"><span class="atip-i">${ic('bell', 15)}</span><span class="atip-t">Уведомления о цене</span><button class="atip-x" data-act="alertTipOff" aria-label="Скрыть подсказку">${ic('x', 12, 2.2)}</button></div>` : '') + `
+      `<button class="btn pri" data-go="transfers" style="height:46px">${ic('plus', 17, 2.5)}Новый перевод</button>`) + frozenBanner() + (isMob() && !(DB.settings || {}).tipAlertOff ? `<div class="atip" role="button" tabindex="0" data-act="alertTip"><span class="atip-i">${ic('bell', 15)}</span><span class="atip-t">Уведомления о цене</span><button class="atip-x" data-act="alertTipOff" aria-label="Скрыть подсказку">${ic('x', 12, 2.2)}</button></div>` : '') + (isMob() ? qsTab() : '') + `
     <section class="row">
       <div class="card dark c3" style="gap:20px;justify-content:space-between">
         <div class="hrow"><span class="hb-seg" role="group" aria-label="Что показать"><button data-act="balMode" data-val="acc" class="${balAll() ? '' : 'on'}" aria-pressed="${!balAll()}">Счёт</button><button data-act="balMode" data-val="all" class="${balAll() ? 'on' : ''}" aria-pressed="${balAll()}">Всего</button></span><span class="hb-lbl" style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#C4C6CE"><span style="width:24px;height:24px;border-radius:12px;background:#fff;color:#0E0F12;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">€</span>Баланс · EUR</span>
@@ -2400,6 +2406,13 @@ function histUpdate() {
 }
 
 
+function qsTab() {
+  const T = ['t-blue', 't-ok', 't-wait', 'q-vi'], tone = n => T[[...n].reduce((a, c) => a + c.charCodeAt(0), 0) % T.length];
+  const seen = new Set(), list = [];
+  [...DB.tx].filter(t => t.cat === 'transfer' && t.amount < 0).sort((a, b) => b.ts - a.ts).forEach(t => { if (list.length < 3 && !seen.has(t.title)) { const r = DB.recipients.find(x => x.name === t.title); if (r) { seen.add(t.title); list.push(r); } } });
+  const avs = list.map(r => `<button class="qs-av lic nic ${tone(r.name)}" data-act="quickTo" data-id="${r.id}" aria-label="Перевести: ${esc(r.name)}" title="${esc(r.name)}">${esc(initials(r.name))}</button>`).join('');
+  return `<div class="qs" role="button" tabindex="0" data-act="qsGo">${avs ? `<span class="qs-avs">${avs}</span>` : `<span class="qs-ic">${ic('transfer', 17)}</span>`}<span class="qs-t">Перевести</span><span class="qs-go" aria-hidden="true">${ic('arrow', 16, 2.2)}</span></div>`;
+}
 function quickList() {
   const T = ['t-blue', 't-ok', 't-wait', 'q-vi'];
   const tone = (n) => T[[...n].reduce((a, c) => a + c.charCodeAt(0), 0) % T.length];
@@ -3103,6 +3116,7 @@ const ACT = {
     if (want === 'ios') return infoDlg('Установить на iPhone', `<div class="isteps">${istep(1, 'Откройте этот сайт в <b>Safari</b>')}${istep(2, `Нажмите <b>Поделиться</b> <span class="iico">${ic('share', 16)}</span> внизу экрана`)}${istep(3, 'Выберите <b>На экран «Домой»</b>')}${istep(4, 'Нажмите <b>Добавить</b> — иконка Neo появится на главном экране')}</div>`);
     infoDlg('Установить на Android', `<div class="isteps">${istep(1, 'Откройте этот сайт в <b>Chrome</b>')}${istep(2, `Нажмите меню <span class="iico" style="transform:rotate(90deg)">${ic('dots', 16)}</span> в правом верхнем углу`)}${istep(3, 'Выберите <b>Установить приложение</b> или <b>Добавить на главный экран</b>')}${istep(4, 'Подтвердите — иконка Neo появится на главном экране')}</div>`);
   },
+  qsGo() { V.tr = null; go('transfers'); },
   balMode(el) { DB.settings.balMode = el.dataset.val; save(); document.querySelectorAll('.hb-seg button').forEach(b => { const on = b.dataset.val === el.dataset.val; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); }); if (window.hbUpd) hbUpd(); },
   async copy(el) { const v = el.dataset.val; try { await navigator.clipboard.writeText(v); toast('Скопировано'); } catch (e) { prompt('Скопируйте:', v); } },
   txf(el) { V.txFilter = el.dataset.val; rerenderMain(); },
