@@ -753,9 +753,11 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   #cHero .cr-hr > .seg button{color:var(--muted);background:transparent;flex:none;padding:0 12px}
   #cHero .cr-hr > .seg button.on{background:var(--soft);color:var(--ink)}
   #cStats{display:none!important}
-  .cr-acts{order:2;display:grid;grid-template-columns:repeat(4,1fr);background:#E8E8E3;border-radius:0 0 24px 24px;margin:-30px 0 14px;padding:42px 6px 14px;position:relative;z-index:0}
+  .cr-acts{order:2;display:grid;grid-template-columns:repeat(5,1fr);background:#E8E8E3;border-radius:0 0 24px 24px;margin:-30px 0 14px;padding:42px 6px 14px;position:relative;z-index:0}
   .cr-acts button{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--ink);-webkit-tap-highlight-color:transparent}
-  .cr-acts button span{width:48px;height:48px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;transition:transform .15s}
+  .cr-acts button[data-val="receive"] svg{transform:rotate(180deg)}
+  .cr-acts button{font-size:12px!important;white-space:nowrap}
+  .cr-acts button span{width:46px;height:46px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;transition:transform .15s}
   .cr-acts button:first-child span{background:var(--accent);color:#fff}
   .cr-acts button:active span{transform:scale(.92)}
   .row > #cPanel{display:none!important}
@@ -2229,7 +2231,7 @@ VIEWS.crypto = {
             <div class="seg">${Object.entries(RANGES).map(([k, [l]]) => `<button class="${C.range === k ? 'on' : ''}" data-act="cRange" data-val="${k}">${l}</button>`).join('')}</div>
           </div>
         </div>
-        <div class="cr-acts">${[['buy', 'plus', 'Купить'], ['sell', 'minus', 'Продать'], ['swap', 'transfer', 'Обмен'], ['send', 'send', 'Отправить']].map(([k, i, l]) => `<button data-act="cAct" data-val="${k}"><span>${ic(i, 20, 2.2)}</span>${l}</button>`).join('')}</div>
+        <div class="cr-acts">${[['buy', 'plus', 'Купить'], ['sell', 'minus', 'Продать'], ['swap', 'transfer', 'Обмен'], ['send', 'send', 'Отправить'], ['receive', 'send', 'Получить']].map(([k, i, l]) => `<button data-act="cAct" data-val="${k}"><span>${ic(i, 20, 2.2)}</span>${l}</button>`).join('')}</div>
         <div class="chartwrap"><div class="chart" id="cChart"></div></div>
         <div class="sub3" id="cStats" style="grid-template-columns:repeat(3,minmax(0,1fr))"></div>
       </div>
@@ -3347,7 +3349,7 @@ const ACT = {
   cRange(el) { V.cr.range = el.dataset.val; document.querySelectorAll('[data-act="cRange"]').forEach(b => b.classList.toggle('on', b === el)); VIEWS.crypto.loadChart(); },
   cMktSort(el) { const C = V.cr; C.msort = el.dataset.val; document.querySelectorAll('#cMktSeg button').forEach(b => b.classList.toggle('on', b.dataset.val === C.msort)); VIEWS.crypto.lists(); },
   cPick(el) { const C = V.cr; if (C.sel !== el.dataset.val) { C.sel = el.dataset.val; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); } VIEWS.crypto.head(); VIEWS.crypto.lists(); VIEWS.crypto.panel(); },
-  cAct(el) { V.cr.side = el.dataset.val; const sh = $('crSheet'), p = $('cPanel'); if (sh && p && p.parentNode !== sh) sh.appendChild(p); VIEWS.crypto.panel(); $('crShT').textContent = { buy: 'Купить', sell: 'Продать', swap: 'Обмен', send: 'Отправить' }[el.dataset.val]; document.body.classList.add('cr-sh', 'no-bnav'); },
+  cAct(el) { V.cr.side = el.dataset.val; const sh = $('crSheet'), p = $('cPanel'); if (sh && p && p.parentNode !== sh) sh.appendChild(p); VIEWS.crypto.panel(); $('crShT').textContent = { buy: 'Купить', sell: 'Продать', swap: 'Обмен', send: 'Отправить', receive: 'Получить' }[el.dataset.val]; document.body.classList.add('cr-sh', 'no-bnav'); },
   crrMore(el) { const r = el.closest('.crr'), o = !r.classList.contains('more'); r.classList.toggle('more', o); el.setAttribute('aria-expanded', o); el.firstChild.textContent = o ? 'Скрыть ' : 'Подробнее '; },
   cShClose() { const sh = $('crSheet'), wasRes = sh && sh.classList.contains('res'); document.body.classList.remove('cr-sh', 'no-bnav'); if (wasRes) { setTimeout(() => { sh.classList.remove('res'); $('crRes').innerHTML = ''; VIEWS.crypto.panel(); }, 340); scrollTo({ top: 0, behavior: 'smooth' }); } },
   cSide(el) { V.cr.side = el.dataset.val; VIEWS.crypto.panel(); if (innerWidth < 900 && el.classList.contains('act')) $('cPanel').scrollIntoView({ behavior: 'smooth' }); },
