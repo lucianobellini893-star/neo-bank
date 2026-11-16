@@ -764,10 +764,11 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   body.cr-sh .cr-sheet{transform:none}
   body.cr-sh{overflow:hidden}
   body.cr-sh .cpop{z-index:90}
-  .cr-sh-h{position:sticky;top:0;z-index:2;background:var(--card);display:flex;align-items:center;height:62px;padding:10px 16px 0}
+  .cr-sh-h{position:sticky;top:0;z-index:2;background:var(--card);display:flex;align-items:center;justify-content:center;height:58px;padding:12px 16px 0}
   .cr-sh-h i{position:absolute;left:50%;top:8px;transform:translateX(-50%);width:40px;height:5px;border-radius:3px;background:var(--line);display:block}
-  .cr-sh-h b{font-size:20px;font-weight:800;letter-spacing:-.01em}
-  .cr-sh-h button{position:absolute;right:12px;top:18px;width:34px;height:34px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--ink)}
+  .cr-sh-h b{font-size:17px;font-weight:800;letter-spacing:-.01em}
+  .cr-sheet .cs-l{display:none}
+  .cr-sh-h button{position:absolute;right:14px;top:19px;width:30px;height:30px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--ink)}
   .cr-sheet #cPanel{display:flex!important;box-shadow:none!important;background:transparent!important;border:0!important;padding:0 16px!important;margin:0!important}
   .cr-sheet .tabs4{display:none!important}
   .cr-sheet #cpPos{display:none!important}
@@ -2322,7 +2323,7 @@ VIEWS.crypto = {
       if (C.to === C.sel) C.to = COINS.find(x => x.id !== C.sel).id;
       const tabs = `<div class="tabs4">${[['buy', 'Купить'], ['sell', 'Продать'], ['swap', 'Обмен'], ['send', 'Отправить'], ['receive', 'Получить']].map(([k, l]) => `<button class="${C.side === k ? 'on' : ''}" data-act="cSide" data-val="${k}">${l}</button>`).join('')}</div>`;
       const pickBtn = (id, mode) => { const x = COIN[id], q = DB.crypto.hold[id] || 0; return `<button type="button" class="cpick" data-act="coinMenu" data-mode="${mode}">${coinIcon(id, 36)}<span class="lim"><b>${esc(x.name)} <span class="muted">${x.sym}</span></b><span>${q > 1e-12 ? 'В портфеле ' + nf(q, Math.min(x.dp, 6)) + ' ' + x.sym : eur(Mkt.price(id) || x.snap)}</span></span><span class="chev">${ic('chev', 18)}</span></button>`; };
-      const coinsel = `<div class="fld"><span>Актив</span>${pickBtn(C.sel, 'sel')}</div>`;
+      const coinsel = `<div class="fld"><span class="cs-l">Актив</span>${pickBtn(C.sel, 'sel')}</div>`;
       if (C.side === 'buy' || C.side === 'sell') {
         const buy = C.side === 'buy';
         el.innerHTML = tabs + coinsel + `
@@ -2335,7 +2336,7 @@ VIEWS.crypto = {
         $('cpAmt').oninput = e => { C.sellAll = false; e.target.value = C.amount = e.target.value.replace(/[^0-9,.]/g, ''); el.querySelectorAll('[data-act="cChip"]').forEach(b => b.classList.toggle('on', b.dataset.val === C.amount)); this.nums(); };
       } else if (C.side === 'swap') {
         const held = DB.crypto.hold[c.id] || 0;
-        el.innerHTML = tabs + coinsel.replace('<span>Актив</span>', '<span>Отдаёте</span>') + `
+        el.innerHTML = tabs + coinsel.replace('<span class="cs-l">Актив</span>', '<span>Отдаёте</span>') + `
           <div class="box" style="gap:8px"><div class="kv muted" style="font-size:13px"><span>Сумма</span><button data-act="cSwapMax" style="font-size:13px;font-weight:700;color:var(--link);padding:0">Макс: ${nf(held, c.dp)} ${c.sym}</button></div>
             <label style="display:flex;align-items:baseline;gap:8px"><span class="sr">Сколько отдаёте</span><input class="amt" id="cpSwapAmt" inputmode="decimal" value="${esc(C.swapAmt)}" placeholder="0"><b class="muted" style="font-size:18px">${c.sym}</b></label><span class="muted" style="font-size:13px" id="cpSwapEur">≈ €0,00</span></div>
           <div style="display:flex;justify-content:center;margin:-6px 0"><button type="button" class="swapbtn" data-act="cSwapDir" aria-label="Поменять монеты местами" title="Поменять местами">${ic('swapc', 44, 1.6)}</button></div>
