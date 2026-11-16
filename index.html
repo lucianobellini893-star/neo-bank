@@ -178,7 +178,7 @@ body.no-bnav .trd{padding-bottom:132px;min-height:calc(100dvh - 40px - env(safe-
 .trd-amt{font-size:36px;letter-spacing:-.03em;line-height:1}.trd-top .tag{font-size:12px;padding:4px 10px;background:var(--lime-soft);color:var(--lime-ink)}
 .trd-card{margin-bottom:auto;gap:8px!important;padding:14px 16px!important}.trd-card .kv{font-size:13.5px}.trd-card .kv b{text-align:right}
 .trd-btns{display:flex;flex-direction:column;gap:8px;margin-top:auto}.trd-btns .btn{height:48px}.trd-btns>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}.trd .btn.trd-w{background:var(--card)}.trd-top .tag.tag{background:var(--lime-soft);color:var(--lime-ink)}.trd-top .tag.pend{background:var(--warn-bg);color:var(--warn-ink)}
-.trw-h,.trw-rec{display:none}.trs{display:contents}.trl-m{display:none}
+.trw-h,.trw-rec{display:none}.trs{display:contents}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
 .atip{display:none}
 .htx-all{display:none}
 .gpc-sp{display:none}
@@ -735,6 +735,20 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .qtr-home,.hmk-card{display:none!important}
   .trf>h2{display:none}
   .main:has(.trw-h) > .head{display:none}
+  #mktStatus{display:none}
+  #cHero{display:flex!important;flex-direction:column!important;background:transparent!important;padding:0!important;gap:0!important;box-shadow:none!important;border:0!important;color:var(--ink)}
+  #cHero > .hrow,#cHero .cr-hr{display:contents!important}
+  #cHero > .hrow > div:first-child{order:1;flex:none!important;background:var(--hero);color:#fff;border-radius:26px;padding:18px;margin-bottom:14px;gap:8px!important}
+  #cHero > .hrow > div:first-child > span:first-child{font-size:13px!important}
+  #cTotal{font-size:40px!important}
+  #cSelHead{order:2;background:var(--card);border-radius:24px 24px 0 0;padding:16px 16px 4px!important;margin:0!important;color:var(--ink)!important;width:100%}
+  #cSelHead .cr-sub{color:var(--muted);font-size:13px!important}#cSelHead .cr-up{color:var(--green)}#cSelHead .cr-dn{color:var(--red)}#cSelHead .cr-ar{color:var(--muted);margin-left:auto!important}
+  #cHero .chartwrap{order:3;background:var(--card);min-height:104px!important;flex:none}
+  #cHero .chartwrap{overflow:hidden;position:relative}#cHero .chartwrap .chart{inset:8px 16px 4px!important;width:auto!important}
+  #cHero .cr-hr > .seg{order:4;align-self:stretch;background:var(--card);border-radius:0 0 24px 24px;padding:8px 16px 16px;justify-content:flex-start;gap:4px}
+  #cHero .cr-hr > .seg button{color:var(--muted);background:transparent;flex:none;padding:0 12px}
+  #cHero .cr-hr > .seg button.on{background:var(--soft);color:var(--ink)}
+  #cStats{display:none!important}
   .trf .trw-rec{display:none!important}
   .trl-d{display:none}.trl-m{display:inline}.trl-m em{font-style:normal;font-weight:500;color:var(--muted)}
   .trf .inp.bad{background:var(--card)!important;box-shadow:inset 0 0 0 1.5px var(--red)!important}
@@ -2130,13 +2144,14 @@ VIEWS.transfers = {
 };
 
 /* ---------------- CRYPTO ---------------- */
+const crChartOpts = sel => isMob() ? { color: '#1F4DFF', minimal: true, fmt: v => eur(v), label: 'График цены ' + COIN[sel].sym } : { dark: true, fmt: v => eur(v), label: 'График цены ' + COIN[sel].sym };
 VIEWS.crypto = {
   title: 'Крипто',
   html() {
     const C = V.cr = Object.assign({ sel: 'bitcoin', range: '1', side: 'buy', amount: '100', net: 0, addr: '', memo: '', sendAmt: '', swapAmt: '', to: 'ethereum' }, V.cr || {});
     return header('Крипто', 'Покупайте, продавайте, отправляйте и получайте криптовалюту', `<span id="mktStatus">${Mkt.statusHTML()}</span>`) + `
     <section class="row">
-      <div class="card dark c3" style="gap:18px">
+      <div class="card dark c3" id="cHero" style="gap:18px">
         <div class="hrow" style="align-items:flex-start">
           <div style="display:flex;flex-direction:column;gap:10px;flex:1 1 260px;min-width:0"><span style="font-size:14px;font-weight:600;color:#C4C6CE">Стоимость портфеля</span>
             <span class="big" id="cTotal"><span class="skel" style="width:240px;height:52px"></span></span>
@@ -2185,11 +2200,11 @@ VIEWS.crypto = {
       const want = C.sel + ':' + C.range; drawChart($('cChart'), null);
       const p = await Mkt.history(C.sel, C.range);
       if (want !== C.sel + ':' + C.range || !$('cChart')) return;
-      pts = p; drawChart($('cChart'), pts, { dark: true, fmt: v => eur(v), label: 'График цены ' + COIN[C.sel].sym });
+      pts = p; drawChart($('cChart'), pts, crChartOpts(C.sel));
     };
     const head = () => {
       const c = COIN[C.sel], p = Mkt.price(C.sel), ch = Mkt.ch(C.sel);
-      $('cSelHead').innerHTML = coinIcon(C.sel, 32) + `<span style="display:flex;flex-direction:column"><b style="font-size:15px">${esc(c.name)} · ${c.sym}</b><span style="font-size:14px;color:#C4C6CE">${p ? esc(eur(p)) : '—'} <b style="color:${ch >= 0 ? '#9DD43A' : '#FF8A80'}">${p ? pct(ch) : ''}</b></span></span><span style="color:#A9ADB9;margin-left:2px">${ic('arrow', 16)}</span>`;
+      $('cSelHead').innerHTML = coinIcon(C.sel, 32) + `<span style="display:flex;flex-direction:column"><b style="font-size:15px">${esc(c.name)} · ${c.sym}</b><span class="cr-sub" style="font-size:14px">${p ? esc(eur(p)) : '—'} <b class="${ch >= 0 ? 'cr-up' : 'cr-dn'}">${p ? pct(ch) : ''}</b></span></span><span class="cr-ar" style="margin-left:2px">${ic('arrow', 16)}</span>`;
       const x = Mkt.px[C.sel] || {}, big = v => v >= 1e9 ? nf(v / 1e9, 2) + ' млрд' : v >= 1e6 ? nf(v / 1e6, 1) + ' млн' : nf(v, 0);
       $('cStats').innerHTML = `<div><span>Макс. 24 ч</span><b>${x.hi ? eur(x.hi) : '—'}</b></div><div><span>Мин. 24 ч</span><b>${x.lo ? eur(x.lo) : '—'}</b></div><div><span>Объём 24 ч</span><b>${x.vol ? '€' + big(x.vol) : '—'}</b></div>`;
       const cd = cryptoDelta();
@@ -2345,7 +2360,7 @@ VIEWS.crypto = {
     new MutationObserver(tabsFix).observe($('cPanel'), { childList: true });
     head(); lists(); this.panel(); loadChart(); tabsFix();
     let lastW = 0, lastH = 0;
-    const ro = new ResizeObserver(() => { const el = $('cChart'); if (!el) return; const w = el.clientWidth, h = el.clientHeight; if (Math.abs(w - lastW) < 2 && Math.abs(h - lastH) < 2) return; lastW = w; lastH = h; if (pts) drawChart($('cChart'), pts, { dark: true, fmt: v => eur(v), label: 'График цены ' + COIN[C.sel].sym }); });
+    const ro = new ResizeObserver(() => { const el = $('cChart'); if (!el) return; const w = el.clientWidth, h = el.clientHeight; if (Math.abs(w - lastW) < 2 && Math.abs(h - lastH) < 2) return; lastW = w; lastH = h; if (pts) drawChart($('cChart'), pts, crChartOpts(C.sel)); });
     ro.observe($('cChart'));
     const off = Mkt.on((kind, id, old) => {
       if (!$('cTotal')) return;
@@ -2358,7 +2373,7 @@ VIEWS.crypto = {
         lastChart = n; const p = Mkt.price(id), tt = Math.floor(n / 1000), last = pts[pts.length - 1];
         const step = { '1': 300, '7': 3600, '30': 14400, '365': 86400, 'max': 604800 }[C.range];
         if (tt - last.t < step) last.v = p; else pts.push({ t: tt, v: p });
-        drawChart($('cChart'), pts, { dark: true, fmt: v => eur(v), label: 'График цены ' + COIN[C.sel].sym });
+        drawChart($('cChart'), pts, crChartOpts(C.sel));
       }
     });
     unsubView = () => { off(); ro.disconnect(); };
