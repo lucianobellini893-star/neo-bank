@@ -1157,7 +1157,7 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (
     { from: 'sys', text: 'Диалог завершён', ts: d + 6 * 60e3 }] });
   try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {}
 })();
-function addNotif(kind, title, body) { DB.notifs.unshift({ id: uid(), ts: Date.now(), kind, title, body, read: false }); DB.notifs = DB.notifs.slice(0, 40); const nn = DB.notifs[0], quiet = !DB.settings.notifPush || !ntfPrefs()[ntfTone(nn).g]; clearTimeout(addNotif.t); addNotif.t = setTimeout(() => { refreshBadge(); if (!quiet) ringBell(); }, 80); setTimeout(() => showPush(nn), 160); }
+function addNotif(kind, title, body, silent) { DB.notifs.unshift({ id: uid(), ts: Date.now(), kind, title, body, read: false }); DB.notifs = DB.notifs.slice(0, 40); const nn = DB.notifs[0], quiet = !DB.settings.notifPush || !ntfPrefs()[ntfTone(nn).g]; clearTimeout(addNotif.t); addNotif.t = setTimeout(() => { refreshBadge(); if (!quiet) ringBell(); }, 80); if (!silent) setTimeout(() => showPush(nn), 160); }
 function addTx(tx) { DB.tx.unshift({ id: tx.id || uid(), ts: Date.now(), ...tx }); if (tx.amount < 0) checkBudget(); }
 const monthKey = (d = new Date()) => d.getFullYear() + '-' + d.getMonth();
 const live = t => t.status !== 'cancelled';
@@ -2112,7 +2112,7 @@ VIEWS.transfers = {
       const txId = uid(); addTx({ id: txId, title: T.name.trim(), meta: T.instant ? 'SEPA Instant' : 'Исходящий SEPA', amount: -amt, cat: 'transfer', status: T.instant ? undefined : 'pending', iban: fmtIban(T.iban), ref: T.ref.trim() || undefined });
       if (!DB.recipients.some(r => r.iban.replace(/\s/g, '') === T.iban.replace(/\s/g, '').toUpperCase())) DB.recipients.unshift({ id: uid(), name: T.name.trim(), iban: fmtIban(T.iban) });
       save();
-      addNotif('out', 'Перевод ' + eur(amt) + ' отправлен', T.name.trim() + ' · ' + (T.instant ? 'SEPA Instant' : 'SEPA'));
+      addNotif('out', 'Перевод ' + eur(amt) + ' отправлен', T.name.trim() + ' · ' + (T.instant ? 'SEPA Instant' : 'SEPA'), true);
       T.done = { id: txId, name: T.name.trim(), iban: fmtIban(T.iban), amount: amt, instant: T.instant };
       rerenderMain();
     };
