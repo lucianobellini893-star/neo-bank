@@ -739,10 +739,11 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   #mktStatus{display:none}
   #cHero{display:flex!important;flex-direction:column!important;background:transparent!important;padding:0!important;gap:0!important;box-shadow:none!important;border:0!important;color:var(--ink)}
   #cHero > .hrow,#cHero .cr-hr{display:contents!important}
-  #cHero > .hrow > div:first-child{order:1;flex:none!important;background:var(--hero);color:#fff;border-radius:26px;padding:22px 18px;margin-bottom:0;position:relative;z-index:1;gap:10px!important;align-items:center;text-align:center}
+  #cHero > .hrow > div:first-child{order:1;flex:none!important;background:var(--card);color:var(--ink);border-radius:26px;padding:22px 18px;margin-bottom:0;position:relative;z-index:1;gap:10px!important;align-items:center;text-align:center}
   #cHero > .hrow > div:first-child > div{justify-content:center}
-  #cTotalCh,#cPnl{background:var(--hero2)!important;color:#C9CBD2!important;border-radius:999px!important;height:28px;padding:0 12px!important;display:inline-flex;align-items:center;gap:6px;font-size:12.5px!important;font-weight:700}
-  #cHero > .hrow > div:first-child > span:first-child{font-size:13px!important}
+  #cTotalCh,#cPnl{background:var(--soft)!important;color:var(--ink)!important;border-radius:999px!important;height:28px;padding:0 12px!important;display:inline-flex;align-items:center;gap:6px;font-size:12.5px!important;font-weight:700}
+  #cHero > .hrow > div:first-child > span:first-child{font-size:13px!important;color:var(--muted)!important}
+  #cTotal{color:var(--ink)}#cTotal .c{color:#B8BAC2!important}
   #cTotal{font-size:44px!important}
   #cSelHead{order:3;background:var(--card);border-radius:24px 24px 0 0!important;padding:16px 16px 4px!important;margin:0 0 -1px!important;color:var(--ink)!important;width:100%;outline:none!important;box-shadow:none!important;-webkit-tap-highlight-color:transparent}#cSelHead:active{opacity:.7}
   #cSelHead .cr-sub{color:var(--muted);font-size:13px!important}#cSelHead .cr-up{color:var(--green)}#cSelHead .cr-dn{color:var(--red)}#cSelHead .cr-ar{color:var(--muted);margin-left:auto!important}
@@ -752,9 +753,9 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   #cHero .cr-hr > .seg button{color:var(--muted);background:transparent;flex:none;padding:0 12px}
   #cHero .cr-hr > .seg button.on{background:var(--soft);color:var(--ink)}
   #cStats{display:none!important}
-  .cr-acts{order:2;display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border-radius:0 0 24px 24px;margin:-30px 0 14px;padding:42px 6px 14px;position:relative;z-index:0}
+  .cr-acts{order:2;display:grid;grid-template-columns:repeat(4,1fr);background:#E8E8E3;border-radius:0 0 24px 24px;margin:-30px 0 14px;padding:42px 6px 14px;position:relative;z-index:0}
   .cr-acts button{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--ink);-webkit-tap-highlight-color:transparent}
-  .cr-acts button span{width:48px;height:48px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;transition:transform .15s}
+  .cr-acts button span{width:48px;height:48px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;transition:transform .15s}
   .cr-acts button:first-child span{background:var(--accent);color:#fff}
   .cr-acts button:active span{transform:scale(.92)}
   .row > #cPanel{display:none!important}
@@ -2281,7 +2282,7 @@ VIEWS.crypto = {
         const s = nf(cd.now, 2), i = s.lastIndexOf(',');
         $('cTotal').innerHTML = DB.hidden ? '€ ••••' : '€' + esc(s.slice(0, i)) + '<span class="c">' + esc(s.slice(i)) + '</span>';
         const up = cd.d >= 0; const el = $('cTotalCh');
-        const pa = pnlAll(), gc = v => v >= 0 ? '#9DD43A' : '#FF8A80';
+        const pa = pnlAll(), gc = v => isMob() ? (v >= 0 ? 'var(--green)' : 'var(--red)') : v >= 0 ? '#9DD43A' : '#FF8A80';
         if (isMob()) {
           el.innerHTML = '24 ч <b style="color:' + gc(cd.d) + '">' + pct(cd.pct) + '</b>'; el.style.background = ''; el.style.color = '';
           $('cPnl').innerHTML = pa.c > 0 && !DB.hidden ? 'Всего <b style="color:' + gc(pa.d) + '">' + (pa.d >= 0 ? '+' : '−') + nf(Math.abs(pa.pct), 1) + '%</b>' : 'Всего —';
