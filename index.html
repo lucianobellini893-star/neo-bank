@@ -763,11 +763,12 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   body.cr-sh .cr-sheet{transform:none}
   body.cr-sh{overflow:hidden}
   body.cr-sh .cpop{z-index:90}
-  .cr-sh-h{position:sticky;top:0;z-index:2;background:var(--card);display:flex;justify-content:center;align-items:center;height:40px}
-  .cr-sh-h i{width:40px;height:5px;border-radius:3px;background:var(--line);display:block}
-  .cr-sh-h button{position:absolute;right:12px;top:8px;width:34px;height:34px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--ink)}
+  .cr-sh-h{position:sticky;top:0;z-index:2;background:var(--card);display:flex;align-items:center;height:62px;padding:10px 16px 0}
+  .cr-sh-h i{position:absolute;left:50%;top:8px;transform:translateX(-50%);width:40px;height:5px;border-radius:3px;background:var(--line);display:block}
+  .cr-sh-h b{font-size:20px;font-weight:800;letter-spacing:-.01em}
+  .cr-sh-h button{position:absolute;right:12px;top:18px;width:34px;height:34px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--ink)}
   .cr-sheet #cPanel{display:flex!important;box-shadow:none!important;background:transparent!important;border:0!important;padding:0 16px!important;margin:0!important}
-  .cr-sheet .tabs4 [data-val="receive"]{display:none}
+  .cr-sheet .tabs4{display:none!important}
   .cr-sheet .tabs4{overflow:visible!important;-webkit-mask:none!important;mask:none!important}.cr-sheet .tabs4 button{flex:1}
   .trf .trw-rec{display:none!important}
   .trl-d{display:none}.trl-m{display:inline}.trl-m em{font-style:normal;font-weight:500;color:var(--muted)}
@@ -2187,7 +2188,7 @@ VIEWS.crypto = {
       </div>
       <div class="card c2" id="cPanel"></div>
     </section>
-    <div class="cr-bd" data-act="cShClose"></div><div class="cr-sheet" id="crSheet" role="dialog" aria-label="Операция с криптовалютой"><div class="cr-sh-h"><i></i><button data-act="cShClose" aria-label="Закрыть">${ic('x', 18, 2.2)}</button></div></div>
+    <div class="cr-bd" data-act="cShClose"></div><div class="cr-sheet" id="crSheet" role="dialog" aria-label="Операция с криптовалютой"><div class="cr-sh-h"><i></i><b id="crShT"></b><button data-act="cShClose" aria-label="Закрыть">${ic('x', 18, 2.2)}</button></div></div>
     <section class="row">
       <div class="c3 col"><div class="card grow" style="gap:6px">
         <div class="hrow" style="margin-bottom:6px"><h2>Мои активы</h2><span class="muted" style="font-size:13px" id="cHoldN"></span></div>
@@ -3296,7 +3297,7 @@ const ACT = {
   cRange(el) { V.cr.range = el.dataset.val; document.querySelectorAll('[data-act="cRange"]').forEach(b => b.classList.toggle('on', b === el)); VIEWS.crypto.loadChart(); },
   cMktSort(el) { const C = V.cr; C.msort = el.dataset.val; document.querySelectorAll('#cMktSeg button').forEach(b => b.classList.toggle('on', b.dataset.val === C.msort)); VIEWS.crypto.lists(); },
   cPick(el) { const C = V.cr; if (C.sel !== el.dataset.val) { C.sel = el.dataset.val; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); } VIEWS.crypto.head(); VIEWS.crypto.lists(); VIEWS.crypto.panel(); },
-  cAct(el) { V.cr.side = el.dataset.val; const sh = $('crSheet'), p = $('cPanel'); if (sh && p && p.parentNode !== sh) sh.appendChild(p); VIEWS.crypto.panel(); document.body.classList.add('cr-sh', 'no-bnav'); },
+  cAct(el) { V.cr.side = el.dataset.val; const sh = $('crSheet'), p = $('cPanel'); if (sh && p && p.parentNode !== sh) sh.appendChild(p); VIEWS.crypto.panel(); $('crShT').textContent = { buy: 'Купить', sell: 'Продать', swap: 'Обмен', send: 'Отправить' }[el.dataset.val]; document.body.classList.add('cr-sh', 'no-bnav'); },
   cShClose() { document.body.classList.remove('cr-sh', 'no-bnav'); },
   cSide(el) { V.cr.side = el.dataset.val; VIEWS.crypto.panel(); if (innerWidth < 900 && el.classList.contains('act')) $('cPanel').scrollIntoView({ behavior: 'smooth' }); },
   cNet(el) { V.cr.net = +el.dataset.val; V.cr.addr = ''; VIEWS.crypto.panel(); },
