@@ -178,7 +178,7 @@ body.no-bnav .trd{padding-bottom:132px;min-height:calc(100dvh - 40px - env(safe-
 .trd-amt{font-size:36px;letter-spacing:-.03em;line-height:1}.trd-top .tag{font-size:12px;padding:4px 10px;background:var(--lime-soft);color:var(--lime-ink)}
 .trd-card{margin-bottom:auto;gap:8px!important;padding:14px 16px!important}.trd-card .kv{font-size:13.5px}.trd-card .kv b{text-align:right}
 .trd-btns{display:flex;flex-direction:column;gap:8px;margin-top:auto}.trd-btns .btn{height:48px}.trd-btns>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}.trd .btn.trd-w{background:var(--card)}.trd-top .tag.tag{background:var(--lime-soft);color:var(--lime-ink)}.trd-top .tag.pend{background:var(--warn-bg);color:var(--warn-ink)}
-.trw-h,.trw-rec{display:none}.trs{display:contents}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
+.trw-h,.trw-rec{display:none}.trs{display:contents}.cr-acts,.cr-bd,.cr-sheet{display:none}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
 .atip{display:none}
 .htx-all{display:none}
 .gpc-sp{display:none}
@@ -738,19 +738,37 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   #mktStatus{display:none}
   #cHero{display:flex!important;flex-direction:column!important;background:transparent!important;padding:0!important;gap:0!important;box-shadow:none!important;border:0!important;color:var(--ink)}
   #cHero > .hrow,#cHero .cr-hr{display:contents!important}
-  #cHero > .hrow > div:first-child{order:1;flex:none!important;background:var(--hero);color:#fff;border-radius:26px;padding:22px 18px;margin-bottom:14px;gap:10px!important;align-items:center;text-align:center}
+  #cHero > .hrow > div:first-child{order:1;flex:none!important;background:var(--hero);color:#fff;border-radius:26px;padding:22px 18px;margin-bottom:0;position:relative;z-index:1;gap:10px!important;align-items:center;text-align:center}
   #cHero > .hrow > div:first-child > div{justify-content:center}
   #cTotalCh,#cPnl{background:var(--hero2)!important;color:#C9CBD2!important;border-radius:999px!important;height:28px;padding:0 12px!important;display:inline-flex;align-items:center;gap:6px;font-size:12.5px!important;font-weight:700}
   #cHero > .hrow > div:first-child > span:first-child{font-size:13px!important}
   #cTotal{font-size:44px!important}
-  #cSelHead{order:2;background:var(--card);border-radius:24px 24px 0 0!important;padding:16px 16px 4px!important;margin:0 0 -1px!important;color:var(--ink)!important;width:100%;outline:none!important;box-shadow:none!important;-webkit-tap-highlight-color:transparent}#cSelHead:active{opacity:.7}
+  #cSelHead{order:3;background:var(--card);border-radius:24px 24px 0 0!important;padding:16px 16px 4px!important;margin:0 0 -1px!important;color:var(--ink)!important;width:100%;outline:none!important;box-shadow:none!important;-webkit-tap-highlight-color:transparent}#cSelHead:active{opacity:.7}
   #cSelHead .cr-sub{color:var(--muted);font-size:13px!important}#cSelHead .cr-up{color:var(--green)}#cSelHead .cr-dn{color:var(--red)}#cSelHead .cr-ar{color:var(--muted);margin-left:auto!important}
-  #cHero .chartwrap{order:3;background:var(--card);min-height:104px!important;flex:none}
+  #cHero .chartwrap{order:4;background:var(--card);min-height:104px!important;flex:none}
   #cHero .chartwrap{overflow:hidden;position:relative}#cHero .chartwrap .chart{inset:8px 16px 4px!important;width:auto!important}
-  #cHero .cr-hr > .seg{order:4;align-self:stretch;background:var(--card);border-radius:0 0 24px 24px;padding:8px 16px 16px;justify-content:flex-start;gap:4px}
+  #cHero .cr-hr > .seg{order:5;align-self:stretch;background:var(--card);border-radius:0 0 24px 24px;padding:8px 16px 16px;justify-content:flex-start;gap:4px}
   #cHero .cr-hr > .seg button{color:var(--muted);background:transparent;flex:none;padding:0 12px}
   #cHero .cr-hr > .seg button.on{background:var(--soft);color:var(--ink)}
   #cStats{display:none!important}
+  .cr-acts{order:2;display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border-radius:0 0 24px 24px;margin:-30px 0 14px;padding:42px 6px 14px;position:relative;z-index:0}
+  .cr-acts button{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--ink);-webkit-tap-highlight-color:transparent}
+  .cr-acts button span{width:48px;height:48px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;transition:transform .15s}
+  .cr-acts button:first-child span{background:var(--accent);color:#fff}
+  .cr-acts button:active span{transform:scale(.92)}
+  .row > #cPanel{display:none!important}
+  .cr-bd{display:block;position:fixed;inset:0;background:rgba(14,15,18,.42);z-index:80;opacity:0;pointer-events:none;transition:opacity .25s}
+  body.cr-sh .cr-bd{opacity:1;pointer-events:auto}
+  .cr-sheet{display:block;position:fixed;left:0;right:0;bottom:0;z-index:81;background:var(--card);border-radius:26px 26px 0 0;max-height:90dvh;overflow-y:auto;overscroll-behavior:contain;padding:0 0 calc(18px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.8,.2,1);box-shadow:0 -10px 40px -12px rgba(14,15,18,.3)}
+  body.cr-sh .cr-sheet{transform:none}
+  body.cr-sh{overflow:hidden}
+  body.cr-sh .cpop{z-index:90}
+  .cr-sh-h{position:sticky;top:0;z-index:2;background:var(--card);display:flex;justify-content:center;align-items:center;height:40px}
+  .cr-sh-h i{width:40px;height:5px;border-radius:3px;background:var(--line);display:block}
+  .cr-sh-h button{position:absolute;right:12px;top:8px;width:34px;height:34px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--ink)}
+  .cr-sheet #cPanel{display:flex!important;box-shadow:none!important;background:transparent!important;border:0!important;padding:0 16px!important;margin:0!important}
+  .cr-sheet .tabs4 [data-val="receive"]{display:none}
+  .cr-sheet .tabs4{overflow:visible!important;-webkit-mask:none!important;mask:none!important}.cr-sheet .tabs4 button{flex:1}
   .trf .trw-rec{display:none!important}
   .trl-d{display:none}.trl-m{display:inline}.trl-m em{font-style:normal;font-weight:500;color:var(--muted)}
   .trf .inp.bad{background:var(--card)!important;box-shadow:inset 0 0 0 1.5px var(--red)!important}
@@ -1686,12 +1704,12 @@ function render() {
   const view = VIEWS[route];
   root.innerHTML = `<div class="app">${sideHTML()}<main class="main" id="main">${view.html()}</main></div>${bnavHTML()}${takeoverHTML()}`;
   bnavInd(true); if (bnavHTML.prev !== route) { const r = route; requestAnimationFrame(() => requestAnimationFrame(() => { document.querySelectorAll('.bnav button').forEach(b => b.classList.toggle('on', b.dataset.go === r)); bnavInd(); })); } bnavHTML.prev = route;
-  document.body.classList.remove('no-bnav'); view.mount && view.mount();
+  document.body.classList.remove('no-bnav', 'cr-sh'); view.mount && view.mount();
   const mn = $('main'); mn.classList.add('enter'); setTimeout(() => mn.classList.remove('enter'), 600);
   document.title = 'Neo — ' + view.title;
   window.scrollTo(0, 0);
 }
-function rerenderMain() { const v = VIEWS[route]; if (unsubView) { unsubView(); unsubView = null; } document.body.classList.remove('no-bnav'); $('main').innerHTML = v.html(); v.mount && v.mount(); }
+function rerenderMain() { const v = VIEWS[route]; if (unsubView) { unsubView(); unsubView = null; } document.body.classList.remove('no-bnav', 'cr-sh'); $('main').innerHTML = v.html(); v.mount && v.mount(); }
 
 /* =====================================================================
    LOGIN
@@ -2163,11 +2181,13 @@ VIEWS.crypto = {
             <div class="seg">${Object.entries(RANGES).map(([k, [l]]) => `<button class="${C.range === k ? 'on' : ''}" data-act="cRange" data-val="${k}">${l}</button>`).join('')}</div>
           </div>
         </div>
+        <div class="cr-acts">${[['buy', 'plus', 'Купить'], ['sell', 'minus', 'Продать'], ['swap', 'transfer', 'Обмен'], ['send', 'send', 'Отправить']].map(([k, i, l]) => `<button data-act="cAct" data-val="${k}"><span>${ic(i, 20, 2.2)}</span>${l}</button>`).join('')}</div>
         <div class="chartwrap"><div class="chart" id="cChart"></div></div>
         <div class="sub3" id="cStats" style="grid-template-columns:repeat(3,minmax(0,1fr))"></div>
       </div>
       <div class="card c2" id="cPanel"></div>
     </section>
+    <div class="cr-bd" data-act="cShClose"></div><div class="cr-sheet" id="crSheet" role="dialog" aria-label="Операция с криптовалютой"><div class="cr-sh-h"><i></i><button data-act="cShClose" aria-label="Закрыть">${ic('x', 18, 2.2)}</button></div></div>
     <section class="row">
       <div class="c3 col"><div class="card grow" style="gap:6px">
         <div class="hrow" style="margin-bottom:6px"><h2>Мои активы</h2><span class="muted" style="font-size:13px" id="cHoldN"></span></div>
@@ -3276,6 +3296,8 @@ const ACT = {
   cRange(el) { V.cr.range = el.dataset.val; document.querySelectorAll('[data-act="cRange"]').forEach(b => b.classList.toggle('on', b === el)); VIEWS.crypto.loadChart(); },
   cMktSort(el) { const C = V.cr; C.msort = el.dataset.val; document.querySelectorAll('#cMktSeg button').forEach(b => b.classList.toggle('on', b.dataset.val === C.msort)); VIEWS.crypto.lists(); },
   cPick(el) { const C = V.cr; if (C.sel !== el.dataset.val) { C.sel = el.dataset.val; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); } VIEWS.crypto.head(); VIEWS.crypto.lists(); VIEWS.crypto.panel(); },
+  cAct(el) { V.cr.side = el.dataset.val; const sh = $('crSheet'), p = $('cPanel'); if (sh && p && p.parentNode !== sh) sh.appendChild(p); VIEWS.crypto.panel(); document.body.classList.add('cr-sh', 'no-bnav'); },
+  cShClose() { document.body.classList.remove('cr-sh', 'no-bnav'); },
   cSide(el) { V.cr.side = el.dataset.val; VIEWS.crypto.panel(); if (innerWidth < 900 && el.classList.contains('act')) $('cPanel').scrollIntoView({ behavior: 'smooth' }); },
   cNet(el) { V.cr.net = +el.dataset.val; V.cr.addr = ''; VIEWS.crypto.panel(); },
   cChip(el) { const C = V.cr; C.sellAll = el.dataset.val === 'max'; C.amount = C.sellAll ? String(Math.floor((DB.crypto.hold[C.sel] || 0) * Mkt.price(C.sel) * 100) / 100).replace('.', ',') : el.dataset.val; $('cpAmt').value = C.amount; document.querySelectorAll('[data-act="cChip"]').forEach(b => b.classList.toggle('on', b === el)); VIEWS.crypto.nums(); },
