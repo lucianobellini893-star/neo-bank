@@ -738,9 +738,11 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   #mktStatus{display:none}
   #cHero{display:flex!important;flex-direction:column!important;background:transparent!important;padding:0!important;gap:0!important;box-shadow:none!important;border:0!important;color:var(--ink)}
   #cHero > .hrow,#cHero .cr-hr{display:contents!important}
-  #cHero > .hrow > div:first-child{order:1;flex:none!important;background:var(--hero);color:#fff;border-radius:26px;padding:18px;margin-bottom:14px;gap:8px!important}
+  #cHero > .hrow > div:first-child{order:1;flex:none!important;background:var(--hero);color:#fff;border-radius:26px;padding:22px 18px;margin-bottom:14px;gap:10px!important;align-items:center;text-align:center}
+  #cHero > .hrow > div:first-child > div{justify-content:center}
+  #cTotalCh,#cPnl{background:var(--hero2)!important;color:#C9CBD2!important;border-radius:999px!important;height:28px;padding:0 12px!important;display:inline-flex;align-items:center;gap:6px;font-size:12.5px!important;font-weight:700}
   #cHero > .hrow > div:first-child > span:first-child{font-size:13px!important}
-  #cTotal{font-size:40px!important}
+  #cTotal{font-size:44px!important}
   #cSelHead{order:2;background:var(--card);border-radius:24px 24px 0 0!important;padding:16px 16px 4px!important;margin:0 0 -1px!important;color:var(--ink)!important;width:100%;outline:none!important;box-shadow:none!important;-webkit-tap-highlight-color:transparent}#cSelHead:active{opacity:.7}
   #cSelHead .cr-sub{color:var(--muted);font-size:13px!important}#cSelHead .cr-up{color:var(--green)}#cSelHead .cr-dn{color:var(--red)}#cSelHead .cr-ar{color:var(--muted);margin-left:auto!important}
   #cHero .chartwrap{order:3;background:var(--card);min-height:104px!important;flex:none}
@@ -2212,9 +2214,15 @@ VIEWS.crypto = {
         const s = nf(cd.now, 2), i = s.lastIndexOf(',');
         $('cTotal').innerHTML = DB.hidden ? '€ ••••' : '€' + esc(s.slice(0, i)) + '<span class="c">' + esc(s.slice(i)) + '</span>';
         const up = cd.d >= 0; const el = $('cTotalCh');
+        const pa = pnlAll(), gc = v => v >= 0 ? '#9DD43A' : '#FF8A80';
+        if (isMob()) {
+          el.innerHTML = '24 ч <b style="color:' + gc(cd.d) + '">' + pct(cd.pct) + '</b>'; el.style.background = ''; el.style.color = '';
+          $('cPnl').innerHTML = pa.c > 0 && !DB.hidden ? 'Всего <b style="color:' + gc(pa.d) + '">' + (pa.d >= 0 ? '+' : '−') + nf(Math.abs(pa.pct), 1) + '%</b>' : 'Всего —';
+        } else {
         el.textContent = (up ? '↑ ' : '↓ ') + eur(Math.abs(cd.d)) + ' · ' + pct(cd.pct) + ' за 24 ч';
         el.style.background = up ? 'var(--lime)' : '#FFE1DE'; el.style.color = up ? '#0E0F12' : '#7A1A12';
-        const pa = pnlAll(); $('cPnl').innerHTML = pa.c > 0 && !DB.hidden ? 'Доходность <b style="color:' + (pa.d >= 0 ? '#9DD43A' : '#FF8A80') + '">' + pnlTxt(pa) + '</b>' : 'Доходность —';
+        $('cPnl').innerHTML = pa.c > 0 && !DB.hidden ? 'Доходность <b style="color:' + gc(pa.d) + '">' + pnlTxt(pa) + '</b>' : 'Доходность —';
+        }
       }
     };
     const lists = () => {
