@@ -783,6 +783,9 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .crr-t{margin:0;font-size:21px;letter-spacing:-.01em}.crr-d{display:none}
   .crr-amt{font-size:30px;letter-spacing:-.03em;opacity:.35;transition:opacity .4s}
   .crr-s{font-size:13.5px;color:var(--muted)}
+  .crr-more{display:inline-flex;align-items:center;gap:4px;font-size:13.5px;font-weight:700;color:var(--accent);opacity:0;pointer-events:none;transition:opacity .35s .25s;padding:4px 8px}.crr-more svg{transition:transform .25s}
+  .crr.ok .crr-more{opacity:1;pointer-events:auto}.crr.more .crr-more svg{transform:rotate(180deg)}
+  .crr:not(.more) .crr-det{display:none}
   .crr-det{width:100%;background:var(--soft);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;margin-top:10px;opacity:0;transform:translateY(10px);transition:opacity .4s .25s,transform .4s .25s;text-align:left}
   .crr-det .kv{font-size:13.5px}
   .crr-btn{width:100%;margin-top:10px;opacity:0;pointer-events:none;transition:opacity .35s .35s}
@@ -2201,6 +2204,7 @@ function crRes(o) {
   const when = new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
   box.innerHTML = `<div class="crr"><div class="crr-coin"><i class="crr-ring"></i><span class="crr-ic">${coinIcon(o.coin, 84)}</span><span class="crr-ok">${ic('check', 20, 3)}</span></div>
     <h3 class="crr-t"><span class="crr-p">${esc(o.wait)}</span><span class="crr-d">${esc(o.done)}</span></h3><b class="crr-amt">${esc(o.amt)}</b><span class="crr-s">${esc(o.sub)}</span>
+    <button class="crr-more" data-act="crrMore" aria-expanded="false">Подробнее ${ic('chev', 16, 2.2)}</button>
     <div class="crr-det">${o.rows.concat([['Дата', when]]).map(([k, v]) => `<div class="kv"><span class="muted">${k}</span><b>${esc(v)}</b></div>`).join('')}</div>
     <button class="btn blk crr-btn" data-act="cShClose">Готово</button></div>`;
   sh.classList.add('res'); sh.scrollTop = 0;
@@ -3268,7 +3272,7 @@ const ACT = {
     const sht = crInSheet();
     addNotif('crypto', 'Обмен выполнен', nf(q, a.dp) + ' ' + a.sym + ' → ' + nf(out, b.dp) + ' ' + b.sym, sht);
     C.swapAmt = ''; save(); refreshBadge(); VIEWS.crypto.lists(); VIEWS.crypto.head();
-    if (sht) crRes({ coin: C.to, wait: 'Обмен идёт…', done: 'Обмен выполнен', amt: '+' + nf(out, b.dp) + ' ' + b.sym, sub: 'Отдано ' + nf(q, a.dp) + ' ' + a.sym, rows: [['Отдано', nf(q, a.dp) + ' ' + a.sym], ['Получено', nf(out, b.dp) + ' ' + b.sym], ['Курс', '1 ' + a.sym + ' = ' + nf(pa / pb, b.dp) + ' ' + b.sym], ['Комиссия', eur(q * pa * feePct())]] });
+    if (sht) crRes({ coin: C.to, wait: 'Обмен идёт…', done: 'Обмен выполнен', amt: '+' + nf(out, b.dp) + ' ' + b.sym, sub: nf(q, a.dp) + ' ' + a.sym + ' → ' + nf(out, b.dp) + ' ' + b.sym, rows: [['Отдано', nf(q, a.dp) + ' ' + a.sym], ['Получено', nf(out, b.dp) + ' ' + b.sym], ['Курс', '1 ' + a.sym + ' = ' + nf(pa / pb, b.dp) + ' ' + b.sym], ['Комиссия', eur(q * pa * feePct())]] });
     else { VIEWS.crypto.panel(); toast('Обменено на ' + nf(out, b.dp) + ' ' + b.sym); }
   },
   hide() { DB.hidden = !DB.hidden; save(); rerenderMain(); },
@@ -3342,6 +3346,7 @@ const ACT = {
   cMktSort(el) { const C = V.cr; C.msort = el.dataset.val; document.querySelectorAll('#cMktSeg button').forEach(b => b.classList.toggle('on', b.dataset.val === C.msort)); VIEWS.crypto.lists(); },
   cPick(el) { const C = V.cr; if (C.sel !== el.dataset.val) { C.sel = el.dataset.val; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); } VIEWS.crypto.head(); VIEWS.crypto.lists(); VIEWS.crypto.panel(); },
   cAct(el) { V.cr.side = el.dataset.val; const sh = $('crSheet'), p = $('cPanel'); if (sh && p && p.parentNode !== sh) sh.appendChild(p); VIEWS.crypto.panel(); $('crShT').textContent = { buy: 'Купить', sell: 'Продать', swap: 'Обмен', send: 'Отправить' }[el.dataset.val]; document.body.classList.add('cr-sh', 'no-bnav'); },
+  crrMore(el) { const r = el.closest('.crr'), o = !r.classList.contains('more'); r.classList.toggle('more', o); el.setAttribute('aria-expanded', o); el.firstChild.textContent = o ? 'Скрыть ' : 'Подробнее '; },
   cShClose() { const sh = $('crSheet'), wasRes = sh && sh.classList.contains('res'); document.body.classList.remove('cr-sh', 'no-bnav'); if (wasRes) { setTimeout(() => { sh.classList.remove('res'); $('crRes').innerHTML = ''; VIEWS.crypto.panel(); }, 340); scrollTo({ top: 0, behavior: 'smooth' }); } },
   cSide(el) { V.cr.side = el.dataset.val; VIEWS.crypto.panel(); if (innerWidth < 900 && el.classList.contains('act')) $('cPanel').scrollIntoView({ behavior: 'smooth' }); },
   cNet(el) { V.cr.net = +el.dataset.val; V.cr.addr = ''; VIEWS.crypto.panel(); },
@@ -3366,7 +3371,7 @@ const ACT = {
     const sht = crInSheet();
     addNotif('crypto', (buy ? 'Куплено ' : 'Продано ') + nf(qNow, c.dp) + ' ' + c.sym, 'Курс ' + eur(pNow) + ' · ' + eur(amt), sht); refreshBadge();
     save(); VIEWS.crypto.lists(); VIEWS.crypto.head(); VIEWS.crypto.nums();
-    if (sht) crRes({ coin: C.sel, wait: buy ? 'Покупка идёт…' : 'Продажа идёт…', done: buy ? 'Покупка выполнена' : 'Продажа выполнена', amt: (buy ? '+' : '−') + nf(qNow, c.dp) + ' ' + c.sym, sub: buy ? 'Списано ' + eur(amt) + ' с EUR-счёта' : 'Зачислено ' + eur(amt - fee) + ' на EUR-счёт', rows: [['Монета', c.name + ' · ' + c.sym], ['Курс', eur(pNow)], [buy ? 'Списано' : 'Продано на', eur(amt)], ['Комиссия', eur(fee)], [buy ? 'Получено' : 'Зачислено', buy ? nf(qNow, c.dp) + ' ' + c.sym : eur(amt - fee)]] });
+    if (sht) crRes({ coin: C.sel, wait: buy ? 'Покупка идёт…' : 'Продажа идёт…', done: buy ? 'Покупка выполнена' : 'Продажа выполнена', amt: (buy ? '+' : '−') + nf(qNow, c.dp) + ' ' + c.sym, sub: buy ? eur(amt) + ' → ' + nf(qNow, c.dp) + ' ' + c.sym + ' · курс ' + eur(pNow) : nf(qNow, c.dp) + ' ' + c.sym + ' → ' + eur(amt - fee) + ' · курс ' + eur(pNow), rows: [['Монета', c.name + ' · ' + c.sym], ['Курс', eur(pNow)], [buy ? 'Списано' : 'Продано на', eur(amt)], ['Комиссия', eur(fee)], [buy ? 'Получено' : 'Зачислено', buy ? nf(qNow, c.dp) + ' ' + c.sym : eur(amt - fee)]] });
     else toast((buy ? 'Куплено ' : 'Продано ') + nf(qNow, c.dp) + ' ' + c.sym);
   },
   async cSend() {
