@@ -178,7 +178,8 @@ body.no-bnav .trd{padding-bottom:132px;min-height:calc(100dvh - 40px - env(safe-
 .trd-amt{font-size:36px;letter-spacing:-.03em;line-height:1}.trd-top .tag{font-size:12px;padding:4px 10px;background:var(--lime-soft);color:var(--lime-ink)}
 .trd-card{margin-bottom:auto;gap:8px!important;padding:14px 16px!important}.trd-card .kv{font-size:13.5px}.trd-card .kv b{text-align:right}
 .trd-btns{display:flex;flex-direction:column;gap:8px;margin-top:auto}.trd-btns .btn{height:48px}.trd-btns>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}.trd .btn.trd-w{background:var(--card)}.trd-top .tag.tag{background:var(--lime-soft);color:var(--lime-ink)}.trd-top .tag.pend{background:var(--warn-bg);color:var(--warn-ink)}
-.trw-h,.trw-rec{display:none}.trs{display:contents}.cr-acts,.cr-bd,.cr-sheet{display:none}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
+.trw-h,.trw-rec{display:none}.trs{display:contents}
+.dlg-th{display:flex;align-items:center;justify-content:flex-start;gap:10px}.qtimer{position:relative;width:38px;height:38px;flex:none;display:flex;align-items:center;justify-content:center}.qtimer svg{position:absolute;inset:0;transform:rotate(-90deg)}.qt-bg{fill:var(--soft);stroke:var(--line);stroke-width:3}.qt-fg{fill:none;stroke:var(--muted);stroke-width:3;stroke-linecap:round;stroke-dashoffset:0;animation:qtRun linear forwards}.qtimer b{position:relative;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink)}@keyframes qtRun{to{stroke-dashoffset:94.25}}.cr-acts,.cr-bd,.cr-sheet{display:none}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
 .atip{display:none}
 .htx-all{display:none}
 .gpc-sp{display:none}
@@ -1519,17 +1520,20 @@ function drawChart(el, pts, o = {}) {
 /* =====================================================================
    DIALOG
    ===================================================================== */
-function ask(title, rows, okText = 'Подтвердить', extra = '') {
+function ask(title, rows, okText = 'Подтвердить', extra = '', o = {}) {
   return new Promise(res => {
+    const T = o.timer || 0, R = 15, L = 2 * Math.PI * R;
     $('dlgBody').innerHTML = `<div style="display:flex;flex-direction:column;gap:14px">
-      <h2 tabindex="-1">${esc(title)}</h2>
+      ${T ? `<div class="dlg-th"><h2 tabindex="-1">${esc(title)}</h2><span class="qtimer" title="Курс зафиксирован на ${T} секунд"><svg viewBox="0 0 36 36" width="38" height="38"><circle cx="18" cy="18" r="${R}" class="qt-bg"/><circle cx="18" cy="18" r="${R}" class="qt-fg" style="stroke-dasharray:${L.toFixed(2)};animation-duration:${T}s"/></svg><b id="qtN">${T}</b></span></div>` : `<h2 tabindex="-1">${esc(title)}</h2>`}
       ${rows.length ? `<div class="dlg-rows">${rows.map(([k, v, mono]) => `<div class="dr${!mono && (String(v).length + String(k).length > 34) ? ' col' : ''}"><span>${esc(k)}</span><b class="${mono ? 'mono' : ''}">${esc(v)}</b></div>`).join('')}</div>` : ''}
       ${extra}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px"><button class="btn" id="dNo">Отмена</button><button class="btn ${/^(Удалить|Завершить|Отменить|Закрыть)/.test(okText) ? 'dng' : 'pri'}" id="dOk">${esc(okText)}</button></div></div>`;
     const d = $('dlg'); d.showModal(); d.querySelector('#dlgBody h2').focus();
-    $('dOk').onclick = () => { d.close(); res(true); };
-    $('dNo').onclick = () => { d.close(); res(false); };
-    d.oncancel = () => res(false);
+    let left = T, iv = 0; const stop = () => clearInterval(iv);
+    if (T) iv = setInterval(() => { left--; const n = $('qtN'); if (n) n.textContent = Math.max(0, left); if (left <= 0) { stop(); d.close(); res(false); toast('Время вышло — курс обновился, подтвердите ещё раз'); } }, 1000);
+    $('dOk').onclick = () => { stop(); d.close(); res(true); };
+    $('dNo').onclick = () => { stop(); d.close(); res(false); };
+    d.oncancel = () => { stop(); res(false); };
   });
 }
 
@@ -3257,7 +3261,7 @@ const ACT = {
     const C = V.cr, a = COIN[C.sel], b = COIN[C.to], pa = Mkt.price(C.sel), pb = Mkt.price(C.to), q = parseQty(C.swapAmt);
     if (!pa || !pb || q <= 0) return;
     const out = q * pa * (1 - feePct()) / pb;
-    if (!(await ask('Обмен ' + a.sym + ' → ' + b.sym, [['Отдаёте', nf(q, a.dp) + ' ' + a.sym], ['Курс', '1 ' + a.sym + ' = ' + nf(pa / pb, b.dp) + ' ' + b.sym], ['Комиссия', eur(q * pa * feePct())], ['Получите', '≈ ' + nf(out, b.dp) + ' ' + b.sym]], 'Обменять'))) return;
+    if (!(await ask('Обмен ' + a.sym + ' → ' + b.sym, [['Отдаёте', nf(q, a.dp) + ' ' + a.sym], ['Курс', '1 ' + a.sym + ' = ' + nf(pa / pb, b.dp) + ' ' + b.sym], ['Комиссия', eur(q * pa * feePct())], ['Получите', '≈ ' + nf(out, b.dp) + ' ' + b.sym]], 'Обменять', '', { timer: isMob() ? 25 : 0 }))) return;
     const moved = reduceCost(C.sel, q); DB.crypto.cost[C.to] = costOf(C.to) + moved;
     DB.crypto.hold[C.sel] = Math.max(0, (DB.crypto.hold[C.sel] || 0) - q); DB.crypto.hold[C.to] = (DB.crypto.hold[C.to] || 0) + out;
     DB.crypto.history.unshift({ id: C.to, title: 'Обмен ' + a.sym + ' → ' + b.sym, meta: new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + ' · −' + nf(q, a.dp) + ' ' + a.sym, amount: '+' + nf(out, b.dp) + ' ' + b.sym, plus: true });
@@ -3347,7 +3351,7 @@ const ACT = {
     const C = V.cr, c = COIN[C.sel], p = Mkt.price(C.sel), buy = C.side === 'buy', amt = parseNum(C.amount);
     if (!p || amt <= 0) return;
     const fee = amt * feePct(), q = buy ? (amt - fee) / p : amt / p;
-    if (!(await ask(buy ? 'Покупка ' + c.sym : 'Продажа ' + c.sym, [['Курс', eur(p)], [buy ? 'Списание с EUR-счёта' : 'Продаётся', buy ? eur(amt) : nf(q, c.dp) + ' ' + c.sym], ['Комиссия', eur(fee)], [buy ? 'Получите' : 'Зачислится на EUR-счёт', buy ? nf(q, c.dp) + ' ' + c.sym : eur(amt - fee)]], 'Подтвердить'))) return;
+    if (!(await ask(buy ? 'Покупка ' + c.sym : 'Продажа ' + c.sym, [['Курс', eur(p)], [buy ? 'Списание с EUR-счёта' : 'Продаётся', buy ? eur(amt) : nf(q, c.dp) + ' ' + c.sym], ['Комиссия', eur(fee)], [buy ? 'Получите' : 'Зачислится на EUR-счёт', buy ? nf(q, c.dp) + ' ' + c.sym : eur(amt - fee)]], 'Подтвердить', '', { timer: isMob() ? 25 : 0 }))) return;
     let qNow, pNow = Mkt.price(C.sel) || p;
     if (buy) qNow = buyCrypto(C.sel, cents(amt)).q;
     else {
