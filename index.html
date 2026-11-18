@@ -179,7 +179,7 @@ body.no-bnav .trd{padding-bottom:132px;min-height:calc(100dvh - 40px - env(safe-
 .trd-card{margin-bottom:auto;gap:8px!important;padding:14px 16px!important}.trd-card .kv{font-size:13.5px}.trd-card .kv b{text-align:right}
 .trd-btns{display:flex;flex-direction:column;gap:8px;margin-top:auto}.trd-btns .btn{height:48px}.trd-btns>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}.trd .btn.trd-w{background:var(--card)}.trd-top .tag.tag{background:var(--lime-soft);color:var(--lime-ink)}.trd-top .tag.pend{background:var(--warn-bg);color:var(--warn-ink)}
 .trw-h,.trw-rec{display:none}.trs{display:contents}
-.dlg-th{display:flex;align-items:center;justify-content:space-between;gap:10px}.qtimer{position:relative;width:28px;height:28px;flex:none;display:flex;align-items:center;justify-content:center}.qtimer svg{position:absolute;inset:0;transform:rotate(-90deg)}.qt-bg{fill:none;stroke:none}.qt-fg{fill:none;stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:1.4;stroke-linecap:round;stroke-dashoffset:0;animation:qtRun linear forwards}.qtimer b{position:relative;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}@keyframes qtRun{to{stroke-dashoffset:94.25}}.cr-acts,.cr-bd,.cr-sheet,.card.cr-histm,.cr-albn{display:none}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
+.dlg-th{display:flex;align-items:center;justify-content:space-between;gap:10px}.qtimer{position:relative;width:28px;height:28px;flex:none;display:flex;align-items:center;justify-content:center}.qtimer svg{position:absolute;inset:0;transform:rotate(-90deg)}.qt-bg{fill:none;stroke:none}.qt-fg{fill:none;stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:1.4;stroke-linecap:round;stroke-dashoffset:0;animation:qtRun linear forwards}.qtimer b{position:relative;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}@keyframes qtRun{to{stroke-dashoffset:94.25}}.cr-acts,.cr-bd,.cr-sheet,.card.cr-histm,.cr-albn,.mk-all,.cscr{display:none}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
 .atip{display:none}
 .htx-all{display:none}
 .gpc-sp{display:none}
@@ -755,6 +755,25 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   #cStats{display:none!important}
   .cr-hd{display:none!important}
   .card.cr-histm{display:flex}
+  #cMktSum{display:none}
+  .mkseg{background:transparent!important;padding:0!important;gap:6px!important;justify-content:flex-start}.mkseg button{flex:none!important;height:30px!important;padding:0 12px!important;border-radius:999px!important;background:var(--soft)!important;color:var(--ink)!important;font-size:12.5px!important;box-shadow:none!important}.mkseg button.on{background:var(--ink)!important;color:#fff!important}
+  #cMkt svg{display:block!important;flex:none}
+  #cMkt .li{gap:10px}#cMkt .lir{width:auto!important;min-width:86px}
+  #cMkt .mkpct{background:none!important;padding:0!important}
+  #cMkt .li.on{background:transparent}
+  .mk-all{display:block;align-self:center;font-size:13.5px;font-weight:700;color:var(--accent);padding:8px 12px}.mk-all[hidden]{display:none}
+  .cscr{display:flex;flex-direction:column;position:fixed;inset:0;z-index:85;background:var(--card);transform:translateX(100%);transition:transform .32s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+  .cscr.on{transform:none;visibility:visible}
+  body.cs-open{overflow:hidden}
+  .cs-top{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 16px 6px}.cs-top b{flex:1;text-align:center;font-size:16px}
+  .cs-bk{width:40px;height:40px;border-radius:50%;background:var(--soft);display:flex;align-items:center;justify-content:center;color:var(--ink)}.cs-bk svg{transform:rotate(180deg)}
+  .cs-body{flex:1;overflow-y:auto;padding:4px 16px 16px;display:flex;flex-direction:column;gap:14px}
+  .cs-hd{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;margin-top:4px}.cs-p{font-size:34px;letter-spacing:-.03em}.cs-ch{font-size:13.5px;font-weight:700}
+  .cs-chart{position:relative;height:170px;margin:0 -4px;overflow:hidden;flex:none}.cs-chart .chart{position:absolute!important;inset:0!important;height:auto!important;min-height:0!important}
+  .cs-rg{align-self:stretch}.cs-rg button{flex:1}
+  .cs-pos{display:flex;justify-content:space-between;gap:10px;background:var(--soft);border-radius:16px;padding:12px 14px}.cs-pos span{display:flex;flex-direction:column;gap:2px}.cs-pos small{font-size:12px;color:var(--muted);font-weight:600}.cs-pos small.up{color:var(--green)}.cs-pos small.down{color:var(--red)}.cs-pos b{font-size:15px}
+  .cs-about{display:flex;flex-direction:column;gap:4px;align-items:flex-start}.cs-about b{font-size:15px}.cs-about p{margin:0;font-size:13.5px;line-height:1.5;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.cs-about p.open{-webkit-line-clamp:unset;display:block}.cs-about button{font-size:13.5px;font-weight:700;color:var(--accent)}
+  .cs-foot{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 16px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--card)}.cs-foot .btn{height:52px}
   .col > #alForm{display:none!important}
   .cr-albn{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:22px;padding:14px;transition:opacity .24s,transform .24s}.cr-albn[hidden]{display:none}.cr-albn.out{opacity:0;transform:scale(.97)}
   .cr-albi{width:38px;height:38px;border-radius:14px;background:#E3E8FF;color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none}
@@ -1811,7 +1830,7 @@ function render() {
   const view = VIEWS[route];
   root.innerHTML = `<div class="app">${sideHTML()}<main class="main" id="main">${view.html()}</main></div>${bnavHTML()}${takeoverHTML()}`;
   bnavInd(true); if (bnavHTML.prev !== route) { const r = route; requestAnimationFrame(() => requestAnimationFrame(() => { document.querySelectorAll('.bnav button').forEach(b => b.classList.toggle('on', b.dataset.go === r)); bnavInd(); })); } bnavHTML.prev = route;
-  document.body.classList.remove('no-bnav', 'cr-sh'); view.mount && view.mount();
+  document.body.classList.remove('no-bnav', 'cr-sh', 'cs-open'); if ($('coinScr')) $('coinScr').classList.remove('on'); view.mount && view.mount();
   const mn = $('main'); mn.classList.add('enter'); setTimeout(() => mn.classList.remove('enter'), 600);
   document.title = 'Neo — ' + view.title;
   window.scrollTo(0, 0);
@@ -2335,7 +2354,7 @@ VIEWS.crypto = {
         <div class="card grow mktcard"><div class="hrow"><h2>Рынок · 24 ч</h2><span class="mkst" id="cUpd"></span></div>
           <div class="mksum" id="cMktSum"></div>
           <div class="seg mkseg" id="cMktSeg">${[['all', 'Все'], ['up', 'Рост'], ['down', 'Падение'], ['vol', 'Объём']].map(([k, l]) => `<button class="${(C.msort || 'all') === k ? 'on' : ''}" data-act="cMktSort" data-val="${k}">${l}</button>`).join('')}</div>
-          <div id="cMkt" class="mklist"></div></div>
+          <div id="cMkt" class="mklist"></div><button type="button" class="mk-all" id="cMktAll" data-act="cMktAll"></button></div>
         <div class="warn" style="display:flex;gap:10px;border-radius:22px;padding:16px 18px;font-size:13px"><span style="flex:none">${ic('warn', 20)}</span><span>Криптоактивы волатильны и не защищены системой гарантирования вкладов. Цены — Binance / CoinGecko в реальном времени. Покупки, продажи и переводы в этой версии — демо: в блокчейн ничего не отправляется.</span></div>
       </div>
     </section>`;
@@ -2388,7 +2407,8 @@ VIEWS.crypto = {
         $('cMktSum').innerHTML = n ? `<div class="mkbar"><i style="flex:${ups || 0.001} 1 0;background:var(--green)"></i><i style="flex:${(n - ups) || 0.001} 1 0;background:var(--red)"></i></div>
           <div class="mkst3"><div><span>Растут</span><b class="up">${ups} из ${n}</b></div><div><span>Лидер</span><b>${best.sym} <span class="${Mkt.ch(best.id) >= 0 ? 'up' : 'down'}">${pct(Mkt.ch(best.id))}</span></b></div><div><span>Аутсайдер</span><b>${worst.sym} <span class="${Mkt.ch(worst.id) >= 0 ? 'up' : 'down'}">${pct(Mkt.ch(worst.id))}</span></b></div></div>` : '';
         $('cMkt').classList.toggle('top', ms === 'up' || ms === 'down');
-        $('cMkt').innerHTML = list.map(c => { const p = Mkt.price(c.id), ch = Mkt.ch(c.id), fl = flashes[c.id] || ''; delete flashes[c.id];
+        if ($('cMktAll')) { $('cMktAll').hidden = list.length <= 6; $('cMktAll').textContent = C.mAll ? 'Свернуть' : 'Все ' + list.length + ' монет'; }
+        const mobLim = isMob() && !C.mAll; $('cMkt').innerHTML = (mobLim ? list.slice(0, 6) : list).map(c => { const p = Mkt.price(c.id), ch = Mkt.ch(c.id), fl = flashes[c.id] || ''; delete flashes[c.id];
           if (!p) return `<div class="li"><span class="ci skel" style="width:36px;height:36px"></span><span class="skel" style="flex:1;height:18px"></span></div>`;
           const held = (DB.crypto.hold[c.id] || 0) > 1e-12;
           return `<button class="li sel-row ${c.id === C.sel ? 'on' : ''}" data-act="cPick" data-val="${c.id}">${coinIcon(c.id, 38)}<span class="lim"><b style="font-size:14px;font-weight:700">${esc(c.name)}${held ? '<i class="mkheld" title="Есть в портфеле"></i>' : ''}</b><span style="font-size:12px">${c.sym}</span></span>${sparkSVG(Mkt.spark[c.id], ch >= 0, 84, 30)}<span class="lir" style="width:104px"><b style="font-size:14px" class="${fl}">${eur(p)}</b><span class="mkpct ${ch >= 0 ? 'up' : 'down'}">${pct(ch)}</span></span></button>`; }).join('') || `<p class="muted" style="margin:auto;text-align:center;font-size:14px">${ms === 'up' ? 'Сейчас ни одна монета не растёт' : 'Сейчас ни одна монета не падает'}</p>`;
@@ -3016,6 +3036,24 @@ function coinSheetHTML(id) {
     ${hist.length ? `<div style="display:flex;flex-direction:column"><b style="font-size:15px;margin-bottom:4px">Ваши операции</b>${hist.map(h => `<div class="li" style="border-top:1px solid var(--line)"><span class="lim"><b style="font-size:14px">${esc(h.title)}</b><span style="font-size:12px">${esc(h.meta)}</span></span><b class="${h.plus ? 'up' : ''}" style="font-size:14px">${esc(h.amount)}</b></div>`).join('')}</div>` : ''}
     <!--FOOT--><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">${[['buy', 'Купить', 'pri'], ['sell', 'Продать', ''], ['send', 'Отправить', '']].map(([k, l, cl]) => `<button class="btn ${cl}" data-act="ciSide" data-id="${id}" data-val="${k}">${l}</button>`).join('')}</div>`;
 }
+function coinScr(id) {
+  const c = COIN[id], p = Mkt.price(id), ch = Mkt.ch(id), pos = pnlOf(id);
+  let el = $('coinScr'); if (!el) { el = document.createElement('div'); el.id = 'coinScr'; el.className = 'cscr'; el.setAttribute('role', 'dialog'); document.body.appendChild(el); }
+  el.dataset.id = id;
+  el.innerHTML = `<div class="cs-top"><button type="button" class="cs-bk" data-act="coinScrClose" aria-label="Назад">${ic('arrow', 18, 2.4)}</button><b>${esc(c.name)}</b><span style="width:40px"></span></div>
+    <div class="cs-body"><div class="cs-hd">${coinIcon(id, 44)}<b class="cs-p" id="csP">${p ? eur(p) : '—'}</b><span class="${ch >= 0 ? 'up' : 'down'} cs-ch" id="csCh">${p ? pct(ch) + ' за 24 ч' : ''}</span></div>
+    <div class="cs-chart"><div class="chart" id="csChart"></div></div>
+    <div class="seg cs-rg">${Object.entries(RANGES).map(([k, [l]]) => `<button class="${k === '1' ? 'on' : ''}" data-act="csRange" data-val="${k}">${l}</button>`).join('')}</div>
+    ${pos.q > 1e-12 ? `<div class="cs-pos"><span><small>Ваша позиция</small><b>${nf(pos.q, c.dp)} ${c.sym}</b></span><span style="text-align:right"><b>${eur(pos.v)}</b>${pos.c > 0 ? `<small class="${pos.d >= 0 ? 'up' : 'down'}">${pos.d >= 0 ? '+' : '−'}${nf(Math.abs(pos.pct), 2)}%</small>` : ''}</span></div>` : ''}
+    <div class="cs-about"><b>О монете</b><p id="csAbout">${esc(COIN_INFO[id] || '')}</p><button type="button" data-act="csMore">Ещё</button></div></div>
+    <div class="cs-foot"><button class="btn" data-act="csTrade" data-val="sell"${pos.q > 1e-12 ? '' : ' disabled'}>Продать</button><button class="btn pri" data-act="csTrade" data-val="buy">Купить</button></div>`;
+  document.body.classList.add('cs-open', 'no-bnav'); requestAnimationFrame(() => el.classList.add('on'));
+  coinScrChart(id, '1');
+}
+async function coinScrChart(id, range) {
+  const pts = await Mkt.history(id, range), el = $('csChart'); if (!el || $('coinScr').dataset.id !== id) return;
+  drawChart(el, pts, { color: '#1F4DFF', minimal: true, fmt: v => eur(v), label: 'График цены ' + COIN[id].sym });
+}
 async function drawCoinChart(id, range) {
   const pts = await Mkt.history(id, range); const el = $('ciChart'); if (!el) return;
   const up = pts.length > 1 && pts[pts.length - 1].v >= pts[0].v;
@@ -3477,7 +3515,12 @@ const ACT = {
   // crypto
   cRange(el) { V.cr.range = el.dataset.val; document.querySelectorAll('[data-act="cRange"]').forEach(b => b.classList.toggle('on', b === el)); VIEWS.crypto.loadChart(); },
   cMktSort(el) { const C = V.cr; C.msort = el.dataset.val; document.querySelectorAll('#cMktSeg button').forEach(b => b.classList.toggle('on', b.dataset.val === C.msort)); VIEWS.crypto.lists(); },
-  cPick(el) { const C = V.cr; if (C.sel !== el.dataset.val) { C.sel = el.dataset.val; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); } VIEWS.crypto.head(); VIEWS.crypto.lists(); VIEWS.crypto.panel(); },
+  coinScrClose() { const el = $('coinScr'); if (!el) return; el.classList.remove('on'); document.body.classList.remove('cs-open', 'no-bnav'); },
+  csRange(el) { el.parentNode.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el)); coinScrChart($('coinScr').dataset.id, el.dataset.val); },
+  csMore(el) { $('csAbout').classList.toggle('open'); el.textContent = $('csAbout').classList.contains('open') ? 'Свернуть' : 'Ещё'; },
+  csTrade(el) { const id = $('coinScr').dataset.id, C = V.cr; if (C.sel !== id) { C.sel = id; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); VIEWS.crypto.head(); VIEWS.crypto.lists(); } ACT.coinScrClose(); setTimeout(() => ACT.cAct({ dataset: { val: el.dataset.val } }), 200); },
+  cMktAll() { V.cr.mAll = !V.cr.mAll; VIEWS.crypto.lists(); },
+  cPick(el) { if (isMob() && el.closest('#cMkt')) return coinScr(el.dataset.val); const C = V.cr; if (C.sel !== el.dataset.val) { C.sel = el.dataset.val; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); } VIEWS.crypto.head(); VIEWS.crypto.lists(); VIEWS.crypto.panel(); },
   cAct(el) { V.cr.side = el.dataset.val; const sh = $('crSheet'), p = $('cPanel'); if (sh && p && p.parentNode !== sh) sh.appendChild(p); VIEWS.crypto.panel(); $('crShT').textContent = { buy: 'Купить', sell: 'Продать', swap: 'Обмен', send: 'Отправить', receive: 'Получить' }[el.dataset.val]; document.body.classList.add('cr-sh', 'no-bnav'); },
   crTx(el) {
     const h = DB.crypto.history[+el.dataset.i]; if (!h) return;
