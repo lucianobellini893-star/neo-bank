@@ -179,7 +179,7 @@ body.no-bnav .trd{padding-bottom:132px;min-height:calc(100dvh - 40px - env(safe-
 .trd-card{margin-bottom:auto;gap:8px!important;padding:14px 16px!important}.trd-card .kv{font-size:13.5px}.trd-card .kv b{text-align:right}
 .trd-btns{display:flex;flex-direction:column;gap:8px;margin-top:auto}.trd-btns .btn{height:48px}.trd-btns>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}.trd .btn.trd-w{background:var(--card)}.trd-top .tag.tag{background:var(--lime-soft);color:var(--lime-ink)}.trd-top .tag.pend{background:var(--warn-bg);color:var(--warn-ink)}
 .trw-h,.trw-rec{display:none}.trs{display:contents}
-.dlg-th{display:flex;align-items:center;justify-content:space-between;gap:10px}.qtimer{position:relative;width:28px;height:28px;flex:none;display:flex;align-items:center;justify-content:center}.qtimer svg{position:absolute;inset:0;transform:rotate(-90deg)}.qt-bg{fill:none;stroke:none}.qt-fg{fill:none;stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:1.4;stroke-linecap:round;stroke-dashoffset:0;animation:qtRun linear forwards}.qtimer b{position:relative;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}@keyframes qtRun{to{stroke-dashoffset:94.25}}.cr-acts,.cr-bd,.cr-sheet,.card.cr-histm{display:none}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
+.dlg-th{display:flex;align-items:center;justify-content:space-between;gap:10px}.qtimer{position:relative;width:28px;height:28px;flex:none;display:flex;align-items:center;justify-content:center}.qtimer svg{position:absolute;inset:0;transform:rotate(-90deg)}.qt-bg{fill:none;stroke:none}.qt-fg{fill:none;stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:1.4;stroke-linecap:round;stroke-dashoffset:0;animation:qtRun linear forwards}.qtimer b{position:relative;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}@keyframes qtRun{to{stroke-dashoffset:94.25}}.cr-acts,.cr-bd,.cr-sheet,.card.cr-histm,.cr-albn{display:none}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
 .atip{display:none}
 .htx-all{display:none}
 .gpc-sp{display:none}
@@ -755,6 +755,16 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   #cStats{display:none!important}
   .cr-hd{display:none!important}
   .card.cr-histm{display:flex}
+  .col > #alForm{display:none!important}
+  .cr-albn{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:22px;padding:14px;transition:opacity .24s,transform .24s}.cr-albn[hidden]{display:none}.cr-albn.out{opacity:0;transform:scale(.97)}
+  .cr-albi{width:42px;height:42px;border-radius:14px;background:#E3E8FF;color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none}
+  .cr-albn .lim{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.cr-albn .lim b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cr-albn .lim span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cr-alc{height:34px;padding:0 13px;border-radius:999px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;flex:none}
+  .cr-alx{width:26px;height:26px;border-radius:50%;background:var(--soft);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none}
+  .cr-sheet:not(.al) #alForm{display:none!important}.cr-sheet.al #cPanel,.cr-sheet.al #crRes{display:none!important}
+  .cr-sheet #alForm{box-shadow:none!important;background:transparent!important;border:0!important;padding:0 16px!important;margin:0!important;gap:12px}
+  .cr-sheet #alForm > .hrow{display:none}
+  .cr-sheet #alForm .tbar{display:grid;grid-template-columns:1fr 1fr;gap:8px}.cr-sheet #alForm .tbar .sel{width:100%;height:50px}.cr-sheet #alForm .tbar .fbox{grid-column:1/-1;height:50px}.cr-sheet #alForm .tbar .btn{grid-column:1/-1;height:52px;justify-content:center}
   .cr-hall{font-size:13.5px;font-weight:700;color:var(--accent)}
   .crh{display:flex;width:100%;text-align:left;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);color:var(--ink);-webkit-tap-highlight-color:transparent}.crh:active{opacity:.6}
   .crd{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:0 0 4px}
@@ -2309,6 +2319,7 @@ VIEWS.crypto = {
         <h2 class="cr-hd" style="margin-top:18px">История</h2><div id="cHist" class="cr-hd"></div>
       </div>
         <div class="card cr-histm" style="gap:4px"><div class="hrow"><h2>История</h2><button type="button" class="cr-hall" id="cHistAll" data-act="crHistAll"></button></div><div id="cHistM"></div></div>
+        <div class="cr-albn" id="crAlBn"${DB.settings.alertCard === false ? ' hidden' : ''}><span class="cr-albi">${ic('bell', 19, 2.2)}</span><span class="lim"><b>Ценовые уведомления</b><span id="crAlSub">Сообщим, когда цена дойдёт до цели</span></span><button type="button" class="cr-alc" data-act="crAlOpen">Создать</button><button type="button" class="cr-alx" data-act="crAlOff" aria-label="Скрыть">${ic('x', 14, 2.4)}</button></div>
         <form class="card" id="alForm" novalidate>
           <div class="hrow"><h2>Ценовые уведомления</h2><span class="tag demo" id="alCount"></span></div>
           <div class="tbar">
@@ -2545,10 +2556,11 @@ VIEWS.crypto = {
       if (price <= 0) return toast('Введите цену');
       if (p && ((dir === 'above' && price <= p) || (dir === 'below' && price >= p))) return toast('Цена уже ' + (dir === 'above' ? 'выше' : 'ниже') + ' этого уровня');
       DB.alerts.unshift({ id: uid(), coin, dir, price, active: true, ts: Date.now() }); save();
-      $('alPrice').value = ''; alerts(); toast('Уведомление создано');
+      $('alPrice').value = ''; alerts(); toast('Уведомление создано'); this.alSub && this.alSub(); if ($('crSheet') && $('crSheet').classList.contains('al')) ACT.cShClose(true);
       try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch (err) {}
     };
     this.alerts = alerts; prefill(); alerts();
+    const alSub = () => { const n = DB.alerts.filter(a => a.active).length, sb = $('crAlSub'); if (sb) sb.textContent = n ? n + ' ' + (n === 1 ? 'активное' : 'активных') + ' · добавить ещё' : 'Сообщим, когда цена дойдёт до цели'; }; this.alSub = alSub; alSub();
     this.loadChart = loadChart; this.lists = lists; this.head = head;
     const tabsFix = () => { const t = document.querySelector('#cPanel .tabs4'); if (!t) return; const upd = () => t.classList.toggle('end', t.scrollLeft + t.clientWidth >= t.scrollWidth - 4); const on = t.querySelector('.on'); if (on && t.scrollWidth > t.clientWidth) t.scrollLeft = Math.max(0, on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2); upd(); t.onscroll = upd; };
     new MutationObserver(tabsFix).observe($('cPanel'), { childList: true });
@@ -2737,7 +2749,7 @@ VIEWS.settings = {
           <span class="muted" style="font-size:13.5px;line-height:1.45">Добавьте Neo на главный экран — открывается как обычное приложение, на весь экран, без адресной строки.</span>
           <div class="appbtns"><button class="appbtn${devOS() === 'android' ? ' me' : ''}" data-act="installApp" data-val="android">${ic('device', 22)}<span><small>Установить на</small><b>Android</b></span></button><button class="appbtn${devOS() === 'ios' ? ' me' : ''}" data-act="installApp" data-val="ios">${ic('device', 22)}<span><small>Установить на</small><b>iPhone</b></span></button></div></div>
         <div class="card"><h2>Оформление</h2><div class="seg" style="border-radius:14px">${[['system', 'Системная'], ['light', 'Светлая'], ['dark', 'Тёмная']].map(([k, l]) => `<button style="flex:1;height:40px" class="${(DB.settings.theme || 'system') === k ? 'on' : ''}" data-act="setTheme" data-val="${k}">${l}</button>`).join('')}</div></div>
-        <div class="card" style="gap:0"><h2 style="margin-bottom:10px">Уведомления</h2>${t('notifPush', 'Push-уведомления', 'Всплывающие окна и звонок колокольчика')}${t('notifEmail', 'Email-отчёты', 'Ежемесячная сводка')}
+        <div class="card" style="gap:0"><h2 style="margin-bottom:10px">Уведомления</h2>${t('notifPush', 'Push-уведомления', 'Всплывающие окна и звонок колокольчика')}${isMob() ? `<button class="li" data-act="alCardTog" style="border-top:1px solid var(--line)"><span class="lim"><b>Ценовые уведомления в Крипто</b><span>Показывать баннер на вкладке «Крипто»</span></span><span class="toggle ${DB.settings.alertCard !== false ? 'on' : ''}" aria-hidden="true"></span></button>` : ''}${t('notifEmail', 'Email-отчёты', 'Ежемесячная сводка')}
           <button class="li" data-act="ntfPrefs" style="border-top:1px solid var(--line)"><span class="lim"><b>Категории</b><span>${(() => { const P = ntfPrefs(), off = NTF_CATS.filter(([k]) => !P[k]).length; return off ? 'Выключено: ' + off + ' из ' + NTF_CATS.length : 'Все включены'; })()}</span></span><span class="muted">${ic('arrow', 18)}</span></button></div>
         <div class="card grow"><button class="btn" data-act="reset">Сбросить демо-данные</button><button class="btn blk" data-act="logout">${ic('logout', 18)}Выйти</button></div>
       </div>
@@ -3484,9 +3496,12 @@ const ACT = {
     const rows = (h.rows || []).concat([['Дата', h.ts ? new Date(h.ts).toLocaleString('ru-RU') : h.meta], ['Номер', h.no || '—'], ['Статус', 'Выполнено']]);
     w.document.write(`<html><head><meta charset="utf-8"><title>Квитанция ${esc(h.no || '')}</title></head><body style="font-family:system-ui;padding:40px;max-width:560px;color:#0E0F12"><h2 style="margin:0 0 4px">neo</h2><p style="color:#6B6F7B;margin:0 0 28px">Квитанция о криптооперации · ДЕМО</p><p style="font-size:16px;color:#6B6F7B;margin:0">${esc(h.title)}</p><h1 style="margin:4px 0 20px">${esc(h.amount)}</h1><table style="width:100%;border-collapse:collapse;font-size:14px">${rows.map(([a, b]) => `<tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#6B6F7B">${esc(a)}</td><td style="padding:9px 0;border-bottom:1px solid #eee;text-align:right;font-weight:600">${esc(b)}</td></tr>`).join('')}</table><script>print()<\/script></body></html>`); w.document.close();
   },
+  crAlOpen() { const sh = $('crSheet'), f = $('alForm'); if (!sh || !f) return; if (f.parentNode !== sh) sh.appendChild(f); if ($('alCoin')) $('alCoin').value = V.cr.sel; sh.classList.add('al'); $('crShT').textContent = 'Новое уведомление'; sh.scrollTop = 0; document.body.classList.add('cr-sh', 'no-bnav'); },
+  crAlOff() { DB.settings.alertCard = false; save(); const b = $('crAlBn'); if (b) { b.classList.add('out'); setTimeout(() => b.hidden = true, 240); } toast('Скрыто. Вернуть можно в Настройках → Уведомления'); },
+  alCardTog(el) { DB.settings.alertCard = DB.settings.alertCard === false; save(); el.querySelector('.toggle').classList.toggle('on', DB.settings.alertCard !== false); },
   crHistAll() { V.cr.histAll = !V.cr.histAll; VIEWS.crypto.histM(); },
   crrMore(el) { const r = el.closest('.crr'), o = !r.classList.contains('more'); r.classList.toggle('more', o); el.setAttribute('aria-expanded', o); el.firstChild.textContent = o ? 'Скрыть ' : 'Подробнее '; },
-  cShClose(keep) { const sh = $('crSheet'), wasRes = sh && sh.classList.contains('res'), det = sh && sh.classList.contains('det'); document.body.classList.remove('cr-sh', 'no-bnav'); if (wasRes) { setTimeout(() => { sh.classList.remove('res', 'det'); $('crRes').innerHTML = ''; VIEWS.crypto.panel(); }, 340); if (!det && keep !== true) scrollTo({ top: 0, behavior: 'smooth' }); } },
+  cShClose(keep) { const shA = $('crSheet'); if (shA && shA.classList.contains('al')) { document.body.classList.remove('cr-sh', 'no-bnav'); setTimeout(() => shA.classList.remove('al'), 340); return; } const sh = $('crSheet'), wasRes = sh && sh.classList.contains('res'), det = sh && sh.classList.contains('det'); document.body.classList.remove('cr-sh', 'no-bnav'); if (wasRes) { setTimeout(() => { sh.classList.remove('res', 'det'); $('crRes').innerHTML = ''; VIEWS.crypto.panel(); }, 340); if (!det && keep !== true) scrollTo({ top: 0, behavior: 'smooth' }); } },
   cSide(el) { V.cr.side = el.dataset.val; VIEWS.crypto.panel(); if (innerWidth < 900 && el.classList.contains('act')) $('cPanel').scrollIntoView({ behavior: 'smooth' }); },
   cNetNext() { const C = V.cr, n = COIN[C.sel].nets.length; C.net = (C.net + 1) % n; C.addr = ''; VIEWS.crypto.panel(); },
   cNet(el) { V.cr.net = +el.dataset.val; V.cr.addr = ''; VIEWS.crypto.panel(); },
