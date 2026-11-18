@@ -785,6 +785,11 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .sw-x:active{transform:translate(-50%,-50%) scale(.92)}
   .sw-pc{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.sw-pc button{outline:none;-webkit-tap-highlight-color:transparent;height:36px;border-radius:999px;background:var(--soft);font-size:13px;font-weight:700;color:var(--ink)}
   .sw-ln{text-align:center;font-size:12.5px;color:var(--muted)}
+  .rv-top{display:flex;justify-content:center;gap:8px}
+  .rv-net{height:38px;padding:0 12px;border-radius:999px;background:var(--soft);display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink)}.rv-net span{color:var(--muted);font-weight:600}.rv-net svg{color:var(--muted)}.rv-net:disabled{opacity:1}
+  .rv-qr{align-self:center;padding:14px;border-radius:22px;background:#fff;box-shadow:0 0 0 1px var(--line),0 10px 30px -14px rgba(14,15,18,.22)}.rv-qr .qr{margin:0;padding:0;background:none;border:0;width:180px;height:180px}.rv-qr .qr img,.rv-qr .qr canvas{display:block}
+  .rv-addr{text-align:center;font-size:13.5px;line-height:1.5;word-break:break-all;padding:0 14px}
+  .rv-note{display:flex;gap:6px;font-size:12px;color:var(--muted);line-height:1.45}.rv-note svg{flex:none;margin-top:2px}
   .sd{display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0 4px}
   .sd-coin{background:var(--soft)!important;box-shadow:none!important;margin-bottom:6px}
   .sd-amt{display:flex;width:100%}.sd-amt input{width:100%;border:0;background:transparent;text-align:center;font:inherit;font-size:46px;font-weight:800;letter-spacing:-.04em;color:var(--ink);padding:0;outline:none;line-height:1.1}.sd-amt input::placeholder{color:#B8BAC2}
@@ -2421,6 +2426,16 @@ VIEWS.crypto = {
           $('cpSend').oninput = e => { e.target.value = C.sendAmt = e.target.value.replace(/[^0-9,.]/g, ''); this.nums(); };
           if ($('cpMemo')) $('cpMemo').oninput = e => C.memo = e.target.value;
           vAddr();
+        } else if (isMob()) {
+          el.innerHTML = tabs + `<div class="rv-top"><button type="button" class="sw-p sd-coin" data-act="coinMenu" data-mode="sel">${coinIcon(c.id, 26)}<b>${c.sym}</b>${ic('chev', 15, 2.2)}</button><button type="button" class="rv-net"${nets.length > 1 ? ' data-act="cNetNext"' : ' disabled'}><span>Сеть</span><b>${esc(net.name)}</b>${nets.length > 1 ? ic('chev', 15, 2.2) : ''}</button></div>
+            <div class="rv-qr"><div class="qr" id="cpQr"></div></div>
+            <span class="rv-addr mono" id="cpRecvAddr">…</span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn pri" id="cpCopy" data-act="copy" data-val="">${ic('copy', 16)}Скопировать</button><button class="btn" data-act="shareAddr">${ic('share', 16)}Поделиться</button></div>
+            <span class="rv-note">${ic('info', 14, 2.2)}<span>Только ${c.sym} в сети ${esc(net.name)} — другие активы потеряются. Зачисление после ${net.conf}.</span></span>`;
+          CONFIG.getDepositAddress(c, net).then(a => {
+            if (!$('cpRecvAddr')) return; C.recvAddr = a; $('cpRecvAddr').textContent = a; $('cpCopy').dataset.val = a;
+            if (window.QRCode) { $('cpQr').innerHTML = ''; new QRCode($('cpQr'), { text: a, width: 180, height: 180, colorDark: '#0E0F12', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M }); }
+          });
         } else {
           el.innerHTML = tabs + coinsel + netsel + `
             <div class="qr" id="cpQr"></div>
@@ -3414,6 +3429,7 @@ const ACT = {
   crrMore(el) { const r = el.closest('.crr'), o = !r.classList.contains('more'); r.classList.toggle('more', o); el.setAttribute('aria-expanded', o); el.firstChild.textContent = o ? 'Скрыть ' : 'Подробнее '; },
   cShClose() { const sh = $('crSheet'), wasRes = sh && sh.classList.contains('res'); document.body.classList.remove('cr-sh', 'no-bnav'); if (wasRes) { setTimeout(() => { sh.classList.remove('res'); $('crRes').innerHTML = ''; VIEWS.crypto.panel(); }, 340); scrollTo({ top: 0, behavior: 'smooth' }); } },
   cSide(el) { V.cr.side = el.dataset.val; VIEWS.crypto.panel(); if (innerWidth < 900 && el.classList.contains('act')) $('cPanel').scrollIntoView({ behavior: 'smooth' }); },
+  cNetNext() { const C = V.cr, n = COIN[C.sel].nets.length; C.net = (C.net + 1) % n; C.addr = ''; VIEWS.crypto.panel(); },
   cNet(el) { V.cr.net = +el.dataset.val; V.cr.addr = ''; VIEWS.crypto.panel(); },
   cChip(el) { const C = V.cr; C.sellAll = el.dataset.val === 'max'; C.amount = C.sellAll ? String(Math.floor((DB.crypto.hold[C.sel] || 0) * Mkt.price(C.sel) * 100) / 100).replace('.', ',') : el.dataset.val; $('cpAmt').value = C.amount; document.querySelectorAll('[data-act="cChip"]').forEach(b => b.classList.toggle('on', b === el)); VIEWS.crypto.nums(); },
   cSendPct(el) { const C = V.cr, c = COIN[C.sel], h = DB.crypto.hold[C.sel] || 0, v = +el.dataset.val; C.sendAmt = crQty(h * v, c.dp); $('cpSend').value = C.sendAmt; VIEWS.crypto.nums(); },
