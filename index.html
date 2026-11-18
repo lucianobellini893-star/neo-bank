@@ -179,7 +179,7 @@ body.no-bnav .trd{padding-bottom:132px;min-height:calc(100dvh - 40px - env(safe-
 .trd-card{margin-bottom:auto;gap:8px!important;padding:14px 16px!important}.trd-card .kv{font-size:13.5px}.trd-card .kv b{text-align:right}
 .trd-btns{display:flex;flex-direction:column;gap:8px;margin-top:auto}.trd-btns .btn{height:48px}.trd-btns>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}.trd .btn.trd-w{background:var(--card)}.trd-top .tag.tag{background:var(--lime-soft);color:var(--lime-ink)}.trd-top .tag.pend{background:var(--warn-bg);color:var(--warn-ink)}
 .trw-h,.trw-rec{display:none}.trs{display:contents}
-.dlg-th{display:flex;align-items:center;justify-content:space-between;gap:10px}.qtimer{position:relative;width:28px;height:28px;flex:none;display:flex;align-items:center;justify-content:center}.qtimer svg{position:absolute;inset:0;transform:rotate(-90deg)}.qt-bg{fill:none;stroke:none}.qt-fg{fill:none;stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:1.4;stroke-linecap:round;stroke-dashoffset:0;animation:qtRun linear forwards}.qtimer b{position:relative;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}@keyframes qtRun{to{stroke-dashoffset:94.25}}.cr-acts,.cr-bd,.cr-sheet,.cr-histm{display:none!important}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
+.dlg-th{display:flex;align-items:center;justify-content:space-between;gap:10px}.qtimer{position:relative;width:28px;height:28px;flex:none;display:flex;align-items:center;justify-content:center}.qtimer svg{position:absolute;inset:0;transform:rotate(-90deg)}.qt-bg{fill:none;stroke:none}.qt-fg{fill:none;stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:1.4;stroke-linecap:round;stroke-dashoffset:0;animation:qtRun linear forwards}.qtimer b{position:relative;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}@keyframes qtRun{to{stroke-dashoffset:94.25}}.cr-acts,.cr-bd,.cr-sheet,.card.cr-histm{display:none}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
 .atip{display:none}
 .htx-all{display:none}
 .gpc-sp{display:none}
@@ -754,9 +754,16 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   #cHero .cr-hr > .seg button.on{background:var(--soft);color:var(--ink)}
   #cStats{display:none!important}
   .cr-hd{display:none!important}
-  .cr-histm{display:flex!important}
+  .card.cr-histm{display:flex}
   .cr-hall{font-size:13.5px;font-weight:700;color:var(--accent)}
-  .crh{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}.crh:first-child{border-top:0}
+  .crh{display:flex;width:100%;text-align:left;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);color:var(--ink);-webkit-tap-highlight-color:transparent}.crh:active{opacity:.6}
+  .crd{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:0 0 4px}
+  .crd-ic{margin-bottom:8px}.crd-ic .crh-t{width:26px;height:26px;box-shadow:0 0 0 3px var(--card)}
+  .crd-t{font-size:15px;color:var(--muted);font-weight:600}
+  .crd-a{font-size:32px;letter-spacing:-.03em;color:var(--ink)}
+  .crd-det{width:100%;background:var(--soft);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;margin-top:12px;text-align:left}.crd-det .kv{font-size:13.5px;gap:10px}.crd-det .kv b{text-align:right}
+  .crd-ok{color:var(--green)}
+  .crd-btns{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.crd-btns .btn{height:50px}.crh:first-child{border-top:0}
   .crh-ic{position:relative;display:flex;flex:none}
   .crh-t{position:absolute;right:-3px;bottom:-3px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--card)}
   .crh-t.buy{background:var(--accent);color:#fff}.crh-t.sell{background:#FDECEA;color:var(--red)}.crh-t.swap{background:#E4F7C6;color:#2E6A0C}.crh-t.send{background:var(--soft);color:var(--ink)}
@@ -816,7 +823,8 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .cr-sheet #cpPos{display:none!important}
   .cr-res{display:none}
   .cr-sheet.res .cr-res{display:block;padding:0 16px}
-  .cr-sheet.res #cPanel,.cr-sheet.res .cr-sh-h b,.cr-sheet.res .cr-sh-h button{display:none!important}
+  .cr-sheet.res #cPanel,.cr-sheet.res .cr-sh-h b,.cr-sheet.res:not(.det) .cr-sh-h button{display:none!important}
+  .cr-sheet.det .cr-sh-h{height:52px}
   .cr-sheet.res .cr-sh-h{height:28px}
   .crr{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:6px 0 4px}
   .crr-coin{position:relative;width:112px;height:112px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;perspective:600px}
@@ -1314,6 +1322,7 @@ function buyCrypto(id, amt, label) {
   DB.eur -= amt; DB.crypto.cost[id] = costOf(id) + amt; DB.crypto.hold[id] = (DB.crypto.hold[id] || 0) + q;
   addTx({ title: 'Покупка ' + c.sym, meta: (label ? label + ' · ' : 'Крипто · ') + nf(q, c.dp) + ' ' + c.sym, amount: -amt, cat: 'crypto', coin: id, qty: q, price: p, fee });
   DB.crypto.history.unshift({ id, title: (label || 'Покупка') + ' ' + c.sym, meta: new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + ' · курс ' + eur(p), amount: '+' + nf(q, c.dp) + ' ' + c.sym, plus: true });
+  crLog([['Монета', c.name + ' · ' + c.sym], ['Курс', eur(p)], ['Списано', eur(amt)], ['Комиссия', eur(fee)], ['Получено', nf(q, c.dp) + ' ' + c.sym]]);
   return { q, p, fee };
 }
 const frozen = () => !!(DB.security && DB.security.frozen);
@@ -2255,7 +2264,9 @@ VIEWS.transfers = {
 const crQty = (x, dp) => { const d = Math.min(dp, 8), m = 10 ** d; return String(Math.floor(x * m + 1e-9) / m).replace('.', ','); };
 const crFit = el => { if (!el) return; const n = (el.value || el.placeholder || '').length, base = el.closest('.sd-amt') ? 46 : 30; el.style.fontSize = (n <= 7 ? base : Math.max(base * 7 / n, base * .55)) + 'px'; };
 const crInSheet = () => document.body.classList.contains('cr-sh');
-function crRes(o) {
+function crLog(rows) { const h = DB.crypto.history[0]; if (!h) return; h.rows = rows; h.ts = h.ts || Date.now(); h.no = h.no || 'NEO-CR-' + Math.random().toString(36).slice(2, 8).toUpperCase(); save(); }
+function crRes(o, logOnly) {
+  crLog(o.rows); if (logOnly) return;
   const sh = $('crSheet'), box = $('crRes'); if (!sh || !box) return;
   const when = new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
   box.innerHTML = `<div class="crr"><div class="crr-coin"><i class="crr-ring"></i><span class="crr-ic">${coinIcon(o.coin, 84)}</span><span class="crr-ok">${ic('check', 20, 3)}</span></div>
@@ -2378,7 +2389,7 @@ VIEWS.crypto = {
     const hk = h => /^Покупка/.test(h.title) ? ['buy', 'plus'] : /^Продажа/.test(h.title) ? ['sell', 'minus'] : /^Обмен/.test(h.title) ? ['swap', 'transfer'] : ['send', 'send'];
     this.histM = () => {
       if (!$('cHistM')) return; const all = DB.crypto.history, n = V.cr.histAll ? 30 : 3;
-      $('cHistM').innerHTML = all.slice(0, n).map(h => { const [k, i] = hk(h); return `<div class="crh"><span class="crh-ic">${coinIcon(h.id, 38)}<i class="crh-t ${k}">${ic(i, 10, 3)}</i></span><span class="lim"><b>${esc(h.title)}</b><span>${esc(h.meta)}</span></span><b class="crh-a${h.plus ? ' up' : ''}">${esc(h.amount)}</b></div>`; }).join('') || '<p class="muted" style="font-size:14px;margin:6px 0 2px">Операций пока нет</p>';
+      $('cHistM').innerHTML = all.slice(0, n).map(h => { const [k, i] = hk(h); return `<button type="button" class="crh" data-act="crTx" data-i="${all.indexOf(h)}"><span class="crh-ic">${coinIcon(h.id, 38)}<i class="crh-t ${k}">${ic(i, 10, 3)}</i></span><span class="lim"><b>${esc(h.title)}</b><span>${esc(h.meta)}</span></span><b class="crh-a${h.plus ? ' up' : ''}">${esc(h.amount)}</b></button>`; }).join('') || '<p class="muted" style="font-size:14px;margin:6px 0 2px">Операций пока нет</p>';
       const b = $('cHistAll'); b.hidden = all.length <= 3; b.textContent = V.cr.histAll ? 'Свернуть' : 'Все';
     };
     this.panel = () => {
@@ -3381,8 +3392,8 @@ const ACT = {
     const sht = crInSheet();
     addNotif('crypto', 'Обмен выполнен', nf(q, a.dp) + ' ' + a.sym + ' → ' + nf(out, b.dp) + ' ' + b.sym, sht);
     C.swapAmt = ''; save(); refreshBadge(); VIEWS.crypto.lists(); VIEWS.crypto.head();
-    if (sht) crRes({ coin: C.to, wait: 'Обмен идёт…', done: 'Обмен выполнен', amt: '+' + nf(out, b.dp) + ' ' + b.sym, sub: nf(q, a.dp) + ' ' + a.sym + ' → ' + nf(out, b.dp) + ' ' + b.sym, rows: [['Отдано', nf(q, a.dp) + ' ' + a.sym], ['Получено', nf(out, b.dp) + ' ' + b.sym], ['Курс', '1 ' + a.sym + ' = ' + nf(pa / pb, b.dp) + ' ' + b.sym], ['Комиссия', eur(q * pa * feePct())]] });
-    else { VIEWS.crypto.panel(); toast('Обменено на ' + nf(out, b.dp) + ' ' + b.sym); }
+    crRes({ coin: C.to, wait: 'Обмен идёт…', done: 'Обмен выполнен', amt: '+' + nf(out, b.dp) + ' ' + b.sym, sub: nf(q, a.dp) + ' ' + a.sym + ' → ' + nf(out, b.dp) + ' ' + b.sym, rows: [['Отдано', nf(q, a.dp) + ' ' + a.sym], ['Получено', nf(out, b.dp) + ' ' + b.sym], ['Курс', '1 ' + a.sym + ' = ' + nf(pa / pb, b.dp) + ' ' + b.sym], ['Комиссия', eur(q * pa * feePct())]] }, !sht);
+    if (!sht) { VIEWS.crypto.panel(); toast('Обменено на ' + nf(out, b.dp) + ' ' + b.sym); }
   },
   hide() { DB.hidden = !DB.hidden; save(); rerenderMain(); },
   alertTip() { go('crypto'); setTimeout(() => { const p = $('alPrice'); if (p) { p.closest('.card').scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => p.focus({ preventScroll: true }), 450); } }, 350); },
@@ -3455,9 +3466,26 @@ const ACT = {
   cMktSort(el) { const C = V.cr; C.msort = el.dataset.val; document.querySelectorAll('#cMktSeg button').forEach(b => b.classList.toggle('on', b.dataset.val === C.msort)); VIEWS.crypto.lists(); },
   cPick(el) { const C = V.cr; if (C.sel !== el.dataset.val) { C.sel = el.dataset.val; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); } VIEWS.crypto.head(); VIEWS.crypto.lists(); VIEWS.crypto.panel(); },
   cAct(el) { V.cr.side = el.dataset.val; const sh = $('crSheet'), p = $('cPanel'); if (sh && p && p.parentNode !== sh) sh.appendChild(p); VIEWS.crypto.panel(); $('crShT').textContent = { buy: 'Купить', sell: 'Продать', swap: 'Обмен', send: 'Отправить', receive: 'Получить' }[el.dataset.val]; document.body.classList.add('cr-sh', 'no-bnav'); },
+  crTx(el) {
+    const h = DB.crypto.history[+el.dataset.i]; if (!h) return;
+    const k = /^Покупка/.test(h.title) ? ['buy', 'plus'] : /^Продажа/.test(h.title) ? ['sell', 'minus'] : /^Обмен/.test(h.title) ? ['swap', 'transfer'] : ['send', 'send'];
+    const when = h.ts ? new Date(h.ts).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : h.meta.split(' · ')[0];
+    const rows = (h.rows || [['Детали', h.meta.split(' · ').slice(1).join(' · ') || '—']]).filter(r => r[0] !== 'Монета').concat([['Дата', when], ['Номер', h.no || '—']]);
+    $('crRes').innerHTML = `<div class="crd"><span class="crh-ic crd-ic">${coinIcon(h.id, 64)}<i class="crh-t ${k[0]}">${ic(k[1], 13, 3)}</i></span>
+      <span class="crd-t">${esc(h.title)}</span><b class="crd-a">${esc(h.amount)}</b>
+      <div class="crd-det">${rows.map(([a, b]) => `<div class="kv"><span class="muted">${a}</span><b>${esc(b)}</b></div>`).join('')}<div class="kv"><span class="muted">Статус</span><b class="crd-ok">● Выполнено</b></div></div>
+      <div class="crd-btns"><button class="btn" data-act="crTxPdf" data-i="${el.dataset.i}">${ic('doc', 16)}Чек PDF</button><button class="btn blk" data-act="crTxAgain" data-k="${k[0]}" data-id="${h.id}">${k[0] === 'buy' ? 'Купить ещё' : k[0] === 'sell' ? 'Продать ещё' : k[0] === 'swap' ? 'Обменять ещё' : 'Отправить ещё'}</button></div></div>`;
+    const sh = $('crSheet'); sh.classList.add('res', 'det'); sh.scrollTop = 0; $('crShT').textContent = ''; document.body.classList.add('cr-sh', 'no-bnav');
+  },
+  crTxAgain(el) { const k = el.dataset.k; V.cr.sel = el.dataset.id; ACT.cShClose(true); setTimeout(() => ACT.cAct({ dataset: { val: k } }), 360); },
+  crTxPdf(el) {
+    const h = DB.crypto.history[+el.dataset.i]; if (!h) return; const w = window.open('', '_blank'); if (!w) return toast('Разрешите всплывающие окна');
+    const rows = (h.rows || []).concat([['Дата', h.ts ? new Date(h.ts).toLocaleString('ru-RU') : h.meta], ['Номер', h.no || '—'], ['Статус', 'Выполнено']]);
+    w.document.write(`<html><head><meta charset="utf-8"><title>Квитанция ${esc(h.no || '')}</title></head><body style="font-family:system-ui;padding:40px;max-width:560px;color:#0E0F12"><h2 style="margin:0 0 4px">neo</h2><p style="color:#6B6F7B;margin:0 0 28px">Квитанция о криптооперации · ДЕМО</p><p style="font-size:16px;color:#6B6F7B;margin:0">${esc(h.title)}</p><h1 style="margin:4px 0 20px">${esc(h.amount)}</h1><table style="width:100%;border-collapse:collapse;font-size:14px">${rows.map(([a, b]) => `<tr><td style="padding:9px 0;border-bottom:1px solid #eee;color:#6B6F7B">${esc(a)}</td><td style="padding:9px 0;border-bottom:1px solid #eee;text-align:right;font-weight:600">${esc(b)}</td></tr>`).join('')}</table><script>print()<\/script></body></html>`); w.document.close();
+  },
   crHistAll() { V.cr.histAll = !V.cr.histAll; VIEWS.crypto.histM(); },
   crrMore(el) { const r = el.closest('.crr'), o = !r.classList.contains('more'); r.classList.toggle('more', o); el.setAttribute('aria-expanded', o); el.firstChild.textContent = o ? 'Скрыть ' : 'Подробнее '; },
-  cShClose() { const sh = $('crSheet'), wasRes = sh && sh.classList.contains('res'); document.body.classList.remove('cr-sh', 'no-bnav'); if (wasRes) { setTimeout(() => { sh.classList.remove('res'); $('crRes').innerHTML = ''; VIEWS.crypto.panel(); }, 340); scrollTo({ top: 0, behavior: 'smooth' }); } },
+  cShClose(keep) { const sh = $('crSheet'), wasRes = sh && sh.classList.contains('res'), det = sh && sh.classList.contains('det'); document.body.classList.remove('cr-sh', 'no-bnav'); if (wasRes) { setTimeout(() => { sh.classList.remove('res', 'det'); $('crRes').innerHTML = ''; VIEWS.crypto.panel(); }, 340); if (!det && keep !== true) scrollTo({ top: 0, behavior: 'smooth' }); } },
   cSide(el) { V.cr.side = el.dataset.val; VIEWS.crypto.panel(); if (innerWidth < 900 && el.classList.contains('act')) $('cPanel').scrollIntoView({ behavior: 'smooth' }); },
   cNetNext() { const C = V.cr, n = COIN[C.sel].nets.length; C.net = (C.net + 1) % n; C.addr = ''; VIEWS.crypto.panel(); },
   cNet(el) { V.cr.net = +el.dataset.val; V.cr.addr = ''; VIEWS.crypto.panel(); },
@@ -3485,8 +3513,8 @@ const ACT = {
     const sht = crInSheet();
     addNotif('crypto', (buy ? 'Куплено ' : 'Продано ') + nf(qNow, c.dp) + ' ' + c.sym, 'Курс ' + eur(pNow) + ' · ' + eur(amt), sht); refreshBadge();
     save(); VIEWS.crypto.lists(); VIEWS.crypto.head(); VIEWS.crypto.nums();
-    if (sht) crRes({ coin: C.sel, wait: buy ? 'Покупка идёт…' : 'Продажа идёт…', done: buy ? 'Покупка выполнена' : 'Продажа выполнена', amt: (buy ? '+' : '−') + nf(qNow, c.dp) + ' ' + c.sym, sub: buy ? eur(amt) + ' → ' + nf(qNow, c.dp) + ' ' + c.sym + ' · курс ' + eur(pNow) : nf(qNow, c.dp) + ' ' + c.sym + ' → ' + eur(amt - fee) + ' · курс ' + eur(pNow), rows: [['Монета', c.name + ' · ' + c.sym], ['Курс', eur(pNow)], [buy ? 'Списано' : 'Продано на', eur(amt)], ['Комиссия', eur(fee)], [buy ? 'Получено' : 'Зачислено', buy ? nf(qNow, c.dp) + ' ' + c.sym : eur(amt - fee)]] });
-    else toast((buy ? 'Куплено ' : 'Продано ') + nf(qNow, c.dp) + ' ' + c.sym);
+    crRes({ coin: C.sel, wait: buy ? 'Покупка идёт…' : 'Продажа идёт…', done: buy ? 'Покупка выполнена' : 'Продажа выполнена', amt: (buy ? '+' : '−') + nf(qNow, c.dp) + ' ' + c.sym, sub: buy ? eur(amt) + ' → ' + nf(qNow, c.dp) + ' ' + c.sym + ' · курс ' + eur(pNow) : nf(qNow, c.dp) + ' ' + c.sym + ' → ' + eur(amt - fee) + ' · курс ' + eur(pNow), rows: [['Монета', c.name + ' · ' + c.sym], ['Курс', eur(pNow)], [buy ? 'Списано' : 'Продано на', eur(amt)], ['Комиссия', eur(fee)], [buy ? 'Получено' : 'Зачислено', buy ? nf(qNow, c.dp) + ' ' + c.sym : eur(amt - fee)]] }, !sht);
+    if (!sht) toast((buy ? 'Куплено ' : 'Продано ') + nf(qNow, c.dp) + ' ' + c.sym);
   },
   async cSend() {
     if (!guardOut()) return;
@@ -3498,8 +3526,8 @@ const ACT = {
     const sht = crInSheet();
     addNotif('crypto', 'Отправлено ' + nf(q, c.dp) + ' ' + c.sym, net.name + ' · ' + a.slice(0, 6) + '…' + a.slice(-4) + ' · демо', sht); refreshBadge();
     C.addr = ''; C.sendAmt = ''; save(); VIEWS.crypto.lists(); VIEWS.crypto.head();
-    if (sht) crRes({ coin: C.sel, wait: 'Отправка идёт…', done: 'Отправлено', amt: '−' + nf(q, c.dp) + ' ' + c.sym, sub: 'Демо: в сеть не отправляется', rows: [['Сеть', net.name], ['Адрес', a.slice(0, 8) + '…' + a.slice(-6)], ['Сумма', nf(q, c.dp) + ' ' + c.sym], ['Комиссия сети', net.fee]] });
-    else { VIEWS.crypto.panel(); toast('Демо: перевод записан, в сеть не отправлен'); }
+    crRes({ coin: C.sel, wait: 'Отправка идёт…', done: 'Отправлено', amt: '−' + nf(q, c.dp) + ' ' + c.sym, sub: 'Демо: в сеть не отправляется', rows: [['Сеть', net.name], ['Адрес', a.slice(0, 8) + '…' + a.slice(-6)], ['Сумма', nf(q, c.dp) + ' ' + c.sym], ['Комиссия сети', net.fee]] }, !sht);
+    if (!sht) { VIEWS.crypto.panel(); toast('Демо: перевод записан, в сеть не отправлен'); }
   },
   async shareAddr() { const a = V.cr.recvAddr; if (navigator.share) { try { await navigator.share({ title: 'Мой адрес', text: a }); } catch (e) {} } else ACT.copy({ dataset: { val: a } }); },
 };
