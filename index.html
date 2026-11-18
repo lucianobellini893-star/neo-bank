@@ -789,7 +789,7 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .rv-net{height:38px;padding:0 12px;border-radius:999px;background:var(--soft);display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink)}.rv-net span{color:var(--muted);font-weight:600}.rv-net svg{color:var(--muted)}.rv-net:disabled{opacity:1}
   .rv-qr{align-self:center;padding:14px;border-radius:22px;background:#fff;box-shadow:0 0 0 1px var(--line),0 10px 30px -14px rgba(14,15,18,.22)}.rv-qr .qr{margin:0;padding:0;background:none;border:0;width:180px;height:180px}.rv-qr .qr img,.rv-qr .qr canvas{display:block}
   .rv-addr{text-align:center;font-size:13.5px;line-height:1.5;word-break:break-all;padding:0 14px}
-  .rv-note{display:flex;gap:6px;font-size:12px;color:var(--muted);line-height:1.45}.rv-note svg{flex:none;margin-top:2px}
+  .rv-note{display:flex;gap:6px;font-size:12px;color:var(--muted);line-height:1.45}.rv-note svg{flex:none;margin-top:2px}.rv-note b{font-weight:600;color:var(--ink)}
   .sd{display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0 4px}
   .sd-coin{background:var(--soft)!important;box-shadow:none!important;margin-bottom:6px}
   .sd-amt{display:flex;width:100%}.sd-amt input{width:100%;border:0;background:transparent;text-align:center;font:inherit;font-size:46px;font-weight:800;letter-spacing:-.04em;color:var(--ink);padding:0;outline:none;line-height:1.1}.sd-amt input::placeholder{color:#B8BAC2}
@@ -978,8 +978,19 @@ const CONFIG = {
   coingecko: 'https://api.coingecko.com/api/v3',
   cryptoFeePct: 0.015,
   coinIconCdn: 'https://cdn.jsdelivr.net/npm/cryptocurrency-icons@0.18.1/svg/color/',
-  // Production: your backend asks a custody provider (Fireblocks, BitGo, …) for a deposit address.
-  getDepositAddress: async (coin, net) => 'DEMO-' + coin.sym + '-' + net.id.toUpperCase() + '-ADDRESS',
+  // Deposit addresses come from the custody provider (BitGo) through /api/deposit-address on Vercel.
+  // One address per network is kept on this device; tokens (USDC, LINK…) share their network's address.
+  // If the provider isn't configured yet, a clearly invalid DEMO address is shown so nobody can send real funds to it.
+  depositApi: '/api/deposit-address',
+  getDepositAddress: async (coin, net) => {
+    const book = DB.crypto.addrs || (DB.crypto.addrs = {}), hit = book[net.id];
+    if (hit && hit.a) return hit;
+    try {
+      const r = await fetch(CONFIG.depositApi, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ net: net.id, label: 'neo ' + (DB.user.email || DB.user.phone || DB.user.name || '') }) });
+      if (r.ok) { const j = await r.json(); if (j.address) { book[net.id] = { a: j.address, test: !!j.testnet }; save(); return book[net.id]; } }
+    } catch (e) { /* offline or local file — fall back to demo */ }
+    return { a: 'DEMO-' + coin.sym + '-' + net.id.toUpperCase() + '-ADDRESS', demo: true };
+  },
 };
 
 /* ---------------- utils ---------------- */
@@ -2431,9 +2442,10 @@ VIEWS.crypto = {
             <div class="rv-qr"><div class="qr" id="cpQr"></div></div>
             <span class="rv-addr mono" id="cpRecvAddr">…</span>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn pri" id="cpCopy" data-act="copy" data-val="">${ic('copy', 16)}Скопировать</button><button class="btn" data-act="shareAddr">${ic('share', 16)}Поделиться</button></div>
-            <span class="rv-note">${ic('info', 14, 2.2)}<span>Только ${c.sym} в сети ${esc(net.name)} — другие активы потеряются. Зачисление после ${net.conf}.</span></span>`;
-          CONFIG.getDepositAddress(c, net).then(a => {
-            if (!$('cpRecvAddr')) return; C.recvAddr = a; $('cpRecvAddr').textContent = a; $('cpCopy').dataset.val = a;
+            <span class="rv-note">${ic('info', 14, 2.2)}<span>Только ${c.sym} в сети ${esc(net.name)} — другие активы потеряются. Зачисление после ${net.conf}.<b id="rvTag"></b></span></span>`;
+          CONFIG.getDepositAddress(c, net).then(o => {
+            const a = o.a; if (!$('cpRecvAddr')) return; C.recvAddr = a; $('cpRecvAddr').textContent = a; $('cpCopy').dataset.val = a;
+            const tag = $('rvTag'); if (tag) { tag.textContent = o.demo ? ' Демо-адрес: провайдер ещё не подключён — не отправляйте сюда средства.' : o.test ? ' Тестовая сеть: принимает только тестовые монеты.' : ''; }
             if (window.QRCode) { $('cpQr').innerHTML = ''; new QRCode($('cpQr'), { text: a, width: 180, height: 180, colorDark: '#0E0F12', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M }); }
           });
         } else {
@@ -2442,8 +2454,8 @@ VIEWS.crypto = {
             <div class="box" style="gap:6px;padding:14px 16px"><span class="muted" style="font-size:12px;font-weight:600">Ваш адрес ${c.sym} · ${esc(net.name)}</span><span class="mono" id="cpRecvAddr" style="font-size:13px;font-weight:600;word-break:break-all">…</span></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn pri" id="cpCopy" data-act="copy" data-val="">${ic('copy', 16)}Скопировать</button><button class="btn" data-act="shareAddr">${ic('share', 16)}Поделиться</button></div>
             <div class="warn">Отправляйте на этот адрес только <b>${c.sym}</b> в сети <b>${esc(net.name)}</b>. Активы из другой сети будут потеряны. Зачисление после ${net.conf}.<br><b>Демо:</b> адрес-заглушка, в продакшене его выдаёт кастоди-провайдер.</div>`;
-          CONFIG.getDepositAddress(c, net).then(a => {
-            if (!$('cpRecvAddr')) return; C.recvAddr = a; $('cpRecvAddr').textContent = a; $('cpCopy').dataset.val = a;
+          CONFIG.getDepositAddress(c, net).then(o => {
+            const a = o.a; if (!$('cpRecvAddr')) return; C.recvAddr = a; $('cpRecvAddr').textContent = a; $('cpCopy').dataset.val = a;
             if (window.QRCode) { $('cpQr').innerHTML = ''; new QRCode($('cpQr'), { text: a, width: 172, height: 172, colorDark: '#0E0F12', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M }); }
           });
         }
