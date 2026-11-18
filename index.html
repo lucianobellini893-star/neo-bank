@@ -179,7 +179,7 @@ body.no-bnav .trd{padding-bottom:132px;min-height:calc(100dvh - 40px - env(safe-
 .trd-card{margin-bottom:auto;gap:8px!important;padding:14px 16px!important}.trd-card .kv{font-size:13.5px}.trd-card .kv b{text-align:right}
 .trd-btns{display:flex;flex-direction:column;gap:8px;margin-top:auto}.trd-btns .btn{height:48px}.trd-btns>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}.trd .btn.trd-w{background:var(--card)}.trd-top .tag.tag{background:var(--lime-soft);color:var(--lime-ink)}.trd-top .tag.pend{background:var(--warn-bg);color:var(--warn-ink)}
 .trw-h,.trw-rec{display:none}.trs{display:contents}
-.dlg-th{display:flex;align-items:center;justify-content:space-between;gap:10px}.qtimer{position:relative;width:28px;height:28px;flex:none;display:flex;align-items:center;justify-content:center}.qtimer svg{position:absolute;inset:0;transform:rotate(-90deg)}.qt-bg{fill:none;stroke:none}.qt-fg{fill:none;stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:1.4;stroke-linecap:round;stroke-dashoffset:0;animation:qtRun linear forwards}.qtimer b{position:relative;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}@keyframes qtRun{to{stroke-dashoffset:94.25}}.cr-acts,.cr-bd,.cr-sheet{display:none}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
+.dlg-th{display:flex;align-items:center;justify-content:space-between;gap:10px}.qtimer{position:relative;width:28px;height:28px;flex:none;display:flex;align-items:center;justify-content:center}.qtimer svg{position:absolute;inset:0;transform:rotate(-90deg)}.qt-bg{fill:none;stroke:none}.qt-fg{fill:none;stroke:color-mix(in srgb,var(--muted) 70%,transparent);stroke-width:1.4;stroke-linecap:round;stroke-dashoffset:0;animation:qtRun linear forwards}.qtimer b{position:relative;font-size:11px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted)}@keyframes qtRun{to{stroke-dashoffset:94.25}}.cr-acts,.cr-bd,.cr-sheet,.cr-histm{display:none!important}.cr-sub{color:#C4C6CE}.cr-up{color:#9DD43A}.cr-dn{color:#FF8A80}.cr-ar{color:#A9ADB9}.trl-m{display:none}
 .atip{display:none}
 .htx-all{display:none}
 .gpc-sp{display:none}
@@ -753,6 +753,15 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   #cHero .cr-hr > .seg button{color:var(--muted);background:transparent;flex:none;padding:0 12px}
   #cHero .cr-hr > .seg button.on{background:var(--soft);color:var(--ink)}
   #cStats{display:none!important}
+  .cr-hd{display:none!important}
+  .cr-histm{display:flex!important}
+  .cr-hall{font-size:13.5px;font-weight:700;color:var(--accent)}
+  .crh{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}.crh:first-child{border-top:0}
+  .crh-ic{position:relative;display:flex;flex:none}
+  .crh-t{position:absolute;right:-3px;bottom:-3px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--card)}
+  .crh-t.buy{background:var(--accent);color:#fff}.crh-t.sell{background:#FDECEA;color:var(--red)}.crh-t.swap{background:#E4F7C6;color:#2E6A0C}.crh-t.send{background:var(--soft);color:var(--ink)}
+  .crh .lim{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.crh .lim b{font-size:14px}.crh .lim span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .crh-a{font-size:14px;white-space:nowrap}.crh-a.up{color:var(--green)}
   .cr-acts{order:2;display:grid;grid-template-columns:repeat(5,1fr);background:#E8E8E3;border-radius:0 0 24px 24px;margin:-30px 0 14px;padding:42px 6px 14px;position:relative;z-index:0}
   .cr-acts button{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--ink);-webkit-tap-highlight-color:transparent}
   .cr-acts button[data-val="receive"] svg{transform:rotate(180deg)}
@@ -2286,8 +2295,9 @@ VIEWS.crypto = {
         <div class="hrow" style="margin-bottom:6px"><h2>Мои активы</h2><span class="muted" style="font-size:13px" id="cHoldN"></span></div>
         <div class="stack" id="cAlloc" style="margin-bottom:8px"></div>
         <div id="cHold"></div>
-        <h2 style="margin-top:18px">История</h2><div id="cHist"></div>
+        <h2 class="cr-hd" style="margin-top:18px">История</h2><div id="cHist" class="cr-hd"></div>
       </div>
+        <div class="card cr-histm" style="gap:4px"><div class="hrow"><h2>История</h2><button type="button" class="cr-hall" id="cHistAll" data-act="crHistAll"></button></div><div id="cHistM"></div></div>
         <form class="card" id="alForm" novalidate>
           <div class="hrow"><h2>Ценовые уведомления</h2><span class="tag demo" id="alCount"></span></div>
           <div class="tbar">
@@ -2363,6 +2373,13 @@ VIEWS.crypto = {
       }
       $('cUpd').innerHTML = Mkt.mode === 'offline' ? '<i class="dot off"></i>Офлайн-демо' : '<i class="dot"></i>Live · ' + new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       $('cHist').innerHTML = DB.crypto.history.slice(0, 8).map(h => `<div class="li" style="border-top:1px solid var(--line)">${coinIcon(h.id, 32)}<span class="lim"><b style="font-size:14px">${esc(h.title)}</b><span style="font-size:12px">${esc(h.meta)}</span></span><span class="lir"><b class="${h.plus ? 'up' : ''}" style="font-size:14px">${esc(h.amount)}</b><span class="tag demo">Демо</span></span></div>`).join('') || '<p class="muted" style="font-size:14px">Операций пока нет</p>';
+      this.histM && this.histM();
+    };
+    const hk = h => /^Покупка/.test(h.title) ? ['buy', 'plus'] : /^Продажа/.test(h.title) ? ['sell', 'minus'] : /^Обмен/.test(h.title) ? ['swap', 'transfer'] : ['send', 'send'];
+    this.histM = () => {
+      if (!$('cHistM')) return; const all = DB.crypto.history, n = V.cr.histAll ? 30 : 3;
+      $('cHistM').innerHTML = all.slice(0, n).map(h => { const [k, i] = hk(h); return `<div class="crh"><span class="crh-ic">${coinIcon(h.id, 38)}<i class="crh-t ${k}">${ic(i, 10, 3)}</i></span><span class="lim"><b>${esc(h.title)}</b><span>${esc(h.meta)}</span></span><b class="crh-a${h.plus ? ' up' : ''}">${esc(h.amount)}</b></div>`; }).join('') || '<p class="muted" style="font-size:14px;margin:6px 0 2px">Операций пока нет</p>';
+      const b = $('cHistAll'); b.hidden = all.length <= 3; b.textContent = V.cr.histAll ? 'Свернуть' : 'Все';
     };
     this.panel = () => {
       const c = COIN[C.sel], el = $('cPanel');
@@ -3438,6 +3455,7 @@ const ACT = {
   cMktSort(el) { const C = V.cr; C.msort = el.dataset.val; document.querySelectorAll('#cMktSeg button').forEach(b => b.classList.toggle('on', b.dataset.val === C.msort)); VIEWS.crypto.lists(); },
   cPick(el) { const C = V.cr; if (C.sel !== el.dataset.val) { C.sel = el.dataset.val; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); } VIEWS.crypto.head(); VIEWS.crypto.lists(); VIEWS.crypto.panel(); },
   cAct(el) { V.cr.side = el.dataset.val; const sh = $('crSheet'), p = $('cPanel'); if (sh && p && p.parentNode !== sh) sh.appendChild(p); VIEWS.crypto.panel(); $('crShT').textContent = { buy: 'Купить', sell: 'Продать', swap: 'Обмен', send: 'Отправить', receive: 'Получить' }[el.dataset.val]; document.body.classList.add('cr-sh', 'no-bnav'); },
+  crHistAll() { V.cr.histAll = !V.cr.histAll; VIEWS.crypto.histM(); },
   crrMore(el) { const r = el.closest('.crr'), o = !r.classList.contains('more'); r.classList.toggle('more', o); el.setAttribute('aria-expanded', o); el.firstChild.textContent = o ? 'Скрыть ' : 'Подробнее '; },
   cShClose() { const sh = $('crSheet'), wasRes = sh && sh.classList.contains('res'); document.body.classList.remove('cr-sh', 'no-bnav'); if (wasRes) { setTimeout(() => { sh.classList.remove('res'); $('crRes').innerHTML = ''; VIEWS.crypto.panel(); }, 340); scrollTo({ top: 0, behavior: 'smooth' }); } },
   cSide(el) { V.cr.side = el.dataset.val; VIEWS.crypto.panel(); if (innerWidth < 900 && el.classList.contains('act')) $('cPanel').scrollIntoView({ behavior: 'smooth' }); },
