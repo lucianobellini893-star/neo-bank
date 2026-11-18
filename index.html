@@ -756,9 +756,9 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .cr-hd{display:none!important}
   .card.cr-histm{display:flex}
   .col > #alForm{display:none!important}
-  .cr-albn{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:22px;padding:14px;transition:opacity .24s,transform .24s}.cr-albn[hidden]{display:none}.cr-albn.out{opacity:0;transform:scale(.97)}
-  .cr-albi{width:42px;height:42px;border-radius:14px;background:#E3E8FF;color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none}
-  .cr-albn .lim{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.cr-albn .lim b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cr-albn .lim span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cr-albn{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:22px;padding:14px;transition:opacity .24s,transform .24s}.cr-albn[hidden]{display:none}.cr-albn.out{opacity:0;transform:scale(.97)}
+  .cr-albi{width:38px;height:38px;border-radius:14px;background:#E3E8FF;color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none}
+  .cr-albn .lim{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.cr-albn .lim b{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cr-albn .lim span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .cr-alc{height:34px;padding:0 13px;border-radius:999px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;flex:none}
   .cr-alx{width:26px;height:26px;border-radius:50%;background:var(--soft);color:var(--ink);display:flex;align-items:center;justify-content:center;flex:none}
   .cr-sheet:not(.al) #alForm{display:none!important}.cr-sheet.al #cPanel,.cr-sheet.al #crRes{display:none!important}
@@ -2319,7 +2319,7 @@ VIEWS.crypto = {
         <h2 class="cr-hd" style="margin-top:18px">История</h2><div id="cHist" class="cr-hd"></div>
       </div>
         <div class="card cr-histm" style="gap:4px"><div class="hrow"><h2>История</h2><button type="button" class="cr-hall" id="cHistAll" data-act="crHistAll"></button></div><div id="cHistM"></div></div>
-        <div class="cr-albn" id="crAlBn"${DB.settings.alertCard === false ? ' hidden' : ''}><span class="cr-albi">${ic('bell', 19, 2.2)}</span><span class="lim"><b>Ценовые уведомления</b><span id="crAlSub">Сообщим, когда цена дойдёт до цели</span></span><button type="button" class="cr-alc" data-act="crAlOpen">Создать</button><button type="button" class="cr-alx" data-act="crAlOff" aria-label="Скрыть">${ic('x', 14, 2.4)}</button></div>
+        <div class="cr-albn" id="crAlBn"${DB.settings.alertCard === false ? ' hidden' : ''}><span class="cr-albi">${ic('bell', 19, 2.2)}</span><span class="lim"><b>Ценовые уведомления</b><span id="crAlSub">Сообщим о нужной цене</span></span><button type="button" class="cr-alc" data-act="crAlOpen">Создать</button><button type="button" class="cr-alx" data-act="crAlOff" aria-label="Скрыть">${ic('x', 14, 2.4)}</button></div>
         <form class="card" id="alForm" novalidate>
           <div class="hrow"><h2>Ценовые уведомления</h2><span class="tag demo" id="alCount"></span></div>
           <div class="tbar">
@@ -2560,7 +2560,7 @@ VIEWS.crypto = {
       try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch (err) {}
     };
     this.alerts = alerts; prefill(); alerts();
-    const alSub = () => { const n = DB.alerts.filter(a => a.active).length, sb = $('crAlSub'); if (sb) sb.textContent = n ? n + ' ' + (n === 1 ? 'активное' : 'активных') + ' · добавить ещё' : 'Сообщим, когда цена дойдёт до цели'; }; this.alSub = alSub; alSub();
+    const alSub = () => { const n = DB.alerts.filter(a => a.active).length, sb = $('crAlSub'); if (sb) sb.textContent = n ? n + ' ' + (n === 1 ? 'активное' : n < 5 ? 'активных' : 'активных') : 'Сообщим о нужной цене'; }; this.alSub = alSub; alSub();
     this.loadChart = loadChart; this.lists = lists; this.head = head;
     const tabsFix = () => { const t = document.querySelector('#cPanel .tabs4'); if (!t) return; const upd = () => t.classList.toggle('end', t.scrollLeft + t.clientWidth >= t.scrollWidth - 4); const on = t.querySelector('.on'); if (on && t.scrollWidth > t.clientWidth) t.scrollLeft = Math.max(0, on.offsetLeft - (t.clientWidth - on.offsetWidth) / 2); upd(); t.onscroll = upd; };
     new MutationObserver(tabsFix).observe($('cPanel'), { childList: true });
