@@ -985,7 +985,7 @@ const CONFIG = {
   getDepositAddress: async (coin, net) => {
     const book = DB.crypto.addrs || (DB.crypto.addrs = {}), hit = book[net.id];
     if (hit && hit.a) return hit;
-    try {
+    if (location.protocol !== 'file:') try {
       const r = await fetch(CONFIG.depositApi, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ net: net.id, label: 'neo ' + (DB.user.email || DB.user.phone || DB.user.name || '') }) });
       if (r.ok) { const j = await r.json(); if (j.address) { book[net.id] = { a: j.address, test: !!j.testnet }; save(); return book[net.id]; } }
     } catch (e) { /* offline or local file — fall back to demo */ }
