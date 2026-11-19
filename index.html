@@ -834,6 +834,11 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .sw-pc{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.sw-pc button{outline:none;-webkit-tap-highlight-color:transparent;height:36px;border-radius:999px;background:var(--soft);font-size:13px;font-weight:700;color:var(--ink)}
   .sw-ln{text-align:center;font-size:12.5px;color:var(--muted)}
   .rv-top{display:flex;justify-content:center;gap:8px}
+  .netpop{position:fixed;z-index:95;background:var(--card);border-radius:20px;box-shadow:0 18px 50px -12px rgba(14,15,18,.35),0 0 0 1px var(--line);padding:8px;display:flex;flex-direction:column;gap:2px;opacity:0;transform:translateY(-6px) scale(.98);pointer-events:none;transition:opacity .18s,transform .18s}
+  .netpop.on{opacity:1;transform:none;pointer-events:auto}
+  .np-h{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 10px 4px}
+  .netpop button{display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;text-align:left;color:var(--ink)}.netpop button.on{background:var(--soft)}.netpop button span{flex:1;display:flex;flex-direction:column;gap:2px}.netpop button b{font-size:14px}.netpop button small{font-size:12px;color:var(--muted)}.netpop button svg{color:var(--accent)}
+  .np-w{font-size:11.5px;color:var(--muted);line-height:1.4;padding:6px 10px 4px}
   .rv-net{height:38px;padding:0 12px;border-radius:999px;background:var(--soft);display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink)}.rv-net span{color:var(--muted);font-weight:600}.rv-net svg{color:var(--muted)}.rv-net:disabled{opacity:1}
   .rv-qr{align-self:center;padding:14px;border-radius:22px;background:#fff;box-shadow:0 0 0 1px var(--line),0 10px 30px -14px rgba(14,15,18,.22)}.rv-qr .qr{margin:0;padding:0;background:none;border:0;width:180px;height:180px}.rv-qr .qr img,.rv-qr .qr canvas{display:block}
   .rv-addr{text-align:center;font-size:13.5px;line-height:1.5;word-break:break-all;padding:0 14px}
@@ -3574,9 +3579,18 @@ const ACT = {
   alCardTog(el) { DB.settings.alertCard = DB.settings.alertCard === false; save(); el.querySelector('.toggle').classList.toggle('on', DB.settings.alertCard !== false); },
   crHistAll() { V.cr.histAll = !V.cr.histAll; VIEWS.crypto.histM(); },
   crrMore(el) { const r = el.closest('.crr'), o = !r.classList.contains('more'); r.classList.toggle('more', o); el.setAttribute('aria-expanded', o); el.firstChild.textContent = o ? 'Скрыть ' : 'Подробнее '; },
-  cShClose(keep) { const shA = $('crSheet'); if (shA && shA.classList.contains('al')) { document.body.classList.remove('cr-sh', 'no-bnav'); setTimeout(() => shA.classList.remove('al'), 340); return; } const sh = $('crSheet'), wasRes = sh && sh.classList.contains('res'), det = sh && sh.classList.contains('det'); document.body.classList.remove('cr-sh', 'no-bnav'); if (wasRes) { setTimeout(() => { sh.classList.remove('res', 'det'); $('crRes').innerHTML = ''; VIEWS.crypto.panel(); }, 340); if (!det && keep !== true) scrollTo({ top: 0, behavior: 'smooth' }); } },
+  cShClose(keep) { if ($('netPop')) $('netPop').classList.remove('on'); const shA = $('crSheet'); if (shA && shA.classList.contains('al')) { document.body.classList.remove('cr-sh', 'no-bnav'); setTimeout(() => shA.classList.remove('al'), 340); return; } const sh = $('crSheet'), wasRes = sh && sh.classList.contains('res'), det = sh && sh.classList.contains('det'); document.body.classList.remove('cr-sh', 'no-bnav'); if (wasRes) { setTimeout(() => { sh.classList.remove('res', 'det'); $('crRes').innerHTML = ''; VIEWS.crypto.panel(); }, 340); if (!det && keep !== true) scrollTo({ top: 0, behavior: 'smooth' }); } },
   cSide(el) { V.cr.side = el.dataset.val; VIEWS.crypto.panel(); if (innerWidth < 900 && el.classList.contains('act')) $('cPanel').scrollIntoView({ behavior: 'smooth' }); },
-  cNetNext() { const C = V.cr, n = COIN[C.sel].nets.length; C.net = (C.net + 1) % n; C.addr = ''; VIEWS.crypto.panel(); },
+  cNetNext(el) {
+    const C = V.cr, nets = COIN[C.sel].nets.map(n => NETS[n]); let pop = $('netPop');
+    if (pop && pop.classList.contains('on')) return pop.classList.remove('on');
+    if (!pop) { pop = document.createElement('div'); pop.id = 'netPop'; pop.className = 'netpop'; pop.setAttribute('role', 'listbox'); document.body.appendChild(pop);
+      document.addEventListener('click', e => { if (pop.classList.contains('on') && !pop.contains(e.target) && !e.target.closest('[data-act="cNetNext"]')) pop.classList.remove('on'); }, true); }
+    pop.innerHTML = `<span class="np-h">Выберите сеть</span>` + nets.map((n, i) => `<button type="button" role="option" aria-selected="${i === C.net}" class="${i === C.net ? 'on' : ''}" data-act="cNetPick" data-val="${i}"><span><b>${esc(n.name)}</b><small>Комиссия ${n.fee} · ${n.time}</small></span>${i === C.net ? ic('check', 16, 2.6) : ''}</button>`).join('') + `<span class="np-w">Отправляйте монеты только в выбранной сети, иначе они потеряются.</span>`;
+    const r = el.getBoundingClientRect(), w = Math.min(320, innerWidth - 24); pop.style.width = w + 'px'; pop.style.left = Math.max(12, Math.min(innerWidth - w - 12, r.left + r.width / 2 - w / 2)) + 'px'; pop.style.top = (r.bottom + 8) + 'px';
+    pop.classList.add('on');
+  },
+  cNetPick(el) { const C = V.cr; C.net = +el.dataset.val; C.addr = ''; $('netPop').classList.remove('on'); VIEWS.crypto.panel(); },
   cNet(el) { V.cr.net = +el.dataset.val; V.cr.addr = ''; VIEWS.crypto.panel(); },
   cChip(el) { const C = V.cr; C.sellAll = el.dataset.val === 'max'; C.amount = C.sellAll ? String(Math.floor((DB.crypto.hold[C.sel] || 0) * Mkt.price(C.sel) * 100) / 100).replace('.', ',') : el.dataset.val; $('cpAmt').value = C.amount; document.querySelectorAll('[data-act="cChip"]').forEach(b => b.classList.toggle('on', b === el)); VIEWS.crypto.nums(); },
   cSendPct(el) { const C = V.cr, c = COIN[C.sel], h = DB.crypto.hold[C.sel] || 0, v = +el.dataset.val; C.sendAmt = crQty(h * v, c.dp); $('cpSend').value = C.sendAmt; VIEWS.crypto.nums(); },
