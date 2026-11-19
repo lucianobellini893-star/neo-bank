@@ -772,6 +772,9 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .cs-chart{position:relative;height:170px;margin:0 -4px;overflow:hidden;flex:none}.cs-chart .chart{position:absolute!important;inset:0!important;height:auto!important;min-height:0!important}
   .cs-rg{align-self:stretch}.cs-rg button{flex:1}
   .cs-pos{display:flex;justify-content:space-between;gap:10px;background:var(--soft);border-radius:16px;padding:12px 14px}.cs-pos span{display:flex;flex-direction:column;gap:2px}.cs-pos small{font-size:12px;color:var(--muted);font-weight:600}.cs-pos small.up{color:var(--green)}.cs-pos small.down{color:var(--red)}.cs-pos b{font-size:15px}
+  .cs-al{display:flex;align-items:center;gap:10px;background:#EEF1FF;border-radius:16px;padding:13px 14px;text-align:left;color:var(--ink)}.cs-al svg:first-child{color:var(--accent);flex:none}.cs-al span{flex:1;font-size:13.5px;font-weight:600}.cs-al svg:last-child{color:var(--muted);flex:none}
+  .cs-facts{background:var(--soft);border-radius:18px;padding:2px 14px}.cs-facts div{display:flex;justify-content:space-between;gap:10px;padding:11px 0;font-size:13.5px;border-top:1px solid var(--line)}.cs-facts div:first-child{border-top:0}.cs-facts span{color:var(--muted)}.cs-facts b{text-align:right}.cs-facts b.up{color:var(--green)}.cs-facts b.down{color:var(--red)}
+  .cs-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.cs-tags span,.cs-tags a{height:28px;padding:0 10px;border-radius:999px;background:var(--soft);display:inline-flex;align-items:center;font-size:12px;font-weight:700;color:var(--ink);text-decoration:none}
   .cs-about{display:flex;flex-direction:column;gap:4px;align-items:flex-start}.cs-about b{font-size:15px}.cs-about p{margin:0;font-size:13.5px;line-height:1.5;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.cs-about p.open{-webkit-line-clamp:unset;display:block}.cs-about button{font-size:13.5px;font-weight:700;color:var(--accent)}
   .cs-foot{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 16px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--card)}.cs-foot .btn{height:52px}
   .col > #alForm{display:none!important}
@@ -3036,19 +3039,45 @@ function coinSheetHTML(id) {
     ${hist.length ? `<div style="display:flex;flex-direction:column"><b style="font-size:15px;margin-bottom:4px">Ваши операции</b>${hist.map(h => `<div class="li" style="border-top:1px solid var(--line)"><span class="lim"><b style="font-size:14px">${esc(h.title)}</b><span style="font-size:12px">${esc(h.meta)}</span></span><b class="${h.plus ? 'up' : ''}" style="font-size:14px">${esc(h.amount)}</b></div>`).join('')}</div>` : ''}
     <!--FOOT--><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">${[['buy', 'Купить', 'pri'], ['sell', 'Продать', ''], ['send', 'Отправить', '']].map(([k, l, cl]) => `<button class="btn ${cl}" data-act="ciSide" data-id="${id}" data-val="${k}">${l}</button>`).join('')}</div>`;
 }
+const COIN_FACTS = { // static, rarely changing facts: [launch year, max supply, mechanism, site, white paper]
+  bitcoin: [2009, '21 млн BTC', 'Proof of Work', 'https://bitcoin.org', 'https://bitcoin.org/bitcoin.pdf'],
+  ethereum: [2015, 'Без лимита', 'Proof of Stake', 'https://ethereum.org', 'https://ethereum.org/whitepaper'],
+  solana: [2020, 'Без лимита', 'Proof of Stake', 'https://solana.com', 'https://solana.com/solana-whitepaper.pdf'],
+  'usd-coin': [2018, 'Без лимита · 1 USDC = $1', 'Стейблкоин', 'https://www.circle.com/usdc', ''],
+  ripple: [2012, '100 млрд XRP', 'Консенсус XRP Ledger', 'https://xrpl.org', ''],
+  cardano: [2017, '45 млрд ADA', 'Proof of Stake', 'https://cardano.org', ''],
+  binancecoin: [2017, '≈ 200 млн BNB, часть сжигается', 'Proof of Staked Authority', 'https://www.bnbchain.org', ''],
+  dogecoin: [2013, 'Без лимита', 'Proof of Work', 'https://dogecoin.com', ''],
+  litecoin: [2011, '84 млн LTC', 'Proof of Work', 'https://litecoin.org', ''],
+  polkadot: [2020, 'Без лимита', 'Nominated Proof of Stake', 'https://polkadot.com', ''],
+  chainlink: [2017, '1 млрд LINK', 'Токен ERC-20 · оракулы', 'https://chain.link', ''],
+  'avalanche-2': [2020, '720 млн AVAX', 'Proof of Stake', 'https://www.avax.network', ''],
+  tron: [2018, 'Без лимита', 'Delegated Proof of Stake', 'https://tron.network', ''],
+  stellar: [2014, '50 млрд XLM', 'Stellar Consensus Protocol', 'https://stellar.org', ''],
+  cosmos: [2019, 'Без лимита', 'Proof of Stake', 'https://cosmos.network', ''],
+  uniswap: [2020, '1 млрд UNI', 'Токен ERC-20 · биржа DEX', 'https://uniswap.org', ''],
+};
 function coinScr(id) {
   const c = COIN[id], p = Mkt.price(id), ch = Mkt.ch(id), pos = pnlOf(id);
   let el = $('coinScr'); if (!el) { el = document.createElement('div'); el.id = 'coinScr'; el.className = 'cscr'; el.setAttribute('role', 'dialog'); document.body.appendChild(el); }
   el.dataset.id = id;
-  el.innerHTML = `<div class="cs-top"><button type="button" class="cs-bk" data-act="coinScrClose" aria-label="Назад">${ic('arrow', 18, 2.4)}</button><b>${esc(c.name)}</b><span style="width:40px"></span></div>
+  const F = COIN_FACTS[id] || [], x = Mkt.px[id] || {};
+  el.innerHTML = `<div class="cs-top"><button type="button" class="cs-bk" data-act="coinScrClose" aria-label="Назад">${ic('arrow', 18, 2.4)}</button><b>${esc(c.name)}</b><button type="button" class="cs-bk" data-act="csAlert" aria-label="Ценовое уведомление">${ic('bell', 17, 2.2)}</button></div>
     <div class="cs-body"><div class="cs-hd">${coinIcon(id, 44)}<b class="cs-p" id="csP">${p ? eur(p) : '—'}</b><span class="${ch >= 0 ? 'up' : 'down'} cs-ch" id="csCh">${p ? pct(ch) + ' за 24 ч' : ''}</span></div>
     <div class="cs-chart"><div class="chart" id="csChart"></div></div>
     <div class="seg cs-rg">${Object.entries(RANGES).map(([k, [l]]) => `<button class="${k === '1' ? 'on' : ''}" data-act="csRange" data-val="${k}">${l}</button>`).join('')}</div>
     ${pos.q > 1e-12 ? `<div class="cs-pos"><span><small>Ваша позиция</small><b>${nf(pos.q, c.dp)} ${c.sym}</b></span><span style="text-align:right"><b>${eur(pos.v)}</b>${pos.c > 0 ? `<small class="${pos.d >= 0 ? 'up' : 'down'}">${pos.d >= 0 ? '+' : '−'}${nf(Math.abs(pos.pct), 2)}%</small>` : ''}</span></div>` : ''}
-    <div class="cs-about"><b>О монете</b><p id="csAbout">${esc(COIN_INFO[id] || '')}</p><button type="button" data-act="csMore">Ещё</button></div></div>
+    <button type="button" class="cs-al" data-act="csAlert">${ic('bell', 17, 2.2)}<span>Сообщить, когда ${c.sym} будет выше/ниже…</span>${ic('arrow', 16, 2.2)}</button>
+    <div class="cs-facts"><div><span>Неделя</span><b id="csW">…</b></div><div><span>Год</span><b id="csY">…</b></div><div><span>Объём 24 ч</span><b>${x.vol ? '€' + (x.vol >= 1e9 ? nf(x.vol / 1e9, 1) + ' млрд' : nf(x.vol / 1e6, 1) + ' млн') : '—'}</b></div><div><span>Макс. за период «Всё»</span><b id="csAth">…</b></div>${F[0] ? `<div><span>Запущен</span><b>${F[0]}</b></div><div><span>Макс. выпуск</span><b>${esc(F[1])}</b></div>` : ''}</div>
+    <div class="cs-about"><b>О монете</b><p id="csAbout">${esc(COIN_INFO[id] || '')}</p><button type="button" data-act="csMore">Ещё</button>
+      <div class="cs-tags">${F[2] ? `<span>${esc(F[2])}</span>` : ''}${c.nets.map(n => `<span>Сеть ${esc(NETS[n].name)}</span>`).join('')}${F[3] ? `<a href="${F[3]}" target="_blank" rel="noopener">Сайт ↗</a>` : ''}${F[4] ? `<a href="${F[4]}" target="_blank" rel="noopener">White paper ↗</a>` : ''}</div></div></div>
     <div class="cs-foot"><button class="btn" data-act="csTrade" data-val="sell"${pos.q > 1e-12 ? '' : ' disabled'}>Продать</button><button class="btn pri" data-act="csTrade" data-val="buy">Купить</button></div>`;
   document.body.classList.add('cs-open', 'no-bnav'); requestAnimationFrame(() => el.classList.add('on'));
   coinScrChart(id, '1');
+  requestAnimationFrame(() => { const a = $('csAbout'); if (a && a.scrollHeight <= a.clientHeight + 2) a.nextElementSibling.hidden = true; });
+  const chg = (pts, el) => { const e = $(el); if (!e || $('coinScr').dataset.id !== id) return; if (!pts || pts.length < 2) return e.textContent = '—'; const d = (Mkt.price(id) || pts[pts.length - 1].v) / pts[0].v * 100 - 100; e.textContent = (d >= 0 ? '+' : '−') + nf(Math.abs(d), 1) + '%'; e.className = d >= 0 ? 'up' : 'down'; };
+  Mkt.history(id, '7').then(p => chg(p, 'csW')); Mkt.history(id, '365').then(p => chg(p, 'csY'));
+  Mkt.history(id, 'max').then(p => { const e = $('csAth'); if (!e || $('coinScr').dataset.id !== id) return; if (!p || !p.length) return e.textContent = '—'; const m = Math.max(...p.map(q => q.v)), now = Mkt.price(id) || p[p.length - 1].v; e.textContent = eur(m) + ' · ' + (now >= m ? 'рекорд' : '−' + nf((1 - now / m) * 100, 1) + '%'); });
 }
 async function coinScrChart(id, range) {
   const pts = await Mkt.history(id, range), el = $('csChart'); if (!el || $('coinScr').dataset.id !== id) return;
@@ -3517,6 +3546,7 @@ const ACT = {
   cMktSort(el) { const C = V.cr; C.msort = el.dataset.val; document.querySelectorAll('#cMktSeg button').forEach(b => b.classList.toggle('on', b.dataset.val === C.msort)); VIEWS.crypto.lists(); },
   coinScrClose() { const el = $('coinScr'); if (!el) return; el.classList.remove('on'); document.body.classList.remove('cs-open', 'no-bnav'); },
   csRange(el) { el.parentNode.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el)); coinScrChart($('coinScr').dataset.id, el.dataset.val); },
+  csAlert() { const id = $('coinScr').dataset.id; V.cr.sel = id; ACT.coinScrClose(); setTimeout(() => { ACT.crAlOpen(); if ($('alCoin')) $('alCoin').value = id; }, 220); },
   csMore(el) { $('csAbout').classList.toggle('open'); el.textContent = $('csAbout').classList.contains('open') ? 'Свернуть' : 'Ещё'; },
   csTrade(el) { const id = $('coinScr').dataset.id, C = V.cr; if (C.sel !== id) { C.sel = id; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); VIEWS.crypto.head(); VIEWS.crypto.lists(); } ACT.coinScrClose(); setTimeout(() => ACT.cAct({ dataset: { val: el.dataset.val } }), 200); },
   cMktAll() { V.cr.mAll = !V.cr.mAll; VIEWS.crypto.lists(); },
