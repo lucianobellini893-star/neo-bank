@@ -3550,7 +3550,7 @@ const ACT = {
   csMore(el) { $('csAbout').classList.toggle('open'); el.textContent = $('csAbout').classList.contains('open') ? 'Свернуть' : 'Ещё'; },
   csTrade(el) { const id = $('coinScr').dataset.id, C = V.cr; if (C.sel !== id) { C.sel = id; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); VIEWS.crypto.head(); VIEWS.crypto.lists(); } ACT.coinScrClose(); setTimeout(() => ACT.cAct({ dataset: { val: el.dataset.val } }), 200); },
   cMktAll() { V.cr.mAll = !V.cr.mAll; VIEWS.crypto.lists(); },
-  cPick(el) { if (isMob() && el.closest('#cMkt')) return coinScr(el.dataset.val); const C = V.cr; if (C.sel !== el.dataset.val) { C.sel = el.dataset.val; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); } VIEWS.crypto.head(); VIEWS.crypto.lists(); VIEWS.crypto.panel(); },
+  cPick(el) { if (isMob() && el.closest && el.closest('#cMkt')) return coinScr(el.dataset.val); const C = V.cr; if (C.sel !== el.dataset.val) { C.sel = el.dataset.val; C.net = 0; C.addr = ''; C.sendAmt = ''; VIEWS.crypto.loadChart(); } VIEWS.crypto.head(); VIEWS.crypto.lists(); VIEWS.crypto.panel(); },
   cAct(el) { V.cr.side = el.dataset.val; const sh = $('crSheet'), p = $('cPanel'); if (sh && p && p.parentNode !== sh) sh.appendChild(p); VIEWS.crypto.panel(); $('crShT').textContent = { buy: 'Купить', sell: 'Продать', swap: 'Обмен', send: 'Отправить', receive: 'Получить' }[el.dataset.val]; document.body.classList.add('cr-sh', 'no-bnav'); },
   crTx(el) {
     const h = DB.crypto.history[+el.dataset.i]; if (!h) return;
