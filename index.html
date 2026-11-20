@@ -1002,6 +1002,14 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
   .li .lim>b>.muted{display:none}
 }
 @media print{.side,.noprint{display:none!important}.main{padding:0}.card{box-shadow:none}}
+.ie-m{display:none}
+@media (max-width:760px){.ieC .ie-m{display:inline}.ieC .ie-d{display:none}
+.ieC .bars{height:150px;gap:4px!important;border-bottom:0;padding:0 4px}.ieC .bars button{gap:3px!important}.ieC .bars i{max-width:9px!important;border-radius:5px}
+.ieC .blabels{gap:4px!important;padding:0 4px}
+.ieC .an3{display:flex!important;gap:0!important;border-top:1px solid var(--line);padding-top:12px}
+.ieC .an3 .box{flex:1;min-width:0;background:none!important;border:0!important;border-radius:0;padding:0 0 0 12px!important;border-left:1px solid var(--line)!important;box-shadow:none}
+.ieC .an3 .box:first-child{padding-left:0!important;border-left:0!important}
+.ieC .an3 .box b{font-size:16px!important}.ieC .an3 .box:first-child b{color:var(--ink)}}
 </style>
 </head>
 <body>
@@ -2635,7 +2643,7 @@ VIEWS.analytics = {
     const isNow = A.sel === 5, bspend = monthSpend(), B = DB.settings.budget || 3000;
     return header('Аналитика', 'Куда уходят деньги') + `
     <section class="row">
-      <div class="card c3">
+      <div class="card c3 ieC">
         <div class="hrow" style="align-items:flex-start">
           <div style="display:flex;flex-direction:column;gap:6px"><h2>Доходы и расходы</h2><span class="muted" style="font-size:13px">${cur.full}${isNow ? ' · текущий месяц' : ''}</span></div>
           <div style="display:flex;gap:14px;font-size:13px;font-weight:600"><span style="display:flex;align-items:center;gap:6px"><i style="width:10px;height:10px;border-radius:3px;background:var(--lime);display:block"></i>Доходы</span><span style="display:flex;align-items:center;gap:6px"><i style="width:10px;height:10px;border-radius:3px;background:var(--accent);display:block"></i>Расходы</span></div>
@@ -2647,7 +2655,7 @@ VIEWS.analytics = {
         <div class="an3" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
           <div class="box" style="gap:4px;padding:14px"><span class="muted" style="font-size:12px">Доходы</span><b style="font-size:18px" class="up">${eur(cur.inc, 0)}</b></div>
           <div class="box" style="gap:4px;padding:14px"><span class="muted" style="font-size:12px">Расходы</span><b style="font-size:18px">${eur(cur.sp, 0)}</b></div>
-          <div class="box" style="gap:4px;padding:14px"><span class="muted" style="font-size:12px">${saved >= 0 ? 'Сэкономлено' : 'Перерасход'}</span><b style="font-size:18px" class="${saved >= 0 ? 'up' : 'down'}">${eur(Math.abs(saved), 0)}${cur.inc > 0 ? ` <span class="muted" style="font-size:12px;font-weight:600">${rate}%</span>` : ''}</b></div>
+          <div class="box" style="gap:4px;padding:14px"><span class="muted" style="font-size:12px"><span class="ie-d">${saved >= 0 ? 'Сэкономлено' : 'Перерасход'}</span><span class="ie-m">${saved >= 0 ? 'Осталось' : 'Перерасход'}</span></span><b style="font-size:18px" class="${saved >= 0 ? 'up' : 'down'}"><span class="ie-m">${saved >= 0 ? '+' : '−'}</span>${eur(Math.abs(saved), 0)}${cur.inc > 0 ? ` <span class="muted ie-d" style="font-size:12px;font-weight:600">${rate}%</span>` : ''}</b></div>
         </div>
       </div>
       <div class="card c2" style="gap:12px">
