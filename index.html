@@ -1011,6 +1011,15 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
 .cald{aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:600;border:0;padding:0;font-family:inherit;cursor:pointer}
 .cald.fut{background:var(--soft2);color:var(--muted);opacity:.55;cursor:default}
 .calf{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:12px}
+.pfD{gap:6px}
+.pfh{display:flex;align-items:center;gap:12px;padding-bottom:6px}
+.pft{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left}
+.pft>span{font-size:12px;color:var(--muted)}.pft>b{font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pfl{display:flex;flex-direction:column}
+.pfr{display:flex;align-items:center;gap:12px;padding:10px 0;border:0;border-top:1px solid var(--line);background:none;width:100%;font-family:inherit;color:var(--ink);cursor:pointer}
+.pfl .pfr:first-child{border-top:0}
+.pfi{width:38px;height:38px;border-radius:12px;background:var(--soft2);display:flex;align-items:center;justify-content:center;flex:none}
+.pfc{color:var(--muted);display:flex;flex:none}
 .ie-m{display:none}
 @media (max-width:760px){.ieC .ie-m{display:inline}.ieC .ie-d{display:none}
 .ieC .bars{height:150px;gap:4px!important;border-bottom:0;padding:0 4px}.ieC .bars button{gap:3px!important}.ieC .bars i{max-width:9px!important;border-radius:5px}
@@ -1180,6 +1189,10 @@ const P = {
   device:'<rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/>',
   monitor:'<path d="M17.994 3.283H6.007A3.007 3.007 0 0 0 3 6.29v7.5a3.007 3.007 0 0 0 3.007 3.008h11.987A3.006 3.006 0 0 0 21 13.79v-7.5a3.006 3.006 0 0 0-3.006-3.007zM8.055 20.717h7.89M12 17.004v3.713"/>',
   trash:'<path d="M14.962 3.879l.819 1.785h2.639c.811 0 1.469.658 1.469 1.469v1.088c0 .555-.45 1.005-1.005 1.005H5.115c-.555 0-1.005-.45-1.005-1.005V7.133c0-.811.658-1.469 1.47-1.469h2.639l.818-1.785A1.6 1.6 0 0 1 10.407 3h3.186c.589 0 1.124.343 1.369.879zM18.35 9.301v8.686c0 1.664-1.332 3.013-2.976 3.013H8.627c-1.644 0-2.977-1.349-2.977-3.013V9.301M10.31 12.816v4.509M13.69 12.816v4.509"/>',
+  chev:'<path d="m9 6 6 6-6 6"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  bank:'<path d="M3 10 12 4l9 6"/><path d="M5 10v8M9 10v8M15 10v8M19 10v8M3 20h18"/>',
   key:'<path d="M12 11c0 3-1 6-3 8M15 12c0 3-.5 5-1.5 7M9 11a3 3 0 0 1 6 0M6 12a6 6 0 0 1 12 0c0 2 0 4-.5 6M4 8a9 9 0 0 1 16 0"/>',
 };
 /* optical sizing: menu icons come from different sets, so each is centred and scaled to the same visual size (stroke kept constant) */
@@ -2790,7 +2803,10 @@ VIEWS.settings = {
     const t = (k, title, sub) => `<button class="li" data-act="set" data-val="${k}" style="border-top:1px solid var(--line)"><span class="lim"><b>${title}</b><span>${sub}</span></span><span class="toggle ${DB.settings[k] ? 'on' : ''}" aria-hidden="true"></span></button>`;
     return header('Настройки', 'Профиль, безопасность и уведомления') + frozenBanner() + `
     <section class="row">
-      <div class="card c3" style="gap:4px"><h2 style="margin-bottom:8px">Профиль</h2>
+      ${isMob() ? (() => { const U = DB.user, since = new Date(DB.opened || Date.now() - 400 * DAY).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }).replace(/^\d+\s/, '').replace(' г.', ''), ibs = String(DB.iban || '').replace(/\s/g, ''), ibShort = ibs.slice(0, 4) + ' ' + ibs.slice(4, 8) + ' … ' + ibs.slice(-4);
+        const row = (i, k, v, act, val) => `<button class="pfr" data-act="${act}"${val ? ` data-val="${val}"` : ''}><span class="pfi">${ic(i, 18)}</span><span class="pft"><span>${k}</span><b${v ? '' : ' class="muted"'}>${v ? esc(v) : 'Не указан'}</b></span><span class="pfc">${ic('chev', 18)}</span></button>`;
+        return `<div class="card c3 pfD"><div class="pfh"><span class="av" style="width:48px;height:48px;border-radius:24px;font-size:16px;flex:none">${esc(initials(U.name))}</span><span class="pft"><b style="display:flex;align-items:center;gap:6px;min-width:0;font-size:16px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(U.name)}</span><span style="color:var(--green);display:flex;flex:none" role="img" aria-label="Личность подтверждена">${ic('badge', 17, 2)}</span></b><span>Клиент с ${since}</span></span><button class="chip g" data-act="pfEdit">Изменить</button></div>
+        <div class="pfl">${row('phone', 'Телефон', U.phone, 'pfEdit', 'phone')}${row('mail', 'Email', U.email, 'pfEdit', 'email')}${row('home', 'Адрес', U.address, 'pfEdit', 'address')}${row('bank', 'Реквизиты счёта', ibShort, 'pfBank')}</div></div>`; })() : `<div class="card c3" style="gap:4px"><h2 style="margin-bottom:8px">Профиль</h2>
         <div class="li"><span class="av" style="width:56px;height:56px;border-radius:28px;font-size:18px">${esc(initials(DB.user.name))}</span><div class="lim"><b style="font-size:17px;display:flex;align-items:center;gap:6px;min-width:0"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink);font-size:inherit">${esc(DB.user.name)}</span><span style="color:var(--green);display:flex;flex:none" title="Личность подтверждена" aria-label="Личность подтверждена" role="img">${ic('badge', 20, 2)}</span></b></div></div>
         <label class="fld" style="margin-top:8px"><span>Имя для приветствия</span><input class="inp" id="sFirst" value="${esc(DB.user.first)}"></label>
         <label class="fld"><span>Телефон</span><input class="inp" id="sPhone" value="${esc(DB.user.phone)}"></label>
@@ -2800,7 +2816,7 @@ VIEWS.settings = {
           ${[['IBAN', DB.iban], ['BIC', DB.bic], ['Валюта', 'EUR · евро']].map(([k, v]) => `<div class="kv" style="align-items:center"><span class="muted">${k}</span><span style="display:flex;align-items:center;gap:6px"><b class="${k === 'IBAN' ? 'mono' : ''}" style="font-size:${k === 'IBAN' ? 13 : 14}px">${esc(v)}</b>${k !== 'Валюта' ? `<button class="iconbtn" style="width:30px;height:30px" data-act="copy" data-val="${esc(v)}" aria-label="Скопировать ${k}">${ic('copy', 15)}</button>` : ''}</span></div>`).join('')}
           <div class="kv"><span class="muted">Счёт открыт</span><b style="font-size:14px">${new Date(DB.opened || Date.now() - 400 * DAY).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}</b></div></div>
         <button class="btn pri" data-act="saveProfile" style="align-self:flex-start;margin-top:8px">Сохранить</button>
-      </div>
+      </div>`}
       <div class="c2 col">
         <div class="card" style="gap:14px"><div class="hrow"><h2>Приложение на телефон</h2>${isStandalone() ? '<span class="tag" style="background:var(--lime-soft);color:var(--lime-ink)">Установлено</span>' : ''}</div>
           <span class="muted" style="font-size:13.5px;line-height:1.45">Добавьте Neo на главный экран — открывается как обычное приложение, на весь экран, без адресной строки.</span>
@@ -3552,6 +3568,23 @@ const ACT = {
   logout() { DB.session = false; save(); V = {}; render(); },
   reset() { if (confirm('Сбросить все демо-данные?')) { localStorage.removeItem(KEY); DB = seed(); DB.session = true; save(); V = {}; render(); toast('Данные сброшены'); } },
   set(el) { const k = el.dataset.val; DB.settings[k] = !DB.settings[k]; save(); if (k === 'plus') render(); else rerenderMain(); },
+  pfEdit(el) {
+    const f = el && el.dataset && el.dataset.val, U = DB.user;
+    const F = { first: ['Имя для приветствия', U.first, 'given-name', 'text'], phone: ['Телефон', U.phone, 'tel', 'tel'], email: ['Email', U.email, 'email', 'email'], address: ['Адрес проживания', U.address || '', 'street-address', 'text'] };
+    const keys = f ? [f] : ['first', 'phone', 'email', 'address'];
+    openSheet(f ? F[f][0] : 'Профиль', `<form id="pfForm" novalidate style="display:flex;flex-direction:column;gap:12px">${keys.map(k => `<label class="fld"><span>${F[k][0]}</span><input class="inp" id="pf_${k}" type="${F[k][3]}" autocomplete="${F[k][2]}" value="${esc(F[k][1] || '')}"${k === 'address' ? ' placeholder="Улица, дом, город, индекс"' : ''}></label>`).join('')}<span class="hint" id="pfErr" style="color:var(--red);min-height:16px"></span></form><!--FOOT--><button class="btn pri lg" type="submit" form="pfForm">Сохранить</button>`);
+    if (f) setTimeout(() => { const i = $('pf_' + f); if (i) { i.focus(); i.select(); } }, 80);
+    $('pfForm').onsubmit = e => { e.preventDefault(); const er = m => { $('pfErr').textContent = m; }, v = k => $('pf_' + k) ? $('pf_' + k).value.trim() : null;
+      const em = v('email'), ph = v('phone');
+      if (em !== null && em && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return er('Проверьте email');
+      if (ph !== null && ph.replace(/\D/g, '').length < 9) return er('Проверьте номер телефона');
+      keys.forEach(k => { const x = v(k); if (k === 'first') { if (x) U.first = x; } else U[k] = x; });
+      save(); closeSheet(); rerenderMain(); toast('Профиль сохранён'); };
+  },
+  pfBank() {
+    const opened = new Date(DB.opened || Date.now() - 400 * DAY).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+    openSheet('Реквизиты счёта', `<div style="display:flex;flex-direction:column">${[['IBAN', DB.iban, 1], ['BIC', DB.bic, 1], ['Получатель', DB.user.name, 1], ['Валюта', 'EUR · евро'], ['Счёт открыт', opened]].map(([k, v, c], i) => `<div class="pfr" style="cursor:default;${i ? '' : 'border-top:0'}"><span class="pft"><span>${k}</span><b class="${k === 'IBAN' ? 'mono' : ''}">${esc(v)}</b></span>${c ? `<button class="iconbtn" style="width:36px;height:36px" data-act="copy" data-val="${esc(v)}" aria-label="Скопировать ${k}">${ic('copy', 16)}</button>` : ''}</div>`).join('')}</div><!--FOOT--><button class="btn pri lg" data-act="copy" data-val="${esc(DB.user.name + '\nIBAN: ' + DB.iban + '\nBIC: ' + DB.bic)}">${ic('copy', 18)}Скопировать всё</button>`);
+  },
   saveProfile() {
     const em = $('sEmail').value.trim(); if (em && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return toast('Проверьте email');
     if ($('sPhone').value.replace(/\D/g, '').length < 9) return toast('Проверьте номер телефона');
