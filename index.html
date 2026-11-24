@@ -1003,6 +1003,14 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
 }
 @media print{.side,.noprint{display:none!important}.main{padding:0}.card{box-shadow:none}}
 @media (max-width:760px){.anRow2{display:none!important}}
+.anCal{display:none}
+@media (max-width:760px){.anCal{display:flex}}
+.calg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.calm{height:30px;padding:0 12px;border-radius:999px;background:var(--soft2);display:inline-flex;align-items:center;font-size:12.5px;font-weight:700;text-transform:capitalize}
+.calw{font-size:11px;color:var(--muted);text-align:center;padding-bottom:2px}
+.cald{aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:600;border:0;padding:0;font-family:inherit;cursor:pointer}
+.cald.fut{background:var(--soft2);color:var(--muted);opacity:.55;cursor:default}
+.calf{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:12px}
 .ie-m{display:none}
 @media (max-width:760px){.ieC .ie-m{display:inline}.ieC .ie-d{display:none}
 .ieC .bars{height:150px;gap:4px!important;border-bottom:0;padding:0 4px}.ieC .bars button{gap:3px!important}.ieC .bars i{max-width:9px!important;border-radius:5px}
@@ -2666,6 +2674,18 @@ VIEWS.analytics = {
           return `<button class="li sel-row" data-act="anCat" data-val="${k}" style="padding:8px"><i style="width:10px;height:10px;border-radius:3px;background:${(CAT[k] || ['', '#8B8F9A'])[1]};display:block;flex:none"></i><span class="lim"><b style="font-size:14px">${(CAT[k] || [k])[0]}</b><span style="font-size:12px">${Math.round(v / cdiv * 100)}% расходов</span></span><span class="lir"><b style="font-size:14px">${eur(v)}</b>${d === null ? (v ? '<span class="muted" style="font-size:12px">новое</span>' : '') : `<span style="font-size:12px;font-weight:700" class="${d > 0 ? 'down' : 'up'}">${d > 0 ? '↑' : d < 0 ? '↓' : ''} ${Math.abs(d)}%</span>`}</span></button>`; }).join('') || '<span class="muted" style="font-size:14px">В этом месяце расходов нет</span>'}
       </div>
     </section>
+    ${(() => { const dIn = new Date(cur.y, cur.m + 1, 0).getDate(), isCur = cur.y === now.getFullYear() && cur.m === now.getMonth(), last = isCur ? now.getDate() : dIn, per = Array(dIn + 1).fill(0), cnt = Array(dIn + 1).fill(0);
+      DB.tx.forEach(t => { if (isSpend(t) && inMonth(t, cur.y, cur.m)) { const d = new Date(t.ts).getDate(); per[d] += -t.amount; cnt[d]++; } });
+      const mx = Math.max(1, ...per), off = (new Date(cur.y, cur.m, 1).getDay() + 6) % 7, day = Math.min(A.day || last, last), dTx = DB.tx.filter(t => isSpend(t) && inMonth(t, cur.y, cur.m) && new Date(t.ts).getDate() === day).sort((a, b) => b.ts - a.ts);
+      const BG = ['var(--soft2)', '#DCE4FF', '#A9BCFF', '#6E8BFF', 'var(--accent)'], nOps = n => n + ' ' + (n % 10 === 1 && n % 100 !== 11 ? 'операция' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'операции' : 'операций');
+      const mname = new Date(cur.y, cur.m, 1).toLocaleDateString('ru-RU', { month: 'long' }), dlabel = new Date(cur.y, cur.m, day).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+      return `<section class="row anCal"><div class="card c3" style="gap:12px">
+        <div class="hrow"><h2>Календарь</h2><span class="calm">${mname}</span></div>
+        <div class="calg">${['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'].map(w => `<span class="calw">${w}</span>`).join('')}${'<span></span>'.repeat(off)}${Array.from({ length: dIn }, (_, k) => { const d = k + 1, v = per[d], fut = d > last, lv = v <= 0 ? 0 : Math.min(4, Math.max(1, Math.ceil(Math.sqrt(v / mx) * 4)));
+          return fut ? `<span class="cald fut">${d}</span>` : `<button class="cald${d === day ? ' on' : ''}" data-act="calDay" data-val="${d}" style="background:${d === day ? 'var(--ink)' : BG[lv]};color:${d === day ? 'var(--bg)' : lv >= 3 ? '#fff' : 'var(--ink)'}" aria-label="${d}: ${eur(v)}">${d}</button>`; }).join('')}</div>
+        <div class="calf"><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="muted" style="font-size:12px">${dlabel}${isCur && day === now.getDate() ? ', сегодня' : ''}</span><b style="font-size:16px">${per[day] ? eur(per[day]) + ' · ' + nOps(cnt[day]) : 'Без расходов'}</b></span>${cnt[day] ? `<button class="chip g" data-act="calMore">${A.dayOpen ? 'Скрыть' : 'Смотреть'}</button>` : ''}</div>
+        ${A.dayOpen && dTx.length ? `<div style="display:flex;flex-direction:column;gap:2px">${dTx.map(t => `<button class="li sel-row" data-act="txOpen" data-id="${t.id}">${txIcon(t)}<span class="lim"><b>${esc(t.title)}</b><span>${new Date(t.ts).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })} · ${(CAT[t.cat] || [t.cat])[0]}</span></span><b>${signed(t.amount)}</b></button>`).join('')}</div>` : ''}
+      </div></section>`; })()}
     <section class="row anRow2"><div class="card c3 anTop" style="gap:4px"><h2 style="margin-bottom:8px">Крупнейшие расходы · ${cur.label}</h2>${top.length ? '' : '<span class="muted" style="font-size:14px">Пока нет расходов</span>'}${top.map(t => `<button class="li sel-row" data-act="txOpen" data-id="${t.id}">${txIcon(t)}<span class="lim"><b>${esc(t.title)}</b><span>${new Date(t.ts).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })} · ${(CAT[t.cat] || [t.cat])[0]}</span></span><b>${signed(t.amount)}</b></button>`).join('')}</div>
       <div class="card c2"><div class="hrow"><h2>Бюджет на месяц</h2><button class="chip g" data-act="budget">Изменить</button></div>${(() => { const p = Math.min(100, Math.round(bspend / B * 100)); return `<b style="font-size:26px">${eur(bspend, 0)} <span class="muted" style="font-size:15px;font-weight:600">из ${eur(B, 0)}</span></b><div class="bar" style="height:12px"><i style="width:${p}%;background:${p > 90 ? 'var(--red)' : 'var(--accent)'}"></i></div><span class="muted" style="font-size:13px">${bspend > B ? '<b style="color:var(--red)">Превышен на ' + eur(bspend - B, 0) + '</b> · ' + (() => { const big = DB.tx.filter(t => isSpend(t) && inMonth(t, now.getFullYear(), now.getMonth())).sort((a, b) => a.amount - b.amount)[0]; return big ? 'больше всего — ' + esc(big.title) + ' ' + eur(-big.amount, 0) : ''; })() : 'Осталось ' + eur(B - bspend, 0) + ' до конца месяца · ≈ ' + eur((B - bspend) / Math.max(1, new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate() + 1), 0) + ' в день'}</span>${(() => { const dIn = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(), td = now.getDate(), per = Array(dIn).fill(0);
           DB.tx.filter(t => isSpend(t) && inMonth(t, now.getFullYear(), now.getMonth())).forEach(t => { per[new Date(t.ts).getDate() - 1] -= t.amount; });
@@ -3545,7 +3565,9 @@ const ACT = {
   trBack() { if (V.tr && V.tr.step > 1 && window.trSetStep) trSetStep(V.tr.step - 1); else { V.tr = null; go('home'); } },
   trPick(el) { const T = V.tr, r = DB.recipients.find(x => x.id === el.dataset.id); T.name = r ? r.name : ''; T.iban = r ? r.iban : ''; $('trName').value = T.name; $('trIban').value = T.iban; document.querySelectorAll('.trw-p').forEach(b => b.classList.toggle('on', !!r && b === el)); if (r) { window.trVal && trVal(); $('trRef').focus(); } else { $('trIban').classList.remove('ok', 'bad'); $('trName').focus(); } },
   // analytics
-  anSel(el) { V.an.sel = +el.dataset.val; rerenderMain(); },
+  anSel(el) { V.an.sel = +el.dataset.val; V.an.day = null; V.an.dayOpen = false; rerenderMain(); },
+  calDay(el) { const d = +el.dataset.val; if (V.an.day !== d) V.an.dayOpen = false; V.an.day = d; rerenderMain(); },
+  calMore() { V.an.dayOpen = !V.an.dayOpen; rerenderMain(); },
   anCat(el) { const sel = V.an ? V.an.sel : 5, d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - (5 - sel)); V.hf = { q: '', type: 'out', cat: el.dataset.val, per: sel === 5 ? 'month' : 'm:' + d.getFullYear() + '-' + d.getMonth(), limit: 25 }; go('docs'); setTimeout(() => { const h = $('histCard'); if (h) h.scrollIntoView({ behavior: 'smooth' }); }, 120); },
   // docs
   csv(el) { const [y, m] = el.dataset.val.split('-').map(Number); exportCSV(DB.tx.filter(t => { const d = new Date(t.ts); return d.getFullYear() === y && d.getMonth() === m; }), `neo-statement-${y}-${String(m + 1).padStart(2, '0')}.csv`); },
