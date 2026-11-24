@@ -1020,6 +1020,16 @@ dialog::backdrop{background:rgba(14,15,18,.45)}
 .pfl .pfr:first-child{border-top:0}
 .pfi{width:38px;height:38px;border-radius:12px;background:var(--soft2);display:flex;align-items:center;justify-content:center;flex:none}
 .pfc{color:var(--muted);display:flex;flex:none}
+.dvD{gap:8px}
+.dv-al,.dv-fine{display:flex;gap:12px;align-items:flex-start;border-radius:16px;padding:12px}
+.dv-al{background:#FFF1EE}.dv-al .pft b,.dv-fine .pft b{white-space:normal}.dv-al .pft b{color:#8A2414;font-size:14.5px}.dv-al .pft>span{color:#8A2414;opacity:.8}
+.dv-fine{background:var(--lime-soft);align-items:center}.dv-fine .pft b{color:var(--lime-ink);font-size:14.5px}.dv-fine .pft>span{color:var(--lime-ink);opacity:.8}
+.dv-ai{width:36px;height:36px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;flex:none;color:var(--red)}
+.dv-fine .dv-ai{color:var(--green)}
+.pft>.dv-ab{display:flex;gap:6px;margin-top:8px;opacity:1}
+.dv-ab button{height:32px;padding:0 14px;border-radius:999px;border:0;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.dv-no{background:var(--red);color:#fff}.dv-ok{background:#fff;color:var(--ink)}
+.dv-x{width:32px;height:32px;border-radius:50%;border:0;background:var(--soft2);color:var(--muted);display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer}
 .ie-m{display:none}
 @media (max-width:760px){.ieC .ie-m{display:inline}.ieC .ie-d{display:none}
 .ieC .bars{height:150px;gap:4px!important;border-bottom:0;padding:0 4px}.ieC .bars button{gap:3px!important}.ieC .bars i{max-width:9px!important;border-radius:5px}
@@ -2828,14 +2838,18 @@ VIEWS.settings = {
       </div>
     </section>
     <section class="row">
-      <div class="card c3" style="gap:4px">
+      ${isMob() ? (() => { const S = DB.security, bad = S.logins.find(l => !l.ok && !l.ack), dt = ts => new Date(ts).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+        return `<div class="card c3 dvD">${bad ? `<div class="dv-al"><span class="dv-ai">${ic('warn', 18)}</span><span class="pft"><b>Неудачная попытка входа</b><span>${esc(bad.device)} · ${esc(bad.place.split(',')[0])}, ${dt(bad.ts)}</span><span class="dv-ab"><button class="dv-no" data-act="lgNotMe" data-val="${bad.ts}">Это не я</button><button class="dv-ok" data-act="lgMine" data-val="${bad.ts}">Это был я</button></span></span></div>` : `<div class="dv-fine"><span class="dv-ai">${ic('shield', 18)}</span><span class="pft"><b>Всё в порядке</b><span>Подозрительных входов нет</span></span></div>`}
+        <div class="pfl">${S.sessions.map(x => `<div class="pfr" style="cursor:default"><span class="pfi">${ic(x.kind || 'monitor', 18)}</span><span class="pft"><b style="display:flex;align-items:center;gap:6px;min-width:0"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(x.device)}</span>${x.current ? '<span class="tag" style="background:var(--lime-soft);color:var(--lime-ink);font-size:11px;flex:none">Текущий</span>' : ''}</b><span>${x.current ? 'Это устройство · сейчас' : esc(x.place.split(',')[0]) + ' · ' + agoStr(x.ts)}</span></span>${x.current ? '' : `<button class="dv-x" data-act="endSession" data-id="${x.id}" aria-label="Завершить сеанс ${esc(x.device)}">${ic('x', 14, 2.4)}</button>`}</div>`).join('')}
+        ${S.sessions.length > 1 ? `<button class="pfr" data-act="endAll"><span class="pft"><b style="color:var(--red);font-size:14px">Завершить все другие сеансы</b></span></button>` : ''}
+        <button class="pfr" data-act="logins"><span class="pft"><b style="font-size:14px">История входов</b></span><span class="pfc">${ic('chev', 18)}</span></button></div></div>`; })() : `<div class="card c3" style="gap:4px">
         <div class="hrow" style="margin-bottom:6px"><h2>Устройства и входы</h2><button class="chip g" data-act="logins">История входов</button></div>
         ${DB.security.sessions.map(x => `<div class="li" style="border-top:1px solid var(--line)"><span class="lic" style="background:var(--soft2);color:var(--ink)">${ic(x.kind || 'monitor', 20)}</span><span class="lim"><b>${esc(x.device)}${x.current ? ' <span class="tag" style="background:var(--lime-soft);color:var(--lime-ink);font-size:11px">Текущий</span>' : ''}</b><span>${esc(x.place)} · ${x.current ? 'сейчас' : agoStr(x.ts)}</span></span>${x.current ? '' : `<button class="chip g" data-act="endSession" data-id="${x.id}">Завершить</button>`}</div>`).join('')}
         ${DB.security.sessions.length > 1 ? '<button class="btn" data-act="endAll" style="margin-top:10px;align-self:flex-start">Завершить все другие сеансы</button>' : ''}
         <span class="muted" style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:14px">Последние входы</span>
         ${DB.security.logins.slice(0, 4).map(l => `<div class="li" style="padding:8px 0"><span style="width:8px;height:8px;border-radius:4px;flex:none;background:${l.ok ? 'var(--green)' : 'var(--red)'}"></span><span class="lim"><b style="font-size:14px">${l.ok ? 'Вход' : 'Неудачная попытка'} · ${esc(l.device)}</b><span>${esc(l.place)} · ${new Date(l.ts).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span></span></div>`).join('')}
         <div class="box unk" style="margin-top:auto;flex-direction:row;align-items:center;gap:12px"><span style="color:var(--accent);flex:none">${ic('shield', 20)}</span><span style="flex:1;font-size:13px;line-height:1.45">Не узнаёте устройство или вход? Завершите сеанс, смените пароль и заморозьте исходящие операции.</span><button class="chip g" data-act="logins">Все входы</button></div>
-      </div>
+      </div>`}
       <div class="card c2" style="gap:0">
         <h2 style="margin-bottom:10px">Защита</h2>
         <button class="li" data-act="freeze" style="border-top:1px solid var(--line)"><span class="lic" style="background:${frozen() ? 'var(--peach-soft)' : 'var(--soft2)'};color:${frozen() ? 'var(--peach-ink)' : 'var(--ink)'}">${ic('lock', 20)}</span><span class="lim"><b>Заморозить исходящие</b><span>${frozen() ? 'Включено · переводы и отправка крипты заблокированы' : 'Если потеряли телефон или заметили чужие операции'}</span></span><span class="toggle ${frozen() ? 'on' : ''}" aria-hidden="true"></span></button>
@@ -3389,6 +3403,13 @@ const ACT = {
   },
   endSession(el) { const x = DB.security.sessions.find(z => z.id === el.dataset.id); DB.security.sessions = DB.security.sessions.filter(z => z.id !== el.dataset.id); addNotif('sec', 'Сеанс завершён', x ? x.device : ''); save(); rerenderMain(); toast('Сеанс завершён'); },
   async endAll() { if (!(await ask('Завершить другие сеансы?', [['Устройств', String(DB.security.sessions.length - 1)]], 'Завершить'))) return; DB.security.sessions = DB.security.sessions.filter(z => z.current); addNotif('sec', 'Все другие сеансы завершены', 'Вход остался только на этом устройстве'); save(); rerenderMain(); toast('Готово'); },
+  lgMine(el) { const l = DB.security.logins.find(z => String(z.ts) === el.dataset.val); if (l) l.ack = true; save(); rerenderMain(); toast('Отметили как ваш вход'); },
+  async lgNotMe(el) {
+    if (!(await ask('Защитить аккаунт?', [['Завершим', 'Все другие сеансы'], ['Заморозим', 'Исходящие переводы и крипту'], ['Затем', 'Смените пароль']], 'Защитить'))) return;
+    const l = DB.security.logins.find(z => String(z.ts) === el.dataset.val); if (l) l.ack = true;
+    DB.security.sessions = DB.security.sessions.filter(z => z.current); DB.security.frozen = true;
+    addNotif('sec', 'Аккаунт защищён', 'Другие сеансы завершены, исходящие заморожены'); save(); render(); toast('Аккаунт защищён'); setTimeout(() => ACT.pwChange(), 250);
+  },
   logins() {
     openSheet('История входов', DB.security.logins.map(l => `<div class="li" style="border-top:1px solid var(--line)"><span class="lic" style="background:${l.ok ? 'var(--soft2)' : 'var(--peach-soft)'};color:${l.ok ? 'var(--ink)' : 'var(--peach-ink)'}">${ic(l.ok ? 'check' : 'warn', 18)}</span><span class="lim"><b style="white-space:normal">${l.ok ? 'Успешный вход' : 'Неудачная попытка входа'}</b><span>${esc(l.device)} · ${esc(l.place)}</span><span>${new Date(l.ts).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</span></span></div>`).join('') +
       '<div class="warn" style="margin-top:8px">Не узнаёте вход? Заморозьте исходящие операции и смените пароль.</div><!--FOOT--><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn" data-act="pwChange">Сменить пароль</button><button class="btn blk" data-act="freeze">' + (frozen() ? 'Разморозить' : 'Заморозить') + '</button></div>');
